@@ -1,0 +1,92 @@
+-- -----------------------------------------------------
+-- Opcional: Eliminar la base de datos si existe para empezar limpio
+-- Nota: En DB2, no se usa CREATE SCHEMA con `IF NOT EXISTS` para bases de datos,
+-- sino para esquemas. Asumimos que la base de datos ya existe o que usaremos
+-- un esquema específico dentro de ella, como 'MYDB'.
+-- -----------------------------------------------------
+
+-- Si ya existe el esquema 'MYDB', se usará. Si no, se creará.
+-- Dependiendo de tu configuración de DB2, quizás necesites privilegios
+-- específicos para crear el esquema.
+CREATE SCHEMA MYDB;
+
+-- Establecer el esquema actual (reemplaza 'MYDB' con el nombre de tu esquema/base)
+SET CURRENT SCHEMA MYDB;
+
+CREATE TABLE Sucursal (
+  NO_Sucursal INT NOT NULL,
+  no_telefono VARCHAR(45),
+  calle VARCHAR(45),
+  ciudad VARCHAR(45),
+  estado VARCHAR(45),
+  CP VARCHAR(45),
+  PRIMARY KEY (NO_Sucursal)
+);
+
+CREATE TABLE Empleado (
+  NO_Empleado INT NOT NULL,
+  nombre VARCHAR(45),
+  FName VARCHAR(45),
+  LName VARCHAR(45),
+  categoria VARCHAR(45),
+  NO_Sucursal INT NOT NULL,
+  PRIMARY KEY (NO_Empleado),
+  CONSTRAINT fk_empleado_sucursal
+    FOREIGN KEY (NO_Sucursal)
+    REFERENCES Sucursal (NO_Sucursal)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION  -- **CAMBIO AQUÍ**
+);
+
+
+CREATE INDEX idx_empleado_sucursal ON Empleado (NO_Sucursal);
+
+
+
+CREATE TABLE Gerente ( No_empleado INT NOT NULL, NO_sucursal INT NOT NULL, CONSTRAINT fk_gerente_empleado FOREIGN KEY (No_empleado) REFERENCES Empleado (NO_Empleado) ON DELETE CASCADE ON UPDATE NO ACTION, CONSTRAINT fk_gerente_sucursal FOREIGN KEY (NO_sucursal) REFERENCES Sucursal (NO_Sucursal) ON DELETE CASCADE ON UPDATE NO ACTION );
+CREATE INDEX idx_gerente_empleado ON Gerente (No_empleado);
+CREATE INDEX idx_gerente_sucursal ON Gerente (NO_sucursal);
+
+
+-- -----------------------------------------------------
+-- Tabla `Pelicula`
+-- -----------------------------------------------------
+CREATE TABLE Pelicula (
+  no_catalogo INT NOT NULL,
+  titulo VARCHAR(45),
+  categoria VARCHAR(45),
+  alquiler_diario VARCHAR(45),
+  coste VARCHAR(45),
+  director VARCHAR(45),
+  PRIMARY KEY (no_catalogo)
+);
+
+CREATE TABLE Copia_pelicula (no_película INT NOT NULL,no_catalogo INT NOT NULL,no_sucursal INT,estado VARCHAR(45),PRIMARY KEY (no_película),CONSTRAINT fk_copia_pelicula_catalogo FOREIGN KEY (no_catalogo) REFERENCES Pelicula (no_catalogo) ON DELETE CASCADE ON UPDATE NO ACTION,   CONSTRAINT fk_copia_pelicula_sucursal FOREIGN KEY (no_sucursal) REFERENCES Sucursal (NO_Sucursal) ON DELETE CASCADE ON UPDATE NO ACTION );
+
+
+
+CREATE INDEX idx_copia_pelicula_catalogo ON Copia_pelicula (no_catalogo);
+
+CREATE INDEX idx_copia_pelicula_sucursal ON Copia_pelicula (no_sucursal);
+
+
+CREATE TABLE Actor (
+  Nombre_Actor VARCHAR(20) NOT NULL,
+  PRIMARY KEY (Nombre_Actor)
+);
+
+
+
+CREATE TABLE Pelicula_Actor (No_catalogo INT NOT NULL, nombre_actor VARCHAR(45) NOT NULL, PRIMARY KEY (No_catalogo, nombre_actor), CONSTRAINT fk_pelicula_actor_catalogo FOREIGN KEY (No_catalogo) REFERENCES Pelicula (no_catalogo) ON DELETE CASCADE ON UPDATE NO ACTION, CONSTRAINT fk_pelicula_actor_actor FOREIGN KEY (nombre_actor) REFERENCES Actor (Nombre_Actor) ON DELETE CASCADE ON UPDATE NO ACTION);
+
+
+CREATE INDEX idx_pelicula_actor_catalogo ON Pelicula_Actor (No_catalogo);
+CREATE INDEX idx_pelicula_actor_actor ON Pelicula_Actor (nombre_actor);
+
+
+CREATE TABLE Cliente (No_cliente INT NOT NULL, nombre VARCHAR(45), apellido VARCHAR(45), calle VARCHAR(45), ciudad VARCHAR(45), estado VARCHAR(45), cp VARCHAR(45), fecha_registro VARCHAR(45), no_sucursal INT, PRIMARY KEY (No_cliente), CONSTRAINT fk_cliente_sucursal FOREIGN KEY (no_sucursal) REFERENCES Sucursal (NO_Sucursal) ON DELETE CASCADE ON UPDATE NO ACTION);
+
+CREATE INDEX idx_cliente_sucursal ON Cliente (no_sucursal);
+
+CREATE TABLE Alquiler (no_alquiler INT NOT NULL, no_cliente INT, no_pelicula INT, fecha_alquiler VARCHAR(45), fecha_devolucion VARCHAR(45), alquiler_diario INT, PRIMARY KEY (no_alquiler), CONSTRAINT fk_alquiler_cliente FOREIGN KEY (no_cliente) REFERENCES Cliente (No_cliente) ON DELETE CASCADE ON UPDATE NO ACTION, CONSTRAINT fk_alquiler_pelicula FOREIGN KEY (no_pelicula) REFERENCES Copia_pelicula (no_película) ON DELETE CASCADE ON UPDATE NO ACTION);
+

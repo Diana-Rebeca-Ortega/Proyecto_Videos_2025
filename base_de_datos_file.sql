@@ -1,0 +1,205 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+-- -----------------------------------------------------
+-- Schema bd_videos_proyecto_final
+-- -----------------------------------------------------
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Sucursal`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Sucursal` (
+  `NO_Sucursal` INT NOT NULL,
+  `no_telefono` VARCHAR(45) NULL,
+  `calle` VARCHAR(45) NULL,
+  `ciudad` VARCHAR(45) NULL,
+  `estado` VARCHAR(45) NULL,
+  `CP` VARCHAR(45) NULL,
+  PRIMARY KEY (`NO_Sucursal`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Empleado`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Empleado` (
+  `NO_Empleado` INT NOT NULL,
+  `nombre` VARCHAR(45) NULL,
+  `FName` VARCHAR(45) NULL,
+  `LName` VARCHAR(45) NULL,
+  `categoria` VARCHAR(45) NULL,
+  `NO_Sucursal` INT NOT NULL,
+  PRIMARY KEY (`NO_Empleado`),
+  CONSTRAINT `NO_Sucursal`
+    FOREIGN KEY (`NO_Sucursal`)
+    REFERENCES `mydb`.`Sucursal` (`NO_Sucursal`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `NO_Sucursal_idx` ON `mydb`.`Empleado` (`NO_Sucursal` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Gerente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Gerente` (
+  `No_empleado` INT NOT NULL,
+  `NO_sucursal` INT NOT NULL,
+  CONSTRAINT `No_empleado`
+    FOREIGN KEY (`No_empleado`)
+    REFERENCES `mydb`.`Empleado` (`NO_Empleado`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `NO_sucursal`
+    FOREIGN KEY (`NO_sucursal`)
+    REFERENCES `mydb`.`Sucursal` (`NO_Sucursal`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `No_sucursal_idx` ON `mydb`.`Gerente` (`No_empleado` ASC) VISIBLE;
+
+CREATE INDEX `NO_sucursal_idx` ON `mydb`.`Gerente` (`NO_sucursal` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Pelicula`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Pelicula` (
+  `no_catalogo` INT NOT NULL,
+  `titulo` VARCHAR(45) NULL,
+  `categoria` VARCHAR(45) NULL,
+  `alquiler_diario` VARCHAR(45) NULL,
+  `coste` VARCHAR(45) NULL,
+  `director` VARCHAR(45) NULL,
+  PRIMARY KEY (`no_catalogo`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Copia_pelicula`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Copia_pelicula` (
+  `no_película` INT NOT NULL,
+  `no_catalogo` INT NOT NULL,
+  `no_sucursal` INT NULL,
+  `estado` VARCHAR(45) NULL,
+  PRIMARY KEY (`no_película`),
+  CONSTRAINT `no_catalogo`
+    FOREIGN KEY (`no_catalogo`)
+    REFERENCES `mydb`.`Pelicula` (`no_catalogo`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `no_sucursal`
+    FOREIGN KEY (`no_sucursal`)
+    REFERENCES `mydb`.`Sucursal` (`NO_Sucursal`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `no_catalogo_idx` ON `mydb`.`Copia_pelicula` (`no_catalogo` ASC) VISIBLE;
+
+CREATE INDEX `no_sucursal_idx` ON `mydb`.`Copia_pelicula` (`no_sucursal` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Actor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Actor` (
+  `Nombre_Actor` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`Nombre_Actor`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Pelicula_Actor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Pelicula_Actor` (
+  `No_catalogo` INT NOT NULL,
+  `nombre_actor` VARCHAR(45) NOT NULL,
+  CONSTRAINT `No_catalogo`
+    FOREIGN KEY (`No_catalogo`)
+    REFERENCES `mydb`.`Pelicula` (`no_catalogo`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `nombre_actor`
+    FOREIGN KEY (`nombre_actor`)
+    REFERENCES `mydb`.`Actor` (`Nombre_Actor`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `No_catalogo_idx` ON `mydb`.`Pelicula_Actor` (`No_catalogo` ASC) VISIBLE;
+
+CREATE INDEX `nombre_actor_idx` ON `mydb`.`Pelicula_Actor` (`nombre_actor` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Cliente` (
+  `No_cliente` INT NOT NULL,
+  `nombre` VARCHAR(45) NULL,
+  `apellido` VARCHAR(45) NULL,
+  `calle` VARCHAR(45) NULL,
+  `ciudad` VARCHAR(45) NULL,
+  `estado` VARCHAR(45) NULL,
+  `cp` VARCHAR(45) NULL,
+  `fecha_registro` VARCHAR(45) NULL,
+  `no_sucursal` INT NULL,
+  PRIMARY KEY (`No_cliente`),
+  CONSTRAINT `no_sucursal`
+    FOREIGN KEY (`no_sucursal`)
+    REFERENCES `mydb`.`Sucursal` (`NO_Sucursal`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `no_sucursal_idx` ON `mydb`.`Cliente` (`no_sucursal` ASC) VISIBLE;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Alquiler`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Alquiler` (
+  `no_alquiler` INT NOT NULL,
+  `no_cliente` INT NULL,
+  `no_pelicula` INT NULL,
+  `fecha_alquiler` VARCHAR(45) NULL,
+  `fecha_devolucion` VARCHAR(45) NULL,
+  `alquiler_diario` INT NULL,
+  PRIMARY KEY (`no_alquiler`),
+  CONSTRAINT `no_cliente`
+    FOREIGN KEY (`no_cliente`)
+    REFERENCES `mydb`.`Cliente` (`No_cliente`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `no_pelicula`
+    FOREIGN KEY (`no_pelicula`)
+    REFERENCES `mydb`.`Copia_pelicula` (`no_película`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `no_cliente_idx` ON `mydb`.`Alquiler` (`no_cliente` ASC) VISIBLE;
+
+CREATE INDEX `no_pelicula_idx` ON `mydb`.`Alquiler` (`no_pelicula` ASC) VISIBLE;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
