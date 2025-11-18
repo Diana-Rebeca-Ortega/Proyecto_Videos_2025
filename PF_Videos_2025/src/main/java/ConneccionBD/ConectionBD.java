@@ -19,10 +19,10 @@ class ConexionBD {
 
     public ConexionBD(){
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+           Class.forName("com.ibm.db2.jcc.DB2Driver");
                                     //127.0.0.1
-            String URL = "jdbc:mysql://localhost:3306/BD_Topicos_2025";
-            conexion = DriverManager.getConnection(URL, "root", "1819diana");
+          String URL = "jdbc:db2://localhost:25000/PFVID";
+          conexion = DriverManager.getConnection(URL, "diana931", "1819diana");
 
             System.out.println("YEEEEI Casi son ingeniera/o INMORTAL !!!!");
 
@@ -30,7 +30,7 @@ class ConexionBD {
             System.out.println("Error en el connector/driver");
         } catch (SQLException e) {
            e.printStackTrace();
-            System.out.println("Error en la conexion a MySQL");
+            System.out.println("Error en la conexion a db2");
         }
     }
 
