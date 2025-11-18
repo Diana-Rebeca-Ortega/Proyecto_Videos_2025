@@ -5,6 +5,7 @@
 package Vista;
 
 
+
 /**
  *
  * @author Diana
@@ -18,6 +19,7 @@ public class Pagina_Principal extends javax.swing.JFrame {
      */
     public Pagina_Principal() {
         initComponents();
+        this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 
     }
 
@@ -47,14 +49,15 @@ public class Pagina_Principal extends javax.swing.JFrame {
         setBackground(new java.awt.Color(222, 250, 255));
 
         jPanel1.setBackground(new java.awt.Color(137, 206, 232));
-        jPanel1.setPreferredSize(new java.awt.Dimension(180, 600));
+        jPanel1.setPreferredSize(new java.awt.Dimension(280, 600));
+        jPanel1.setRequestFocusEnabled(false);
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         panel_botones.setBackground(new java.awt.Color(137, 206, 232));
         panel_botones.setPreferredSize(new java.awt.Dimension(300, 20));
 
         btn_sucursales.setBackground(new java.awt.Color(137, 206, 232));
-        btn_sucursales.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/ubicacion.png"))); // NOI18N
+        btn_sucursales.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/ubicacion.png"))); // NOI18N
         btn_sucursales.setText("Sucursales");
         btn_sucursales.setBorder(null);
         btn_sucursales.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -66,13 +69,18 @@ public class Pagina_Principal extends javax.swing.JFrame {
         });
 
         btn_configuracion.setBackground(new java.awt.Color(137, 206, 232));
-        btn_configuracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/ajuste.png"))); // NOI18N
+        btn_configuracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/ajuste.png"))); // NOI18N
         btn_configuracion.setText("Configuracion");
         btn_configuracion.setBorder(null);
         btn_configuracion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btn_configuracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_configuracionActionPerformed(evt);
+            }
+        });
 
         btn_reportes.setBackground(new java.awt.Color(137, 206, 232));
-        btn_reportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/grafico-de-barras.png"))); // NOI18N
+        btn_reportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/grafico-de-barras.png"))); // NOI18N
         btn_reportes.setText("Reportes");
         btn_reportes.setBorder(null);
         btn_reportes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -83,13 +91,18 @@ public class Pagina_Principal extends javax.swing.JFrame {
         });
 
         btn_alquileres.setBackground(new java.awt.Color(137, 206, 232));
-        btn_alquileres.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/alquilar.png"))); // NOI18N
+        btn_alquileres.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/alquilar.png"))); // NOI18N
         btn_alquileres.setText("Alquileres");
         btn_alquileres.setBorder(null);
         btn_alquileres.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btn_alquileres.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_alquileresActionPerformed(evt);
+            }
+        });
 
         btn_clientes.setBackground(new java.awt.Color(137, 206, 232));
-        btn_clientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/nueva-cuenta.png"))); // NOI18N
+        btn_clientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/nueva-cuenta.png"))); // NOI18N
         btn_clientes.setText("Clientes");
         btn_clientes.setBorder(null);
         btn_clientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -100,22 +113,32 @@ public class Pagina_Principal extends javax.swing.JFrame {
         });
 
         btn_catalogo.setBackground(new java.awt.Color(137, 206, 232));
-        btn_catalogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/video.png"))); // NOI18N
+        btn_catalogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/video.png"))); // NOI18N
         btn_catalogo.setText("Cátalogo/Peliculas");
         btn_catalogo.setBorder(null);
         btn_catalogo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btn_catalogo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_catalogoActionPerformed(evt);
+            }
+        });
 
         btn_empleados.setBackground(new java.awt.Color(137, 206, 232));
-        btn_empleados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/jefe-de-equipo.png"))); // NOI18N
+        btn_empleados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/jefe-de-equipo.png"))); // NOI18N
         btn_empleados.setText("Empleados");
         btn_empleados.setBorder(null);
         btn_empleados.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btn_empleados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_empleadosActionPerformed(evt);
+            }
+        });
 
         pnl_perfil.setBackground(new java.awt.Color(137, 206, 232));
 
         jLabel1.setBackground(new java.awt.Color(137, 206, 232));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Vista/Iconos/disney (1).png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/disney (1).png"))); // NOI18N
         jLabel1.setText("Disney Club");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -144,13 +167,13 @@ public class Pagina_Principal extends javax.swing.JFrame {
                 .addGroup(panel_botonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_sucursales, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel_botonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btn_alquileres, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_clientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_catalogo, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                         .addComponent(btn_empleados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(btn_configuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_reportes, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(40, Short.MAX_VALUE))
+                    .addComponent(btn_alquileres, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_reportes, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_configuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(140, Short.MAX_VALUE))
         );
         panel_botonesLayout.setVerticalGroup(
             panel_botonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,17 +183,17 @@ public class Pagina_Principal extends javax.swing.JFrame {
                 .addComponent(btn_empleados, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_catalogo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_alquileres, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btn_reportes, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btn_configuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(btn_sucursales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(259, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btn_configuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(202, Short.MAX_VALUE))
         );
 
         jPanel1.add(panel_botones);
@@ -187,26 +210,74 @@ public class Pagina_Principal extends javax.swing.JFrame {
     
     
     private void btn_sucursalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sucursalesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_sucursalesActionPerformed
-
-    private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
-        // TODO add your handling code here:
-        Vista_Clientes vistaClientes = new Vista_Clientes();
+        PanelSucursales pnlSucursales = new PanelSucursales();
         // 1. Limpia y añade la vista al panel central (pnlContent)
     pnlContent.removeAll();
-    pnlContent.add(vistaClientes, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+    pnlContent.add(pnlSucursales, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
 
     // 2. Refresca la interfaz
     pnlContent.revalidate();
     pnlContent.repaint();
+    }//GEN-LAST:event_btn_sucursalesActionPerformed
 
+    private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
+        // TODO add your handling code here:
+        Panel_Cliente pnlClientes = new Panel_Cliente();
+        // 1. Limpia y añade la vista al panel central (pnlContent)
+    pnlContent.removeAll();
+    pnlContent.add(pnlClientes, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
 
+    // 2. Refresca la interfaz
+    pnlContent.revalidate();
+    pnlContent.repaint();
+        System.out.println("Vista.Pagina_Principal.btn_clientesActionPerformed()");
     }//GEN-LAST:event_btn_clientesActionPerformed
 
     private void btn_reportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reportesActionPerformed
-        // TODO add your handling code here:
+       Panel_Reportes pnl_reportes = new Panel_Reportes();
+  pnlContent.removeAll();
+    pnlContent.add(pnl_reportes, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+
+     pnlContent.revalidate();
+    pnlContent.repaint();
     }//GEN-LAST:event_btn_reportesActionPerformed
+
+    private void btn_alquileresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_alquileresActionPerformed
+        Panel_Alquileres pnl_Alquiler = new Panel_Alquileres();
+  pnlContent.removeAll();
+    pnlContent.add(pnl_Alquiler, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+
+     pnlContent.revalidate();
+    pnlContent.repaint();
+
+    }//GEN-LAST:event_btn_alquileresActionPerformed
+
+    private void btn_catalogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_catalogoActionPerformed
+       PanelCatalogo pnl_catalogo = new PanelCatalogo();
+  pnlContent.removeAll();
+    pnlContent.add(pnl_catalogo, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+
+     pnlContent.revalidate();
+    pnlContent.repaint();
+    }//GEN-LAST:event_btn_catalogoActionPerformed
+
+    private void btn_empleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_empleadosActionPerformed
+           Panel_Empleados pnl_Empleados = new Panel_Empleados();
+  pnlContent.removeAll();
+    pnlContent.add(pnl_Empleados, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+
+     pnlContent.revalidate();
+    pnlContent.repaint();
+    }//GEN-LAST:event_btn_empleadosActionPerformed
+
+    private void btn_configuracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_configuracionActionPerformed
+       Panel_Configuracion pnl_configuracion = new Panel_Configuracion();
+  pnlContent.removeAll();
+    pnlContent.add(pnl_configuracion, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
+
+     pnlContent.revalidate();
+    pnlContent.repaint();
+    }//GEN-LAST:event_btn_configuracionActionPerformed
 
     /**
      * @param args the command line arguments
