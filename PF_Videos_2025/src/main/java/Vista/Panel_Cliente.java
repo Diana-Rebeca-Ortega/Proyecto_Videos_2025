@@ -4,6 +4,11 @@
  */
 package Vista;
 
+import Controlador.ClienteDAO;
+import Modelo.Cliente;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Diana
@@ -15,7 +20,47 @@ public class Panel_Cliente extends javax.swing.JPanel {
      */
     public Panel_Cliente() {
         initComponents();
+        cargarClientesATabla();
     }
+    
+       private void cargarClientesATabla() {
+        DefaultTableModel modelo = new DefaultTableModel();
+        
+        // Nombres de las columnas de tu JTable (ajustar si son diferentes)
+        modelo.addColumn("ID_Cliente");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Primer Ap");
+        modelo.addColumn("Segundo Ap");
+        modelo.addColumn("Calle");
+        modelo.addColumn("Ciudad");
+        modelo.addColumn("CP");
+        modelo.addColumn("Estado"); // Incluir la nueva columna
+        modelo.addColumn("Fecha_Reg");
+        modelo.addColumn("No_Sucursal");
+        
+        ClienteDAO dao = new ClienteDAO();
+        List<Cliente> clientes = dao.obtenerTodosLosClientes();
+        
+        for (Cliente c : clientes) {
+            Object[] fila = new Object[10]; // ¡Ahora son 10 columnas!
+            
+            fila[0] = c.getNoCliente();
+            fila[1] = c.getNombre();
+            fila[2] = c.getApellido1();
+            fila[3] = c.getApellido2();
+            fila[4] = c.getCalle();
+            fila[5] = c.getCiudad();
+            fila[6] = c.getCp();
+            fila[7] = c.getEstado(); // Nuevo campo
+            fila[8] = c.getFechaRegistro(); 
+            fila[9] = c.getNoSucursal();
+            
+            modelo.addRow(fila);
+        }
+        
+        tbla_clientes.setModel(modelo); // Asignar el modelo a la tabla
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

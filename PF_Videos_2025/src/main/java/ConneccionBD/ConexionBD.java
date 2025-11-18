@@ -11,11 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-class ConexionBD {
+public class ConexionBD {
 
     private Connection conexion;
     private Statement stm;  //PreparedStatement ES MEJOR YA QUE EVITA SQL Injection
     private ResultSet rs;
+    private  static ConexionBD instancia;//paso 1  poner una instancia estatica
 
     public ConexionBD(){
         try {
@@ -33,6 +34,16 @@ class ConexionBD {
             System.out.println("Error en la conexion a db2");
         }
     }
+       public static  ConexionBD getInstance(){//paso 3  metodo estatico para obtener la instancia
+        if (instancia==null){
+            instancia=new ConexionBD();
+        }
+        return instancia;
+    }
+       public Connection getConnection() {
+    return conexion;
+}
+       
 
     //CRUD - Create Read Update Delete
     //Metodo para los proces de ABC (altas, bajas y cambios)
