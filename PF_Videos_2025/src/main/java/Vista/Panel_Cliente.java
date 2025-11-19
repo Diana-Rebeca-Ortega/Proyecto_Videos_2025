@@ -7,6 +7,7 @@ package Vista;
 import Controlador.ClienteDAO;
 import Modelo.Cliente;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -31,7 +32,9 @@ public class Panel_Cliente extends javax.swing.JPanel {
         modelo.addColumn("Nombre");
         modelo.addColumn("Primer Ap");
         modelo.addColumn("Segundo Ap");
+        modelo.addColumn("No Exterior");
         modelo.addColumn("Calle");
+        modelo.addColumn("Colonia");
         modelo.addColumn("Ciudad");
         modelo.addColumn("CP");
         modelo.addColumn("Estado"); // Incluir la nueva columna
@@ -42,18 +45,20 @@ public class Panel_Cliente extends javax.swing.JPanel {
         List<Cliente> clientes = dao.obtenerTodosLosClientes();
         
         for (Cliente c : clientes) {
-            Object[] fila = new Object[10]; // ¡Ahora son 10 columnas!
+            Object[] fila = new Object[12]; // ¡Ahora son 10 columnas!
             
             fila[0] = c.getNoCliente();
-            fila[1] = c.getNombre();
-            fila[2] = c.getApellido1();
-            fila[3] = c.getApellido2();
-            fila[4] = c.getCalle();
-            fila[5] = c.getCiudad();
-            fila[6] = c.getCp();
-            fila[7] = c.getEstado(); // Nuevo campo
-            fila[8] = c.getFechaRegistro(); 
-            fila[9] = c.getNoSucursal();
+        fila[1] = c.getNombre();
+        fila[2] = c.getApellido1();
+        fila[3] = c.getApellido2();
+        fila[4] = c.getNo_exterior();
+        fila[5] = c.getCalle();
+        fila[6] = c.getColonia();    
+        fila[7] = c.getCiudad();
+        fila[8] = c.getCp();
+        fila[9] = c.getEstado(); 
+        fila[10] = c.getFechaRegistro();
+        fila[11] = c.getNoSucursal();
             
             modelo.addRow(fila);
         }
@@ -75,35 +80,35 @@ public class Panel_Cliente extends javax.swing.JPanel {
         tbla_clientes = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btn_Nuevo_Cliente = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
         tbla_clientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID_Cliente", "Nombre", "Primer_Ap", "Segundo_Ap", "Calle", "Ciudad", "Estado", "CP", "Fecha_Registro", "No_Sucursal", "Acciones"
+                "ID_Cliente", "Nombre", "Primer_Ap", "Segundo_Ap", "NO_exterior", "Calle", "Colonia/Fraccionamiento", "Ciudad", "Estado", "CP", "Fecha_Registro", "No_Sucursal", "Acciones"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, true, true, true, true, true, false, true
+                true, true, true, true, true, true, true, true, true, true, true, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -111,6 +116,10 @@ public class Panel_Cliente extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(tbla_clientes);
+        if (tbla_clientes.getColumnModel().getColumnCount() > 0) {
+            tbla_clientes.getColumnModel().getColumn(4).setResizable(false);
+            tbla_clientes.getColumnModel().getColumn(9).setResizable(false);
+        }
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -118,24 +127,44 @@ public class Panel_Cliente extends javax.swing.JPanel {
         jLabel1.setText("GESTIÓN DE CLIENTES");
         add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        jButton1.setText("Nuevo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_Nuevo_Cliente.setText("Nuevo");
+        btn_Nuevo_Cliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_Nuevo_ClienteActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1);
+        jPanel1.add(btn_Nuevo_Cliente);
 
         add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btn_Nuevo_ClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Nuevo_ClienteActionPerformed
+        FormularioAltasCliente form = new FormularioAltasCliente(null, true); 
+    form.setVisible(true); // Bloquea la ventana principal hasta que se cierre
+    
+    // 2. Verificar si el usuario presionó Guardar
+    if (form.isDatosGuardados()) {
+        Cliente nuevoCliente = form.getCliente(); 
+
+        ClienteDAO dao = new ClienteDAO();
+        
+        // ¡Se debe usar el mismo tipo de dato que funciona en tu DAO (String o int para ID_CLIENTE)!
+        // Si tienes problemas de tipo de dato en esta línea, revisa tu ClienteDAO y Cliente.java.
+        
+        if (dao.insertarCliente(nuevoCliente)) {
+            JOptionPane.showMessageDialog(this, "Cliente insertado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            
+            // 3. Recargar la tabla
+          cargarClientesATabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al insertar el cliente. Revisa logs.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    }//GEN-LAST:event_btn_Nuevo_ClienteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btn_Nuevo_Cliente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

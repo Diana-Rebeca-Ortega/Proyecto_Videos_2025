@@ -16,8 +16,10 @@ public class Cliente {
     private String nombre;
     private String apellido1;
     private String apellido2;
+    private int  No_exterior;
     private String calle;
     private String ciudad;
+     private String colonia;
     private String estado;
     private String cp; 
     private java.sql.Date fechaRegistro; 
@@ -105,6 +107,22 @@ public class Cliente {
 
     public void setNoSucursal(String noSucursal) {
         this.noSucursal = noSucursal;
+    }
+
+    public int getNo_exterior() {
+        return No_exterior;
+    }
+
+    public void setNo_exterior(int No_exterior) {
+        this.No_exterior = No_exterior;
+    }
+
+    public String getColonia() {
+        return colonia;
+    }
+
+    public void setColonia(String colonia) {
+        this.colonia = colonia;
     }
     
     
