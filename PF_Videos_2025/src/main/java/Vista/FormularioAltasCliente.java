@@ -8,7 +8,9 @@ import java.util.Date; //  para la fecha
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.text.ParseException; // Para manejar el formato de fecha
-
+import javax.swing.text.AbstractDocument; 
+import java.util.Date; // para la fecha
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -31,9 +33,24 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         this.setLocationRelativeTo(null); 
         // 1. Obtener la fecha actual del sistema
     Date fechaActual = new Date();
+    SoloLetrasFilter letrasFilter = new SoloLetrasFilter();
+    ((AbstractDocument) caja_nombre.getDocument()).setDocumentFilter(letrasFilter);
+    ((AbstractDocument) caja_apellido1.getDocument()).setDocumentFilter(letrasFilter);
+    ((AbstractDocument) caja_apellido2.getDocument()).setDocumentFilter(letrasFilter);
     
-    // 2. Definir el formato deseado (DD/MM/AAAA)
-    // El patrón de formato en Java es "dd/MM/yyyy"
+    // Aplicar el filtro a campos de dirección (ciudad, calle, colonia)
+    ((AbstractDocument) caja_ciudad.getDocument()).setDocumentFilter(letrasFilter);
+    ((AbstractDocument) caja_calle.getDocument()).setDocumentFilter(letrasFilter);
+    ((AbstractDocument) caja_colonia.getDocument()).setDocumentFilter(letrasFilter);
+   
+    SoloNumerosFilter numerosFilter = new SoloNumerosFilter();
+    ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(numerosFilter);
+    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(numerosFilter);
+    
+    MaximoDigitosFilter cpFilter = new MaximoDigitosFilter(5);
+    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(cpFilter);
+     ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(cpFilter);
+    
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
     
     // 3. Formatear la fecha a String
@@ -82,7 +99,6 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         jLabel12 = new javax.swing.JLabel();
         comboSucursales = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
-        comboNoExterior = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
         caja_colonia = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
@@ -91,6 +107,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         btn_altasClientes = new javax.swing.JButton();
         btn_cancelarRegistroCliente = new javax.swing.JButton();
         caja_ciudad = new javax.swing.JTextField();
+        caja_num_exterior = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -157,13 +174,6 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         jLabel13.setText("NO_Exterior");
 
-        comboNoExterior.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una Opcion", "00003", "00013", "00023" }));
-        comboNoExterior.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboNoExteriorActionPerformed(evt);
-            }
-        });
-
         jLabel14.setText("Colonia/Fraccionamiento");
 
         caja_colonia.setText("jTextField1");
@@ -194,6 +204,13 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         caja_ciudad.setText("jTextField2");
 
+        caja_num_exterior.setText("jTextField1");
+        caja_num_exterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                caja_num_exteriorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -208,8 +225,8 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
                                 .addComponent(caja_colonia, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(caja_calle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(comboNoExterior, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(caja_num_exterior, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(combo_estados, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -295,31 +312,26 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
                         .addComponent(comboSucursales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
+                .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(caja_ciudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(2, 2, 2)
-                            .addComponent(jLabel13))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(24, 24, 24)
-                            .addComponent(comboNoExterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(caja_num_exterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(2, 2, 2)
                         .addComponent(caja_calle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(caja_colonia, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel14)
+                        .addGap(9, 9, 9)
+                        .addComponent(caja_colonia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(2, 2, 2)
@@ -353,8 +365,12 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "El Nombre y Apellido1 son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return; // Detiene la ejecución si faltan datos esenciales
         }
-        if (comboNoExterior.getSelectedItem().toString().equals("Item 1")) {
-        JOptionPane.showMessageDialog(this, "Debe seleccionar un valor para el campo 'NO_Exterior'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        if (caja_num_exterior.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El Número Exterior es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    if (caja_CP.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El Código Postal (CP) es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
     
@@ -377,7 +393,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
             cliente.setNombre(caja_nombre.getText());
             cliente.setApellido1(caja_apellido1.getText());
             cliente.setApellido2(caja_apellido2.getText());
-            cliente.setNo_exterior(Integer.parseInt(String.valueOf( comboNoExterior.getSelectedItem())) );
+            cliente.setNo_exterior(Integer.parseInt(String.valueOf( caja_num_exterior.getText())) );
             cliente.setCalle(caja_calle.getText());
             cliente.setColonia(caja_colonia.getText());
             cliente.setCiudad(caja_ciudad.getText());
@@ -389,7 +405,9 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
             // 4. Marcar como guardado y cerrar
             datosGuardados = true;
             this.dispose(); // Cierra el JDialog
-            
+            } catch (NumberFormatException e) {
+        // Capturar si, a pesar del filtro, hay un error de formato
+        JOptionPane.showMessageDialog(this, "Error de formato en campos numéricos (Exterior o CP).", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al crear el objeto Cliente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -397,16 +415,16 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_altasClientesActionPerformed
 
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed
-        // TODO add your handling code here:
+       this.dispose();
     }//GEN-LAST:event_btn_cancelarRegistroClienteActionPerformed
 
     private void comboSucursalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSucursalesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboSucursalesActionPerformed
 
-    private void comboNoExteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboNoExteriorActionPerformed
+    private void caja_num_exteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caja_num_exteriorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboNoExteriorActionPerformed
+    }//GEN-LAST:event_caja_num_exteriorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -455,7 +473,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     private javax.swing.JTextField caja_ciudad;
     private javax.swing.JTextField caja_colonia;
     private javax.swing.JTextField caja_nombre;
-    private javax.swing.JComboBox<String> comboNoExterior;
+    private javax.swing.JTextField caja_num_exterior;
     private javax.swing.JComboBox<String> comboSucursales;
     private javax.swing.JComboBox<String> combo_estados;
     private javax.swing.JLabel jLabel1;
