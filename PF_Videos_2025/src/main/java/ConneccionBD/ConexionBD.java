@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ConneccionBD;
-
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,67 +9,48 @@ import java.sql.Statement;
 public class ConexionBD {
 
     private Connection conexion;
-    private Statement stm;  //PreparedStatement ES MEJOR YA QUE EVITA SQL Injection
+    private Statement stm; 
     private ResultSet rs;
-    private  static ConexionBD instancia;//paso 1  poner una instancia estatica
+    private static ConexionBD instancia; 
 
-    public ConexionBD(){
-        try {
-           Class.forName("com.ibm.db2.jcc.DB2Driver");
-                                    //127.0.0.1
-          String URL = "jdbc:db2://localhost:25000/PFVID";
-          conexion = DriverManager.getConnection(URL, "diana931", "1819diana");
-
-            System.out.println("YEEEEI Casi son ingeniera/o INMORTAL !!!!");
-
-        } catch (ClassNotFoundException e) {
-            System.out.println("Error en el connector/driver");
-        } catch (SQLException e) {
-           e.printStackTrace();
-            System.out.println("Error en la conexion a db2");
-        }
+    // Constructor privado: NO debe intentar conectar aquí.
+    private ConexionBD(){
+        System.out.println("YEEEEI Casi son ingeniera/o INMORTAL !!!!");
     }
-       public static  ConexionBD getInstance(){//paso 3  metodo estatico para obtener la instancia
-        if (instancia==null){
-            instancia=new ConexionBD();
+    
+    // Método estático para obtener la instancia (patrón Singleton)
+    public static ConexionBD getInstance(){
+        if (instancia == null){
+            instancia = new ConexionBD();
         }
         return instancia;
     }
-       public Connection getConnection() {
-    return conexion;
-}
-       
+    
+    // Método para obtener la conexión: verifica y recrea si es necesario.
+    public Connection getConnection() throws SQLException {
+        // Verifica si la conexión NO EXISTE o si fue CERRADA.
+        if (conexion == null || conexion.isClosed()) {
+            try {
+                // Configuración de la conexión DB2
+                Class.forName("com.ibm.db2.jcc.DB2Driver");
+                String URL = "jdbc:db2://localhost:25000/PFVID";
+                
+                // Recrear la conexión
+                conexion = DriverManager.getConnection(URL, "diana931", "1819diana");
+                System.out.println("Conexión DB2 establecida/restablecida exitosamente.");
 
-    //CRUD - Create Read Update Delete
-    //Metodo para los proces de ABC (altas, bajas y cambios)
-    public boolean ejecutarInstruccionLMD(String sql){
-        boolean res = false;
-        try {
-            stm = conexion.createStatement();
-            if(stm.executeUpdate(sql) >=1)
-                res = true;
-        } catch (SQLException e) {
-            System.out.println("Error en la ejecucion de la instruccion SQL");
+            } catch (ClassNotFoundException e) {
+                System.err.println("Error en el connector/driver: " + e.getMessage());
+                // Lanza como SQLException para ser manejada por la capa DAO
+                throw new SQLException("DB Driver no encontrado: " + e.getMessage()); 
+            } catch (SQLException e) {
+                System.err.println("Error al reconectar a db2: " + e.getMessage());
+                throw e; 
+            }
         }
-        return res;
+        return conexion;
     }
 
-    //Metodo para CONSULTAS
-    public ResultSet ejecutarInstruccionSQL(String sql){
-        rs = null;
-        System.out.println("SQL => " + sql);
-        try {
-            stm = conexion.createStatement();
-            rs = stm.executeQuery(sql);
-        } catch (SQLException e) {
-            System.out.println("Error en la ejecucion de la instruccion SQL");
-        }
-        return rs;
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Magia magia con INTELLIJ");
-        new ConexionBD();
-    }
+    // ... (Mantén tus métodos ejecutarInstruccionLMD y ejecutarInstruccionSQL) ...
 
 }

@@ -20,10 +20,10 @@ public class Panel_Cliente extends javax.swing.JPanel {
      */
     public Panel_Cliente() {
         initComponents();
-        cargarClientesATabla();
+       // cargarClientesATabla();
     }
     
-       private void cargarClientesATabla() {
+       public void cargarClientesATabla() {
         DefaultTableModel modelo = new DefaultTableModel();
         
         // Nombres de las columnas de tu JTable (ajustar si son diferentes)

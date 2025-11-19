@@ -223,6 +223,7 @@ public class Pagina_Principal extends javax.swing.JFrame {
     private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
         // TODO add your handling code here:
         Panel_Cliente pnlClientes = new Panel_Cliente();
+        pnlClientes.cargarClientesATabla();
         // 1. Limpia y añade la vista al panel central (pnlContent)
     pnlContent.removeAll();
     pnlContent.add(pnlClientes, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
