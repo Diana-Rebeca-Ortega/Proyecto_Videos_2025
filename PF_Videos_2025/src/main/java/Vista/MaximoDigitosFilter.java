@@ -45,7 +45,7 @@ public class MaximoDigitosFilter extends DocumentFilter {
                 super.replace(fb, offset, length, text, attrs);
             } else {
                 // Notificación "Toast" si se excede la longitud máxima
-                JOptionPane.showMessageDialog(null, "El Código Postal solo admite 5 dígitos.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "El campo solo admite 5 dígitos.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

@@ -18,9 +18,8 @@ import java.text.SimpleDateFormat;
  * @author Diana
  */
 public class FormularioAltasCliente extends javax.swing.JDialog {
-      private Cliente cliente; 
-        private boolean datosGuardados = false; // Bandera para saber si se guardó
-
+    private Cliente cliente; 
+    private boolean datosGuardados = false; // Bandera para saber si se guardó
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioAltasCliente.class.getName());
 
     /**
@@ -216,7 +215,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(161, 161, 161)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,58 +358,78 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_combo_estadosActionPerformed
 
     private void btn_altasClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_altasClientesActionPerformed
-        
-        // 1. Validar campos obligatorios (NO_CLIENTE, NOMBRE, etc.)
-        if (caja_nombre.getText().isEmpty() || caja_apellido1.getText().isEmpty()  ) {
-            JOptionPane.showMessageDialog(this, "El Nombre y Apellido1 son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return; // Detiene la ejecución si faltan datos esenciales
-        }
-        if (caja_num_exterior.getText().trim().isEmpty()) {
+   // 1. Validar campos obligatorios al inicio
+    String nombreStr = caja_nombre.getText().trim();
+    String apellido1Str = caja_apellido1.getText().trim();
+    String numExteriorStr = caja_num_exterior.getText().trim();
+    String cpStr = caja_CP.getText().trim();
+    
+    if (nombreStr.isEmpty() || apellido1Str.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El Nombre y Apellido1 son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    if (numExteriorStr.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El Número Exterior es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
-    if (caja_CP.getText().trim().isEmpty()) {
+    
+    // **NOTA IMPORTANTE:** El CP es VARCHAR(5) en la DB2, por lo que NO DEBERÍA fallar en Integer.parseInt().
+    // Sin embargo, si quieres validar que sea un número (aunque sea string), la validación de isEmpty está bien.
+    if (cpStr.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El Código Postal (CP) es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
     
-    if (comboSucursales.getSelectedItem().toString().equals("Item 1")) {
+    // Validar JComboBox
+    if (comboSucursales.getSelectedItem() == null || comboSucursales.getSelectedItem().toString().equals("Seleccione una Opcion")) {
         JOptionPane.showMessageDialog(this, "Debe seleccionar una 'Nombre Sucursal'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
     
-    if (combo_estados.getSelectedItem().toString().equals("Item 1")) {
+    if (combo_estados.getSelectedItem() == null || combo_estados.getSelectedItem().toString().equals("Seleccione una Opcion")) {
         JOptionPane.showMessageDialog(this, "Debe seleccionar un 'Estado'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
+
+    try {
+        // 2. Crear el objeto Cliente y asignar los valores
+        cliente = new Cliente();
         
-        try {
-            // 2. Crear el objeto Cliente y asignar los valores
-            cliente = new Cliente(); 
-            
-            // Asignar todos los campos de texto
-          
-            cliente.setNombre(caja_nombre.getText());
-            cliente.setApellido1(caja_apellido1.getText());
-            cliente.setApellido2(caja_apellido2.getText());
-            cliente.setNo_exterior(Integer.parseInt(String.valueOf( caja_num_exterior.getText())) );
-            cliente.setCalle(caja_calle.getText());
-            cliente.setColonia(caja_colonia.getText());
-            cliente.setCiudad(caja_ciudad.getText());
-            cliente.setCp(caja_CP.getText());
-            cliente.setEstado(String.valueOf( combo_estados.getSelectedItem()));
-            cliente.setNoSucursal(String.valueOf( comboSucursales.getSelectedItem()));
-            
-            
-            // 4. Marcar como guardado y cerrar
-            datosGuardados = true;
-            this.dispose(); // Cierra el JDialog
-            } catch (NumberFormatException e) {
-        // Capturar si, a pesar del filtro, hay un error de formato
-        JOptionPane.showMessageDialog(this, "Error de formato en campos numéricos (Exterior o CP).", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al crear el objeto Cliente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        // CONVERSIÓN CRÍTICA: NO_EXTERIOR
+        // Si numExteriorStr es "" (vacío), la validación inicial lo atrapa. 
+        // Si numExteriorStr contiene solo números, se convierte.
+        int noExterior = Integer.parseInt(numExteriorStr);
+        cliente.setNo_exterior(noExterior);
+
+        // Si necesitas validar que CP sea un número a pesar de ser VARCHAR en DB2:
+        // Integer.parseInt(cpStr); // Si esto falla, el catch de NumberFormatException lo atrapará.
+        
+        // Asignar todos los demás campos
+        cliente.setNombre(nombreStr);
+        cliente.setApellido1(apellido1Str);
+        cliente.setApellido2(caja_apellido2.getText().trim()); // Aplicar trim a los campos no obligatorios
+        
+        cliente.setCalle(caja_calle.getText().trim());
+        cliente.setColonia(caja_colonia.getText().trim());
+        cliente.setCiudad(caja_ciudad.getText().trim());
+        cliente.setCp(cpStr); 
+        
+        // Asignar JComboBox
+        cliente.setEstado(combo_estados.getSelectedItem().toString());
+        cliente.setNoSucursal(comboSucursales.getSelectedItem().toString());
+        
+        // 4. Marcar como guardado y cerrar
+        datosGuardados = true;
+        this.dispose(); // Cierra el JDialog
+        
+    } catch (NumberFormatException e) {
+        // Este catch atrapará la falla si el usuario escribe letras en Número Exterior o CP.
+        JOptionPane.showMessageDialog(this, "El Número Exterior debe contener solo números enteros válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        // Captura cualquier otra excepción (como si la clase Cliente tiene un constructor defectuoso)
+        JOptionPane.showMessageDialog(this, "Error al crear el objeto Cliente: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
     }//GEN-LAST:event_btn_altasClientesActionPerformed
 

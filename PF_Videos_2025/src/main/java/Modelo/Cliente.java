@@ -12,7 +12,7 @@ import java.sql.Date;
  */
 public class Cliente {
    
-    private String noCliente; 
+    private int noCliente; 
     private String nombre;
     private String apellido1;
     private String apellido2;
@@ -29,11 +29,11 @@ public class Cliente {
       
     }
 
-    public String getNoCliente() {
+    public int getNoCliente() {
         return noCliente;
     }
 
-    public void setNoCliente(String noCliente) {
+    public void setNoCliente(int noCliente) {
         this.noCliente = noCliente;
     }
 
