@@ -128,7 +128,11 @@ private void cargarDatosSucursal() {
 
         jLabel12.setText("Nombre Sucursal");
 
-        caja_nombreSucursal.setText("1234567890");
+        caja_nombreSucursal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                caja_nombreSucursalActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Telefono");
 
@@ -341,6 +345,10 @@ private void cargarDatosSucursal() {
             logger.severe("Error general al intentar modificar Sucursal: " + e.getMessage());
         }
     }//GEN-LAST:event_btn_guardarActionPerformed
+
+    private void caja_nombreSucursalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caja_nombreSucursalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_caja_nombreSucursalActionPerformed
 
     /**
      * @param args the command line arguments
