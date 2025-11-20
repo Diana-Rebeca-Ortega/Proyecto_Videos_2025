@@ -7,8 +7,14 @@ package Vista.Sucursal;
 import javax.swing.JOptionPane;
 import Modelo.Sucursal;
 import Controlador.SucursalDAO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Frame; // Necesario para SwingUtilities.getWindowAncestor
+import javax.swing.SwingUtilities; // Necesario para obtener el Frame padre
 /**
  *
  * @author Diana
@@ -20,7 +26,30 @@ public class PanelSucursales extends javax.swing.JPanel {
      */
     public PanelSucursales() {
         initComponents();
+        inicializarPopupMenu(); 
+    agregarListeners();  
+    cargarDatosTabla();
     }
+    private JPopupMenu popupMenu; 
+private JMenuItem menuItemModificar;
+private JMenuItem menuItemEliminar;
+
+private void inicializarPopupMenu() {
+    popupMenu = new JPopupMenu();
+    
+    // Crear la opción Modificar
+    menuItemModificar = new JMenuItem("Modificar Sucursal");
+    popupMenu.add(menuItemModificar);
+    
+    // Crear la opción Eliminar
+    menuItemEliminar = new JMenuItem("Eliminar Sucursal");
+    popupMenu.add(menuItemEliminar);
+    
+    // Asignar el menú a tu JTable (asumo que tu tabla se llama 'tablaSucursales')
+   // tablaSucursales.setComponentPopupMenu(popupMenu);
+    
+    // 2. Agregar Listeners (en el siguiente paso)
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -99,61 +128,157 @@ if (formSucursal.isDatosGuardados()) {
         JOptionPane.showMessageDialog(this, "Sucursal insertada con éxito. ID: " + nuevaSucursal.getNoSucursal(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
         
         // 4. Recargar la tabla (método que debe existir en tu clase actual)
-        cargarSucursalesATabla();
+        cargarDatosTabla();
     } else {
         // Error: Mostrar mensaje de fallo
         JOptionPane.showMessageDialog(this, "Error al insertar la sucursal. Revisa logs.", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }        // TODO add your handling code here:
     }//GEN-LAST:event_button1ActionPerformed
-public void cargarSucursalesATabla() {
-    DefaultTableModel modelo = new DefaultTableModel();
 
-    // 1. Definir las columnas de la tabla de Sucursales
-    // (Asegúrate de que estos nombres coincidan con los de tu JTable en el initComponents)
-    modelo.addColumn("No_Sucursal");
-    modelo.addColumn("Nombre Sucursal");
-    modelo.addColumn("Teléfono");
-    modelo.addColumn("NO_Exterior");
-    modelo.addColumn("Calle");
-    modelo.addColumn("Colonia");
-    modelo.addColumn("Ciudad");
-    modelo.addColumn("Estado");
-    modelo.addColumn("CP");
 
-    // Opcional: Si quieres mostrar la Fecha de Registro (aunque no está en el formulario de altas)
-    // modelo.addColumn("Fecha_Registro"); 
+private void agregarListeners() {
+    menuItemModificar.addActionListener(new ActionListener() {
+        @Override
+      public void actionPerformed(ActionEvent e) {
+            // Llama al método central de lógica, simplificando el ActionListener
+            ejecutarModificarSucursal(); 
+        }
+    });
 
-    // 2. Obtener los datos usando el DAO
-    SucursalDAO dao = new SucursalDAO();
-    // Asumiendo que has implementado este método en tu SucursalDAO
-    List<Sucursal> sucursales = dao.obtenerTodasLasSucursales();
+    menuItemEliminar.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int filaSeleccionada = tablaSucursales.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                // Obtener el ID de la primera columna (columna 0)
+                short idSucursal = (short) tablaSucursales.getValueAt(filaSeleccionada, 0);
+                System.out.println("ID de Sucursal seleccionado para modificar: " + idSucursal);
+                Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(PanelSucursales.this);
+                // Llamar al método de eliminación
+                eliminarSucursal(idSucursal);
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione una sucursal para eliminar.");
+            }
+        }
+    });
+    tablaSucursales.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mousePressed(java.awt.event.MouseEvent evt) {
+            // Verificar si es el evento que dispara el pop-up (clic derecho)
+            if (evt.isPopupTrigger()) {
+                int row = tablaSucursales.rowAtPoint(evt.getPoint());
 
-    // 3. Llenar el modelo con los datos
-    for (Sucursal s : sucursales) {
-        // La cantidad de columnas debe coincidir con la definición de addColumn (9 columnas en este ejemplo)
-        Object[] fila = new Object[9]; 
+                if (row != -1) {
+                    // Forzar la selección de la fila bajo el cursor
+                    tablaSucursales.setRowSelectionInterval(row, row);
+                    
+                    // Mostrar el menú en las coordenadas del clic
+                    popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+        }
+        
+        // Es buena práctica manejar el mouseReleased también, ya que la detección
+        // del Pop-up varía entre sistemas operativos (mousePressed o mouseReleased)
+        @Override
+        public void mouseReleased(java.awt.event.MouseEvent evt) {
+             if (evt.isPopupTrigger()) {
+                int row = tablaSucursales.rowAtPoint(evt.getPoint());
 
-        fila[0] = s.getNoSucursal(); // Asumiendo que tienes getNoSucursal() en la clase Sucursal
-        fila[1] = s.getNombreSucursal();
-        fila[2] = s.getNoTelefono();
-        fila[3] = s.getNumeroExterior();
-        fila[4] = s.getCalle();
-        fila[5] = s.getColonia();
-        fila[6] = s.getCiudad();
-        fila[7] = s.getEstado();
-        fila[8] = s.getCp();
-        // Si incluyes Fecha_Registro:
-        // fila[9] = s.getFechaRegistro();
+                if (row != -1) {
+                    tablaSucursales.setRowSelectionInterval(row, row);
+                    popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+             }
+        }
+    });
+}
+    
 
-        modelo.addRow(fila);
+private void eliminarSucursal(short idSucursal) {
+    int confirmacion = JOptionPane.showConfirmDialog(
+        this, 
+        "¿Está seguro de que desea eliminar la sucursal con ID: " + idSucursal + "?", 
+        "Confirmar Eliminación", 
+        JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirmacion == JOptionPane.YES_OPTION) {
+        SucursalDAO dao = new SucursalDAO();
+        if (dao.eliminarSucursal(idSucursal)) {
+            JOptionPane.showMessageDialog(this, "Sucursal eliminada exitosamente.");
+            // Refrescar la tabla
+            cargarDatosTabla(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al eliminar la sucursal.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-
-    // 4. Asignar el modelo a tu JTable
-    // Asegúrate de que el nombre de tu tabla en PanelSucursales sea 'tbla_sucursales' o el que uses.
-    tablaSucursales.setModel(modelo); 
 }
 
+private void ejecutarModificarSucursal() {
+    int filaSeleccionada = tablaSucursales.getSelectedRow();
+    System.out.println(filaSeleccionada);
+    if (filaSeleccionada != -1) {
+        // Obtener el ID
+        short idSucursal = (short) tablaSucursales.getValueAt(filaSeleccionada, 0);
+        
+        // Obtener el Frame padre
+        Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(PanelSucursales.this);
+        // 1. Abrir el formulario de Modificación (el JDialog)
+        ModificacionesSucursal formModificar = new ModificacionesSucursal(framePadre, true, idSucursal);
+        formModificar.setVisible(true);
+
+        // 2. Verificar si se guardaron los datos al cerrar
+        if (formModificar.isDatosGuardados()) {
+            JOptionPane.showMessageDialog(this, "Sucursal modificada con éxito.");
+            cargarDatosTabla(); // Recargar la tabla
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Seleccione una sucursal para modificar.");
+    }
+}
+private void cargarDatosTabla() {
+    try {
+        // 1. Definir el modelo de la tabla
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("ID_Sucursal"); // Usa el nombre de la columna que definiste en initComponents
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Telefono");
+        modelo.addColumn("NO.Exterior");
+        modelo.addColumn("calle");
+        modelo.addColumn("colonia");
+        modelo.addColumn("ciudad");
+        modelo.addColumn("estado");
+        modelo.addColumn("CP");
+        
+        // 2. Obtener los datos actualizados
+        SucursalDAO dao = new SucursalDAO();
+        List<Modelo.Sucursal> listaSucursales = dao.obtenerTodasLasSucursales();
+
+        // 3. Llenar el modelo con los nuevos datos
+        for (Modelo.Sucursal s : listaSucursales) {
+            modelo.addRow(new Object[]{
+                s.getNoSucursal(),
+                s.getNombreSucursal(),
+                s.getNoTelefono(),
+                s.getNumeroExterior(),
+                s.getCalle(),
+                s.getColonia(),
+                s.getCiudad(),
+                s.getEstado(),
+                s.getCp()
+            });
+        }
+        
+        // 4. Asignar el nuevo modelo (con los datos) a la tabla
+        tablaSucursales.setModel(modelo);
+        
+    } catch (Exception ex) {
+        System.err.println("Error al cargar datos en la tabla: " + ex.getMessage());
+        // Aquí podrías mostrar un JOptionPane de error de conexión o BD
+    }
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button button1;
     private javax.swing.JPanel encabezado;
