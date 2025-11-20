@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package Vista;
+package Vista.Cliente;
 
+import Vista.Cliente.ModificacionesCliente;
+import Vista.Cliente.FormularioAltasCliente;
 import Controlador.ClienteDAO;
 import Modelo.Cliente;
 import java.awt.Frame;
@@ -31,6 +33,8 @@ private JMenuItem menuItemEliminar;
     initComponents();
     popupMenu = new JPopupMenu();
     menuItemModificar = new JMenuItem("Modificar Cliente");
+    //YA FUNCIONAAAA
+    
     menuItemEliminar = new JMenuItem("Eliminar Cliente");
     popupMenu.add(menuItemModificar);
     popupMenu.add(menuItemEliminar);
@@ -45,7 +49,6 @@ private JMenuItem menuItemEliminar;
     menuItemModificar.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             ejecutarModificarCliente();
-            System.out.println("bton modificar derecho");
         }
     });
 
@@ -123,9 +126,7 @@ private JMenuItem menuItemEliminar;
 
 private void ejecutarEliminarCliente() {
     int filaSeleccionada = tbla_clientes.getSelectedRow();
-    
     if (filaSeleccionada == -1) return; 
-
     int idCliente = (int) tbla_clientes.getValueAt(filaSeleccionada, 0); 
     
     // Pide confirmación
@@ -147,7 +148,6 @@ private void ejecutarEliminarCliente() {
         }
     }
 }
-    
        public void cargarClientesATabla() {
         DefaultTableModel modelo = new DefaultTableModel();
         

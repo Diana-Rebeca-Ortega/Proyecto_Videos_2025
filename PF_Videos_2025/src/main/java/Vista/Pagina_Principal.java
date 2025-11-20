@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import Vista.Cliente.Panel_Cliente;
+
 
 
 /**

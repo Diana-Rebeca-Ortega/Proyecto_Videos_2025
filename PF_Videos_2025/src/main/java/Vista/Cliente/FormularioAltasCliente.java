@@ -2,8 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package Vista;
+package Vista.Cliente;
 import Modelo.Cliente;
+import Vista.MaximoDigitosFilter;
+import Vista.SoloLetrasFilter;
+import Vista.SoloNumerosFilter;
 import java.util.Date; //  para la fecha
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
@@ -141,7 +144,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         jLabel8.setText("CP");
 
-        caja_CP.setText("jTextField1");
+        caja_CP.setText("12345");
 
         jLabel9.setText("Estado");
 
@@ -203,7 +206,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         caja_ciudad.setText("jTextField2");
 
-        caja_num_exterior.setText("jTextField1");
+        caja_num_exterior.setText("12");
         caja_num_exterior.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 caja_num_exteriorActionPerformed(evt);
@@ -417,7 +420,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         
         // Asignar JComboBox
         cliente.setEstado(combo_estados.getSelectedItem().toString());
-        cliente.setNoSucursal(comboSucursales.getSelectedItem().toString());
+        cliente.setNoSucursal(txt_No_sucursal.getText());
         
         // 4. Marcar como guardado y cerrar
         datosGuardados = true;
