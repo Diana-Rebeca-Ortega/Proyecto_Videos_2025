@@ -26,7 +26,6 @@ public class Cliente {
     private String noSucursal;
 
     public Cliente() {
-      
     }
 
     public int getNoCliente() {
