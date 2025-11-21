@@ -125,7 +125,7 @@ if (formSucursal.isDatosGuardados()) {
     // 3. Intentar insertar la sucursal en la base de datos
     if (dao.insertarSucursal(nuevaSucursal)) {
         // Éxito: Mostrar mensaje y recargar la tabla de la ventana principal
-        JOptionPane.showMessageDialog(this, "Sucursal insertada con éxito. ID: " + nuevaSucursal.getNoSucursal(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Sucursal insertada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         
         // 4. Recargar la tabla (método que debe existir en tu clase actual)
         cargarDatosTabla();

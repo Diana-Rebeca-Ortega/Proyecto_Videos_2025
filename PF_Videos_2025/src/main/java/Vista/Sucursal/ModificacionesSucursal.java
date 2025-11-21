@@ -144,7 +144,7 @@ private void cargarDatosSucursal() {
 
         caja_colonia.setText("jTextField1");
 
-        jLabel15.setText("Fecha de Registro");
+        jLabel15.setText("Fecha de Modificación");
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel16.setText("DD/MM/AAAA");

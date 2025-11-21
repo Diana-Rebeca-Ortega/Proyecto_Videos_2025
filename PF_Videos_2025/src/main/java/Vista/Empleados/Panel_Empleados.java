@@ -8,18 +8,139 @@ import Controlador.EmpleadoDAO;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JMenuItem; 
+import javax.swing.JPopupMenu; 
+import java.awt.event.ActionEvent; 
+import java.awt.event.ActionListener;
+import java.awt.Frame; 
+import javax.swing.SwingUtilities;
 /**
  *
  * @author Diana
  */
 public class Panel_Empleados extends javax.swing.JPanel {
-
+private JPopupMenu popupMenu;
+    private JMenuItem menuItemModificar;
+    private JMenuItem menuItemEliminar;
     /**
      * Creates new form Panel_Empleados
      */
     public Panel_Empleados() {
         initComponents();
+        inicializarPopupMenu();
+        agregarListeners(); 
+        cargarDatosTabla();
     }
+    private void inicializarPopupMenu() {
+        popupMenu = new JPopupMenu();
+
+        // Crear la opción Modificar
+        menuItemModificar = new JMenuItem("Modificar Empleado");
+        popupMenu.add(menuItemModificar);
+
+        // Crear la opción Eliminar
+        menuItemEliminar = new JMenuItem("Eliminar Empleado");
+        popupMenu.add(menuItemEliminar);
+    }
+    private void agregarListeners() {
+        
+        // Listener para Modificar
+        menuItemModificar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ejecutarModificarEmpleado();
+            }
+        });
+
+        // Listener para Eliminar
+        menuItemEliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int filaSeleccionada = tbl_empleados.getSelectedRow();
+                if (filaSeleccionada != -1) {
+                    // Obtener el ID de la primera columna (columna 0)
+                    int idEmpleado = (int) tbl_empleados.getValueAt(filaSeleccionada, 0); 
+                    System.out.println("ID de Empleado seleccionado para eliminar: " + idEmpleado);
+                    eliminarEmpleado(idEmpleado);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione un empleado para eliminar.");
+                }
+            }
+        });
+        
+        // Listener para mostrar el menú contextual al hacer clic derecho en la tabla
+        tbl_empleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                manejarMouseClick(evt);
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                manejarMouseClick(evt);
+            }
+            
+            private void manejarMouseClick(java.awt.event.MouseEvent evt) {
+                 // Verificar si es el evento que dispara el pop-up (clic derecho)
+                if (evt.isPopupTrigger()) {
+                    int row = tbl_empleados.rowAtPoint(evt.getPoint());
+
+                    if (row != -1) {
+                        // Forzar la selección de la fila bajo el cursor
+                        tbl_empleados.setRowSelectionInterval(row, row);
+                        
+                        // Mostrar el menú en las coordenadas del clic
+                        popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    }
+                }
+            }
+        });
+    }
+    
+    private void ejecutarModificarEmpleado() {
+        int filaSeleccionada = tbl_empleados.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            // Obtener el ID de Empleado (asumo que es de tipo INT)
+            int idEmpleado = (int) tbl_empleados.getValueAt(filaSeleccionada, 0);
+            
+            // Obtener el Frame padre
+            Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(Panel_Empleados.this);
+            
+            // 1. Abrir el formulario de Modificación (DEBES TENER LA CLASE 'ModificacionesEmpleado' CREADA)
+            // Asegúrate de que tu constructor acepte (Frame, boolean, int idEmpleado)
+           ModificacionesEmpleado formModificar = new ModificacionesEmpleado(framePadre, true, idEmpleado);
+           formModificar.setVisible(true);
+            // 2. Verificar si se guardaron los datos al cerrar
+            if (formModificar.isDatosGuardados()) { // DEBES TENER ESTE MÉTODO EN EL JDialog
+                JOptionPane.showMessageDialog(this, "Empleado modificado con éxito.");
+                cargarDatosTabla(); // Recargar la tabla
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un empleado para modificar.");
+        }
+    }
+    
+    // Método para la lógica de Eliminar (NUEVO, adaptado de Sucursal)
+    private void eliminarEmpleado(int idEmpleado) {
+        int confirmacion = JOptionPane.showConfirmDialog(
+            this, 
+            "¿Está seguro de que desea eliminar al empleado con ID: " + idEmpleado + "?", 
+            "Confirmar Eliminación", 
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            EmpleadoDAO dao = new EmpleadoDAO();
+            if (dao.eliminarEmpleado(idEmpleado)) { // DEBES TENER ESTE MÉTODO EN EL DAO
+                JOptionPane.showMessageDialog(this, "Empleado eliminado exitosamente.");
+                // Refrescar la tabla
+                cargarDatosTabla(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al eliminar el empleado.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
