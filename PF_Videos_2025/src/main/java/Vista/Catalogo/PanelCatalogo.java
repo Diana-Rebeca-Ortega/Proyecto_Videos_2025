@@ -56,34 +56,6 @@ private void configurarAccionesMenu() {
             }
         });
     }
-/*
-private void inicializarMenuContextual() {
-        popupMenu = new JPopupMenu();
-        menuItemModificar = new JMenuItem("Modificar Película");
-        menuItemEliminar = new JMenuItem("Eliminar Película");
-        
-        popupMenu.add(menuItemModificar);
-        popupMenu.add(menuItemEliminar);
-        
-        configurarAccionesMenu();
-    }
-    
-    private void configurarAccionesMenu() {
-        // Acción para Modificar
-        menuItemModificar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                ejecutarModificarPelicula();
-            }
-        });
-
-        // Acción para Eliminar
-        menuItemEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                ejecutarEliminarPelicula();
-            }
-        });
-    }*/
-
     private void añadirListenerTabla() {
         tablaPELICULA.addMouseListener(new MouseAdapter() {
             
@@ -128,14 +100,14 @@ private void inicializarMenuContextual() {
             
             // 3. Abrir el JDialog ModificacionesPelicula
             // Asegúrate de que ModificacionesPelicula tenga un constructor (Frame, boolean, int)
-            //ModificacionesPelicula formModificar = new ModificacionesPelicula(framePadre, true, idPelicula); 
-          //  formModificar.setVisible(true);
-/*
+            ModificacionesPelicula formModificar = new ModificacionesPelicula(framePadre, true, idPelicula); 
+          formModificar.setVisible(true);
+
             // 4. Recargar la tabla si hubo cambios
             if (formModificar.isDatosGuardados()) { 
                 cargarPeliculasATabla(); 
                 JOptionPane.showMessageDialog(this, "Película modificada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            }*/
+            }
             
         } catch (ClassCastException e) {
             JOptionPane.showMessageDialog(this, "Error: El ID de la película no es un número entero. Revisar columna 0.", "Error de Datos", JOptionPane.ERROR_MESSAGE);
