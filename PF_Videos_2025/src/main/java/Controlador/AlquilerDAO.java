@@ -16,9 +16,8 @@ public class AlquilerDAO {
      */
     public List<Alquiler> obtenerTodosLosAlquileres() {
         List<Alquiler> lista = new ArrayList<>();
-        String sql = "SELECT ID_ALQUILER, ID_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO "
-                   + "FROM " + ESQUEMA_TABLA;
-
+       String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO "
+                + "FROM " + ESQUEMA_TABLA;
         try (Connection con = ConexionBD.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -27,7 +26,7 @@ public class AlquilerDAO {
                 Alquiler alquiler = new Alquiler();
                 // Mapear los campos de la base de datos al objeto Alquiler
                 alquiler.setIdAlquiler(rs.getInt("ID_ALQUILER"));
-                alquiler.setIdCliente(rs.getInt("ID_CLIENTE"));
+                alquiler.setIdCliente(rs.getInt("NO_CLIENTE"));
                 alquiler.setIdPelicula(rs.getInt("ID_PELICULA"));
                 
                 // Usamos getDate para campos de fecha/hora, asumiendo tipo DATE/TIMESTAMP en DB
@@ -51,10 +50,9 @@ public class AlquilerDAO {
     public boolean insertarAlquiler(Alquiler alquiler) {
         // ID_ALQUILER generalmente se genera automáticamente en la base de datos.
         // FECHA_ALQUILER podemos usar CURRENT DATE o la fecha del objeto si la gestionas en Java.
-        String sql = "INSERT INTO " + ESQUEMA_TABLA + 
-                     " (ID_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO) "
-                   + "VALUES (?, ?, CURRENT DATE, ?, ?)";
-        
+       String sql = "INSERT INTO " + ESQUEMA_TABLA + 
+                 " (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO) " // <- ¡CORREGIDO!
+                 + "VALUES (?, ?, CURRENT DATE, ?, ?)";
         try (Connection con = ConexionBD.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 

@@ -10,7 +10,8 @@ import Controlador.PeliculaDAO;
 import Modelo.Alquiler;
 import Modelo.Cliente;
 import Modelo.Pelicula;
-
+import com.toedter.calendar.JDateChooser;
+import java.text.ParseException;
 /**
  *
  * @author Diana
@@ -24,6 +25,10 @@ private Alquiler alquiler;
     public FormularioRealizarRenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        java.util.Date hoy = new java.util.Date();
+        dateDevolucion.setMinSelectableDate(hoy);
+        mostrarFechaActual();
+        dateDevolucion.setEnabled(false);
     }
     public boolean isDatosGuardados() {
     return datosGuardados;
@@ -32,8 +37,38 @@ private Alquiler alquiler;
 public Alquiler getAlquiler() {
     return alquiler;
 }
+private void mostrarFechaActual() {
+    // Definir el formato de fecha (DD/MM/AAAA)
+    java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    // Obtener la fecha de hoy
+    String fechaHoy = dateFormat.format(new java.util.Date());
+    // Establecer el texto en el JLabel
+    txt_fechaRenta.setText(fechaHoy);
+}
 
-
+// Nuevo método en FormularioRealizarRenta.java
+private void verificarHabilitacionFecha() {
+    // 1. Obtener los textos de los campos de datos.
+    String tituloPelicula = txt_TituloPelicula.getText().trim();
+    String nombreCliente = txt_NombreCliente.getText().trim();
+    
+    final String VALOR_DEFECTO_LABEL = "...";
+    
+    // 2. Verificar si AMBOS tienen datos válidos.
+    boolean peliculaSeleccionada = !tituloPelicula.isEmpty() && !tituloPelicula.equals(VALOR_DEFECTO_LABEL);
+    boolean clienteSeleccionado = !nombreCliente.isEmpty() && !nombreCliente.equals(VALOR_DEFECTO_LABEL);
+    
+    // 3. Habilitar el JDateChooser y el botón RENTAR solo si AMBOS son verdaderos.
+    if (peliculaSeleccionada && clienteSeleccionado) {
+        dateDevolucion.setEnabled(true);
+        btnRentar.setEnabled(true); // Opcional: también habilitar el botón de renta
+    } else {
+        dateDevolucion.setEnabled(false);
+        dateDevolucion.setDate(null); // Limpiar la fecha seleccionada si se deshabilita
+        btnRentar.setEnabled(false); // Opcional: desactivar el botón de renta
+        jLabel30.setText("$0.00"); // Limpiar el costo final
+    }
+}
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -79,7 +114,7 @@ public Alquiler getAlquiler() {
         txt_fechaRenta = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
-        cajaDevolucion = new java.awt.TextField();
+        dateDevolucion = new com.toedter.calendar.JDateChooser();
         btnRentar = new javax.swing.JButton();
         btn_cancelarRegistroCliente = new javax.swing.JButton();
 
@@ -132,7 +167,7 @@ public Alquiler getAlquiler() {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 759, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(9, 9, 9)
@@ -257,45 +292,45 @@ public Alquiler getAlquiler() {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel22))
                     .addComponent(jLabel19)
+                    .addComponent(txt_NombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel20)
-                            .addComponent(txt_Apellido1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_Apellido1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel20))
                         .addGap(24, 24, 24)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_Apellido2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel18)))
-                    .addComponent(txt_NombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel18)
+                            .addComponent(txt_Apellido2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel21)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cajaBuscadorCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_buscadorCliente)
+                    .addComponent(cajaBuscadorCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel22))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel19)
-                .addGap(12, 12, 12)
-                .addComponent(txt_NombreCliente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel19)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_NombreCliente)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_Apellido1)
-                            .addComponent(txt_Apellido2)))
+                        .addComponent(txt_Apellido1))
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
                         .addComponent(jLabel18)
-                        .addGap(22, 22, 22)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_Apellido2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(153, 153, 255));
@@ -315,10 +350,9 @@ public Alquiler getAlquiler() {
 
         jLabel28.setText("Fecha de Devolución/Vencimiento");
 
-        cajaDevolucion.setText("textField1");
-        cajaDevolucion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cajaDevolucionActionPerformed(evt);
+        dateDevolucion.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                dateDevolucionPropertyChange(evt);
             }
         });
 
@@ -326,10 +360,6 @@ public Alquiler getAlquiler() {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addGap(49, 49, 49)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,28 +369,34 @@ public Alquiler getAlquiler() {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel28)
-                    .addComponent(cajaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(71, 71, 71)
+                .addComponent(jLabel28)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabel24)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel26)
-                    .addComponent(jLabel28))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(txt_fechaRenta)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel29)
+                        .addComponent(jLabel24)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cajaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel26)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_fechaRenta))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel28)
+                        .addGap(16, 16, 16)
+                        .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         btnRentar.setBackground(new java.awt.Color(153, 255, 153));
@@ -386,23 +422,26 @@ public Alquiler getAlquiler() {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(796, 796, 796)
                         .addComponent(btn_cancelarRegistroCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnRentar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE)))
+                        .addGap(0, 6, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel15)
+                                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -410,23 +449,23 @@ public Alquiler getAlquiler() {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel16)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel16))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnRentar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_cancelarRegistroCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRentar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_cancelarRegistroCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         pack();
@@ -439,57 +478,101 @@ public Alquiler getAlquiler() {
     private void cajaBuscadorClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorClienteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
-
+private Pelicula peliculaActual;
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
-    String tituloPelicula = txt_TituloPelicula.getText().trim();
-    String nombreCliente = txt_NombreCliente.getText().trim();
-    String fechaDevolucion = cajaDevolucion.getText().trim();
-    
-    // Valor predeterminado de los JLabel según tu código
-    final String VALOR_DEFECTO_LABEL = "..."; 
-    
-    // 2. Realizar la validación
-    boolean error = false;
-    String mensaje = "❌ ERROR: No se puede registrar la renta debido a campos incompletos:\n";
-    
-    // a. Validar Película: Si el título es el valor por defecto o está vacío.
-    if (tituloPelicula.isEmpty() || tituloPelicula.equals(VALOR_DEFECTO_LABEL)) {
-        mensaje += "- No se ha seleccionado una Película.\n";
-        error = true;
-    }
-    
-    // b. Validar Cliente: Si el nombre es el valor por defecto o está vacío.
-    if (nombreCliente.isEmpty() || nombreCliente.equals(VALOR_DEFECTO_LABEL)) {
-        mensaje += "- No se ha seleccionado un Cliente.\n";
-        error = true;
-    }
-    
-    // c. Validar Fecha de Devolución: Si está vacío o si tiene el texto de placeholder (textField1).
-    if (fechaDevolucion.isEmpty() || fechaDevolucion.equalsIgnoreCase("textField1")) {
-        mensaje += "- Falta la Fecha de Devolución/Vencimiento.";
-        error = true;
+  java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
+    System.out.print(cajaBuscadorPelicula.getText()+"ZY");
+    if (fechaDevolucionUtil == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
     }
 
-    // 3. Mostrar mensaje de error si existe
-    if (error) {
-        javax.swing.JOptionPane.showMessageDialog(this, mensaje, "Campos Obligatorios", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return; // Detiene el proceso de renta
-    }
     Alquiler nuevoAlquiler = new Alquiler();
-    nuevoAlquiler.setEstado("RENTADO");
-    this.alquiler = nuevoAlquiler; // Asigna el objeto Alquiler creado
-    this.datosGuardados = true;    // Indica que la operación fue exitosa
-    this.dispose(); // Cierra el formulario
+    java.sql.Date fechaRentaSQL = null;
+    try {
+        // ID de Película (Reemplaza 'jTextField1' por el nombre real de tu componente si es diferente)
+        int idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText()); 
+        nuevoAlquiler.setIdPelicula(idPelicula);
+        
+        // ID de Cliente (cajaBuscadorCliente)
+        int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
+        nuevoAlquiler.setIdCliente(idCliente);
+        System.out.print(cajaBuscadorPelicula.getText()+"ZYsEMANDO **********************");
+        // Formato para parsear la fecha del JLabel (Ej: 21/11/2025)
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        String fechaRentaStr = txt_fechaRenta.getText(); 
+        java.util.Date fechaRentaUtil = dateFormat.parse(fechaRentaStr);
+        
+        // Conversión final a java.sql.Date
+        fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());
+        
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: El ID de Película o Cliente no es un número válido.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return; 
+    } catch (NullPointerException e) {
+        // Atrapa si alguno de los campos de texto no existe (si el nombre es incorrecto)
+        javax.swing.JOptionPane.showMessageDialog(this, "Error de Sistema: Revise que los campos de ID de Película y Cliente existan y estén bien nombrados.", "Error de Componentes", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return; 
+    }   catch (ParseException ex) {
+            System.getLogger(FormularioRealizarRenta.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     
+    java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());
+    
+    // Usamos java.util.Date en el Modelo
+    nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
+    nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
+    nuevoAlquiler.setEstado("RENTADO");
+    // Finalizar el proceso
+    this.alquiler = nuevoAlquiler;
+    this.datosGuardados = true;
+    this.dispose();
     }//GEN-LAST:event_btnRentarActionPerformed
+private void calcularCostoFinal() {
+    // 1. Obtener Costo Diario (debe ser un valor numérico sin el '$')
+    String costoDiarioTexto = txt_AlquilerDiario.getText().trim();
+    double costoDiario = 0.0;
+    
+    if (costoDiarioTexto.equals("...")) {
+        jLabel30.setText("$0.00");
+        return;
+    }
+    
+    try {
+        int idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText());
+        costoDiario = Double.parseDouble(costoDiarioTexto);
+    } catch (NumberFormatException e) {
+        System.err.println("Error al convertir costo diario a número: " + e.getMessage());
+        jLabel30.setText("ERROR");
+        return;
+    }
 
+    // 2. Obtener Fechas
+    java.util.Date fechaRenta = new java.util.Date(); // Hoy
+    java.util.Date fechaDevolucion = dateDevolucion.getDate(); 
+    
+    if (fechaDevolucion == null || fechaDevolucion.before(fechaRenta)) {
+        jLabel30.setText("$0.00");
+        return;
+    }
+    
+    // 3. Calcular Días (redondeando hacia arriba)
+    long diferenciaMilisegundos = fechaDevolucion.getTime() - fechaRenta.getTime();
+    double diferenciaDiasDecimal = (double) diferenciaMilisegundos / (1000 * 60 * 60 * 24);
+    int numeroDias = (int) Math.ceil(diferenciaDiasDecimal);
+    
+    if (numeroDias < 1) {
+        numeroDias = 1; 
+    }
+
+    // 4. Calcular, Formatear y Mostrar
+    double costoTotal = costoDiario * numeroDias;
+    String costoTotalFormateado = String.format("$%.2f", costoTotal);
+    jLabel30.setText(costoTotalFormateado);
+}
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed
         this.dispose();
     }//GEN-LAST:event_btn_cancelarRegistroClienteActionPerformed
-
-    private void cajaDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaDevolucionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cajaDevolucionActionPerformed
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
      // 1. Obtener el ID ingresado
@@ -570,17 +653,25 @@ public Alquiler getAlquiler() {
     }
     }//GEN-LAST:event_btn_buscadorClienteActionPerformed
 
+    private void dateDevolucionPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateDevolucionPropertyChange
+      if ("date".equals(evt.getPropertyName())) {
+        calcularCostoFinal();
+    }
+    }//GEN-LAST:event_dateDevolucionPropertyChange
+
     private void cargarDatosCliente(Cliente c) {
     // Asigna los datos del Cliente (c) a los JLabel de la interfaz
     txt_NombreCliente.setText(c.getNombre());
     txt_Apellido1.setText(c.getApellido1()); 
-    txt_Apellido2.setText(c.getApellido2()); // Suponiendo que tienes un getApellido2()
+    txt_Apellido2.setText(c.getApellido2()); 
+    verificarHabilitacionFecha();
 }
     private  void limpiarDatosCliente() {
     // Restablece los JLabel a su valor por defecto ("...")
     txt_NombreCliente.setText("...");
     txt_Apellido1.setText("...");
     txt_Apellido2.setText("...");
+    verificarHabilitacionFecha();
 }
     
     
@@ -592,6 +683,7 @@ public Alquiler getAlquiler() {
     
     // Suponiendo que el alquiler diario es un valor numérico
     txt_AlquilerDiario.setText(String.valueOf(p.getPrecioAlquiler())); 
+    verificarHabilitacionFecha();
 }
     private void limpiarDatosPelicula() {
     // Restablece los JLabel a su valor por defecto
@@ -599,6 +691,7 @@ public Alquiler getAlquiler() {
     txt_Director.setText("...");
     txt_Categoria.setText("...");
     txt_AlquilerDiario.setText("...");
+    verificarHabilitacionFecha();
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -608,7 +701,7 @@ public Alquiler getAlquiler() {
     private javax.swing.JButton btn_cancelarRegistroCliente;
     private javax.swing.JTextField cajaBuscadorCliente;
     private javax.swing.JTextField cajaBuscadorPelicula;
-    private java.awt.TextField cajaDevolucion;
+    private com.toedter.calendar.JDateChooser dateDevolucion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;

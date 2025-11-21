@@ -5,18 +5,26 @@
     <artifactId>PF_Videos_2025</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-   <dependencies>
-    <dependency>
-        <groupId>org.netbeans.external</groupId>
-        <artifactId>AbsoluteLayout</artifactId>
-        <version>RELEASE270</version>
-    </dependency>
     
-    <dependency>
-        <groupId>com.ibm.db2.jcc</groupId>
-        <artifactId>db2jcc</artifactId>
-        <version>11.5.0.0</version> 
-    </dependency>
+    <dependencies>
+        
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE270</version>
+        </dependency>
+
+       <dependency>
+    <groupId>com.toedter</groupId>
+    <artifactId>calendar</artifactId>
+    <version>1.4</version>
+</dependency>
+        <dependency>
+            <groupId>com.ibm.db2.jcc</groupId>
+            <artifactId>db2jcc</artifactId>
+            <version>11.5.0.0</version> 
+        </dependency>
+        
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
