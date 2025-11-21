@@ -4,6 +4,13 @@
  */
 package Vista.Alquileres;
 
+import Controlador.AlquilerDAO; 
+import Modelo.Alquiler;     
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import Modelo.Pelicula;
+import Vista.Alquileres.FormularioRealizarRenta;
 /**
  *
  * @author Diana
@@ -15,6 +22,7 @@ public class Panel_Alquileres extends javax.swing.JPanel {
      */
     public Panel_Alquileres() {
         initComponents();
+        cargarAlquileresATabla();
     }
 
     /**
@@ -109,8 +117,67 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
+   FormularioRealizarRenta form = new FormularioRealizarRenta(null, true);
+        form.setVisible(true);
+
+        // 2. Verificar si la renta fue exitosa y guardada
+        if (form.isDatosGuardados()) {
+            // El código original estaba intentando insertar una Pelicula,
+            // ¡pero un Alquiler/Renta debería insertar un objeto Alquiler!
+            
+            // Asumiendo que el formulario devuelve el objeto Alquiler recién creado
+            Alquiler nuevoAlquiler = form.getAlquiler(); 
+
+            AlquilerDAO dao = new AlquilerDAO();
+
+            // Asegúrate de que tu AlquilerDAO tenga un método 'insertarAlquiler'
+            if (dao.insertarAlquiler(nuevoAlquiler)) {
+                JOptionPane.showMessageDialog(this, "Renta registrada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                // 3. Recargar la tabla para ver el nuevo registro
+                cargarAlquileresATabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la renta. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_button1ActionPerformed
+public void cargarAlquileresATabla() {
+        // Define el modelo de la tabla
+        DefaultTableModel modelo = new DefaultTableModel();
+
+        // 1. Nombres de las columnas (deben coincidir con el initComponents)
+        modelo.addColumn("ID_Alquiler");
+        modelo.addColumn("ID_Cliente");
+        modelo.addColumn("ID_Pelicula");
+        modelo.addColumn("Fecha_Alquiler");
+        modelo.addColumn("Fecha_Devolucion");
+        modelo.addColumn("Estado");
+        // La columna "Acciones" se manejaría con un renderizador/editor especial si se usa JTable,
+        // pero para la carga de datos no se incluye en el modelo.
+
+        AlquilerDAO dao = new AlquilerDAO();
+        // Asegúrate de tener un método 'obtenerTodosLosAlquileres()' en tu AlquilerDAO
+        List<Alquiler> alquileres = dao.obtenerTodosLosAlquileres();
+
+        // 2. Llenar el modelo con los datos
+        for (Alquiler a : alquileres) {
+            // Se necesitan 6 columnas de datos, no 7, ya que Acciones es visual/funcional.
+            Object[] fila = new Object[6]; 
+
+            // Asegúrate que los getters de tu modelo Alquiler coincidan
+            fila[0] = a.getIdAlquiler();
+            fila[1] = a.getIdCliente();
+            fila[2] = a.getIdPelicula();
+            fila[3] = a.getFechaAlquiler();
+            fila[4] = a.getFechaDevolucion();
+            fila[5] = a.getEstado(); // Ej: "Rentado", "Devuelto", "Vencido"
+
+            modelo.addRow(fila);
+        }
+
+        // 3. Asignar el modelo a la tabla
+        tbla_alquileres.setModel(modelo);
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
