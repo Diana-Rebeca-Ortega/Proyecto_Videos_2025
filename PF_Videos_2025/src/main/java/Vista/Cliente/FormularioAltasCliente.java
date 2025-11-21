@@ -4,9 +4,9 @@
  */
 package Vista.Cliente;
 import Modelo.Cliente;
-import Vista.MaximoDigitosFilter;
-import Vista.SoloLetrasFilter;
-import Vista.SoloNumerosFilter;
+import Vista.Filtros.MaximoDigitosFilter;
+import Vista.Filtros.SoloLetrasFilter;
+import Vista.Filtros.SoloNumerosFilter;
 import java.util.Date; //  para la fecha
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;

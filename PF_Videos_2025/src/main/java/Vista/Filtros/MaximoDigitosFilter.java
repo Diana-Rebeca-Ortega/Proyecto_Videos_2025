@@ -1,5 +1,5 @@
 // MaximoDigitosFilter.java (Nueva clase)
-package Vista;
+package Vista.Filtros;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

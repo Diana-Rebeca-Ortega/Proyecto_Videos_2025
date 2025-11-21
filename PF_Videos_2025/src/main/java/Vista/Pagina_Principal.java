@@ -4,6 +4,9 @@
  */
 package Vista;
 
+import Vista.Conguracion.Panel_Configuracion;
+import Vista.Reportes.Panel_Reportes;
+import Vista.Alquileres.Panel_Alquileres;
 import Vista.Catalogo.PanelCatalogo;
 import Vista.Empleados.Panel_Empleados;
 import Vista.Sucursal.PanelSucursales;

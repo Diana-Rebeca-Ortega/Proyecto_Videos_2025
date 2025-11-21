@@ -7,7 +7,7 @@ import Modelo.Empleado;
 import Controlador.EmpleadoDAO;
 import javax.swing.JOptionPane;
 import java.util.logging.Logger;
-import Vista.SoloLetrasFilter; 
+import Vista.Filtros.SoloLetrasFilter; 
 import javax.swing.text.AbstractDocument;
 /**
  *
