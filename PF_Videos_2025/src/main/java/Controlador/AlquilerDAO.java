@@ -8,7 +8,7 @@ import ConneccionBD.ConexionBD; // Reutiliza tu clase de conexión
 
 public class AlquilerDAO {
 
-    private static final String ESQUEMA_TABLA = "DIANA931.ALQUILERES"; // Ajusta el nombre de tu tabla de alquileres
+    private static final String ESQUEMA_TABLA = "DIANA931.ALQUILER"; // Ajusta el nombre de tu tabla de alquileres
 
     /**
      * Recupera todos los registros de alquiler de la base de datos.
@@ -16,7 +16,7 @@ public class AlquilerDAO {
      */
     public List<Alquiler> obtenerTodosLosAlquileres() {
         List<Alquiler> lista = new ArrayList<>();
-       String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO "
+       String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL "
                 + "FROM " + ESQUEMA_TABLA;
         try (Connection con = ConexionBD.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -33,7 +33,7 @@ public class AlquilerDAO {
                 alquiler.setFechaAlquiler(rs.getDate("FECHA_ALQUILER"));
                 alquiler.setFechaDevolucion(rs.getDate("FECHA_DEVOLUCION")); 
                 alquiler.setEstado(rs.getString("ESTADO"));
-                
+                alquiler.setIdSucursal(rs.getInt("ID_SUCURSAL"));
                 lista.add(alquiler);
             }
         } catch (SQLException e) {
@@ -50,9 +50,9 @@ public class AlquilerDAO {
     public boolean insertarAlquiler(Alquiler alquiler) {
         // ID_ALQUILER generalmente se genera automáticamente en la base de datos.
         // FECHA_ALQUILER podemos usar CURRENT DATE o la fecha del objeto si la gestionas en Java.
-       String sql = "INSERT INTO " + ESQUEMA_TABLA + 
-                 " (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO) " // <- ¡CORREGIDO!
-                 + "VALUES (?, ?, CURRENT DATE, ?, ?)";
+     String sql = "INSERT INTO " + ESQUEMA_TABLA + 
+                     " (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL) " 
+                     + "VALUES (?, ?, CURRENT DATE, ?, ?, ?)";
         try (Connection con = ConexionBD.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -65,13 +65,12 @@ public class AlquilerDAO {
             ps.setInt(2, alquiler.getIdPelicula());
             
             // 3. FECHA_DEVOLUCION (Usamos java.sql.Date para mapear el java.util.Date)
-            // Esto asume que tienes un getter que devuelve java.util.Date o un tipo que puedes convertir.
             long tiempoDevolucion = alquiler.getFechaDevolucion().getTime();
             ps.setDate(3, new java.sql.Date(tiempoDevolucion)); 
             
             // 4. ESTADO (Ej: "RENTADO")
             ps.setString(4, alquiler.getEstado()); 
-            
+            ps.setInt(5, alquiler.getIdSucursal());
             // Ejecutar la inserción.
             return ps.executeUpdate() > 0;
 

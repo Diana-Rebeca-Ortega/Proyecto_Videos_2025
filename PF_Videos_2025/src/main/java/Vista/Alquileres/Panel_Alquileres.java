@@ -122,10 +122,6 @@ public class Panel_Alquileres extends javax.swing.JPanel {
 
         // 2. Verificar si la renta fue exitosa y guardada
         if (form.isDatosGuardados()) {
-            // El código original estaba intentando insertar una Pelicula,
-            // ¡pero un Alquiler/Renta debería insertar un objeto Alquiler!
-            
-            // Asumiendo que el formulario devuelve el objeto Alquiler recién creado
             Alquiler nuevoAlquiler = form.getAlquiler(); 
 
             AlquilerDAO dao = new AlquilerDAO();

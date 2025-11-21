@@ -1,22 +1,16 @@
 package Modelo;
 
-import java.sql.Date; // Usaremos java.sql.Date para mapear directamente el tipo DATE de SQL
+import java.sql.Date; 
 
-/**
- * Clase que representa el objeto de dominio "Alquiler" (Renta de Película).
- * Mapea las columnas de la tabla Alquiler.
- *
- * @author Diana
- */
 public class Alquiler {
-    
-    // Corresponden a los campos del diagrama ER
-    private int idAlquiler;     // ID_alquiler (TINYINT / INT)
-    private int idCliente;      // ID_cliente (INT)
-    private int idPelicula;     // ID_pelicula (TINYINT / INT)
-    private Date fechaAlquiler; // fecha_alquiler (DATE)
-    private Date fechaDevolucion; // fecha_devolucion (DATE)
-    private String estado;      // Estado (VARCHAR(45))
+
+    private int idAlquiler;      // ID_ALQUILER (SMALLINT, PK)
+    private int idCliente;       // NO_CLIENTE (INT)
+    private int idPelicula;      // ID_PELICULA (SMALLINT)
+    private Date fechaAlquiler;  // FECHA_ALQUILER (DATE)
+    private Date fechaDevolucion; // FECHA_DEVOLUCION (DATE)
+    private String estado;       // ESTADO (VARCHAR(45))
+    private int idSucursal;      // ID_SUCURSAL (SMALLINT) 
 
     public Alquiler() {
         // Constructor vacío
@@ -72,4 +66,13 @@ public class Alquiler {
         this.estado = estado;
     }
     
+    // Nuevo Getter para ID_SUCURSAL
+    public int getIdSucursal() {
+        return idSucursal;
+    }
+
+    // Nuevo Setter para ID_SUCURSAL
+    public void setIdSucursal(int idSucursal) {
+        this.idSucursal = idSucursal;
+    }
 }
