@@ -16,11 +16,19 @@ public class Pelicula {
     private double precioAlquiler; // Usamos double para valores monetarios
     private double costeAdquisicion; // Usamos double para valores monetarios
     private int stockTotal;
-
+    private int idSucursal;
     /**
      * Constructor por defecto.
      */
     public Pelicula() {
+    }
+
+    public int getIdSucursal() {
+        return idSucursal;
+    }
+
+    public void setIdSucursal(int idSucursal) {
+        this.idSucursal = idSucursal;
     }
 
     // ----------------------------------------------------

@@ -238,15 +238,15 @@ private void configurarAccionesMenu() {
             Pelicula nuevaPelicula = form.getPelicula(); 
 
             PeliculaDAO dao = new PeliculaDAO();
+            int stockInicial = nuevaPelicula.getStockTotal();
+            int idSucursal = 1;
             
-            if (dao.insertarPelicula(nuevaPelicula)) {
-                JOptionPane.showMessageDialog(this, "Película insertada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                
+            if (dao.insertarPelicula(nuevaPelicula, stockInicial, idSucursal)) {
+               JOptionPane.showMessageDialog(this, "Película y stock inicial generados con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 // 3. Recargar la tabla
                 cargarPeliculasATabla();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al insertar la película. Revisa logs.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+               JOptionPane.showMessageDialog(this, "Error al insertar la película o generar stock. Revisa logs.", "Error", JOptionPane.ERROR_MESSAGE);    }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
