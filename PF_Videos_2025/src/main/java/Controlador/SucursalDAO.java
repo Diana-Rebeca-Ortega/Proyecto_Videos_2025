@@ -11,9 +11,9 @@ public class SucursalDAO {
     // --- C: CREATE (INSERCIÓN) ---
   public boolean insertarSucursal(Sucursal sucursal) {
     // La consulta omite NO_Sucursal porque es GENERATED ALWAYS AS IDENTITY
-    String sql = "INSERT INTO SUCURSAL (NOMBRE_SUCURSAL, NO_TELEFONO, NUMEROEXTERIOR, CALLE, COLONIA, CIUDAD, ESTADO, CP) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    String call = "{CALL RegistrarNuevaSucursal(?, ?, ?, ?, ?, ?, ?, ?)}";
     try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+         CallableStatement ps = con.prepareCall(call)) {
 
         // 1. Asignar parámetros (¡DEBEN SER 8 Y EN EL ORDEN CORRECTO!)
         
@@ -34,17 +34,11 @@ public class SucursalDAO {
         // 8. CP (String)
         ps.setString(8, sucursal.getCp()); // ¡Este es el valor que faltaba!
 
-        int filasAfectadas = ps.executeUpdate();
-        
-        // ... (el resto del código de getGeneratedKeys es correcto)
-        if (filasAfectadas > 0) {
-            // ... (código para obtener el ID)
-            return true;
-        }
-        return false;
+       ps.execute();
+        return true;
 
     } catch (SQLException e) {
-        System.err.println("Error al insertar sucursal: " + e.getMessage());
+        System.err.println("Error al insertar sucursal(LLAMADA AL PROCEDIMIENTO ALMACENADO): " + e.getMessage());
         e.printStackTrace();
         return false;
     }

@@ -1,4 +1,4 @@
-1...
+1...PROCEDIMIENTO
 db2 => CREATE PROCEDURE RegistrarNuevoAlquiler (IN p_no_cliente INT, IN p_no_pelicula INT, IN p_alquiler_diario INT) BEGIN ATOMIC INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO) VALUES (p_no_cliente, p_no_pelicula, CURRENT DATE, p_alquiler_diario); UPDATE Copia_pelicula SET estado = 'Alquilada' WHERE ID_PELICULA = p_no_pelicula; END
 
 ACTUALIZACION 
@@ -9,3 +9,10 @@ ACTUALIZACION
 
 CREATE PROCEDURE RegistrarNuevoAlquiler (IN p_no_cliente INT, IN p_no_pelicula INT, IN p_alquiler_diario INT, IN p_fecha_devolucion DATE) BEGIN ATOMIC INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO, FECHA_DEVOLUCION, ESTADO) VALUES (p_no_cliente, p_no_pelicula, CURRENT DATE, p_alquiler_diario, p_fecha_devolucion, 'RENTADO'); UPDATE Copia_pelicula SET estado = 'Alquilada' WHERE ID_PELICULA = p_no_pelicula; END
 1...
+
+2...PROCEDIMIENTO 
+CREATE PROCEDURE RegistrarNuevaSucursal (IN p_no_telefono VARCHAR(45), IN p_calle VARCHAR(45), IN p_ciudad VARCHAR(45), IN p_estado VARCHAR(45), IN p_cp VARCHAR(45)) LANGUAGE SQL BEGIN ATOMIC INSERT INTO Sucursal (no_telefono, calle, ciudad, estado, CP) VALUES (p_no_telefono, p_calle, p_ciudad, p_estado, p_cp); END
+
+ACTUALIZACION 
+CREATE PROCEDURE RegistrarNuevaSucursal (IN p_nombre_sucursal VARCHAR(45), IN p_no_telefono VARCHAR(45), IN p_numero_exterior INT, IN p_calle VARCHAR(45), IN p_colonia VARCHAR(45), IN p_ciudad VARCHAR(45), IN p_estado VARCHAR(45), IN p_cp VARCHAR(45)) LANGUAGE SQL BEGIN ATOMIC INSERT INTO Sucursal (NOMBRE_SUCURSAL, NO_TELEFONO, NUMEROEXTERIOR, CALLE, COLONIA, CIUDAD, ESTADO, CP) VALUES (p_nombre_sucursal, p_no_telefono, p_numero_exterior, p_calle, p_colonia, p_ciudad, p_estado, p_cp); END
+2...
