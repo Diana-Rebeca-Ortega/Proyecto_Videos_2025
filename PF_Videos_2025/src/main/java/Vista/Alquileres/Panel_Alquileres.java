@@ -108,7 +108,7 @@ public class Panel_Alquileres extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID_Alquiler", "ID_Cliente", "ID_pelicula", "fecha_alquiler", "fecha_devolucion", "Estado", "Acciones(Editar/Eliminar)"
+                "ID_Alquiler", "ID_Cliente", "ID_pelicula", "fecha_alquiler", "fecha_devolucion", "Estado", "Tarifa Final"
             }
         ));
         jScrollPane1.setViewportView(tbla_alquileres);
@@ -119,17 +119,13 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
    FormularioRealizarRenta form = new FormularioRealizarRenta(null, true);
         form.setVisible(true);
-
         // 2. Verificar si la renta fue exitosa y guardada
         if (form.isDatosGuardados()) {
             Alquiler nuevoAlquiler = form.getAlquiler(); 
-
             AlquilerDAO dao = new AlquilerDAO();
-
             // Asegúrate de que tu AlquilerDAO tenga un método 'insertarAlquiler'
             if (dao.insertarAlquiler(nuevoAlquiler)) {
                 JOptionPane.showMessageDialog(this, "Renta registrada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
                 // 3. Recargar la tabla para ver el nuevo registro
                 cargarAlquileresATabla();
             } else {
@@ -148,6 +144,7 @@ public void cargarAlquileresATabla() {
         modelo.addColumn("Fecha_Alquiler");
         modelo.addColumn("Fecha_Devolucion");
         modelo.addColumn("Estado");
+         modelo.addColumn("Tarifa Final");
         // La columna "Acciones" se manejaría con un renderizador/editor especial si se usa JTable,
         // pero para la carga de datos no se incluye en el modelo.
 
@@ -158,7 +155,7 @@ public void cargarAlquileresATabla() {
         // 2. Llenar el modelo con los datos
         for (Alquiler a : alquileres) {
             // Se necesitan 6 columnas de datos, no 7, ya que Acciones es visual/funcional.
-            Object[] fila = new Object[6]; 
+            Object[] fila = new Object[7]; 
 
             // Asegúrate que los getters de tu modelo Alquiler coincidan
             fila[0] = a.getIdAlquiler();
@@ -167,6 +164,7 @@ public void cargarAlquileresATabla() {
             fila[3] = a.getFechaAlquiler();
             fila[4] = a.getFechaDevolucion();
             fila[5] = a.getEstado(); // Ej: "Rentado", "Devuelto", "Vencido"
+            fila[6] = String.format("$%.2f", a.getCostoDiario());
 
             modelo.addRow(fila);
         }

@@ -1,0 +1,11 @@
+1...
+db2 => CREATE PROCEDURE RegistrarNuevoAlquiler (IN p_no_cliente INT, IN p_no_pelicula INT, IN p_alquiler_diario INT) BEGIN ATOMIC INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO) VALUES (p_no_cliente, p_no_pelicula, CURRENT DATE, p_alquiler_diario); UPDATE Copia_pelicula SET estado = 'Alquilada' WHERE ID_PELICULA = p_no_pelicula; END
+
+ACTUALIZACION 
+
+CREATE PROCEDURE RegistrarNuevoAlquiler (IN p_no_cliente INT, IN p_no_pelicula INT, IN p_alquiler_diario INT, IN p_fecha_devolucion DATE) BEGIN ATOMIC INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO, FECHA_DEVOLUCION) VALUES (p_no_cliente, p_no_pelicula, CURRENT DATE, p_alquiler_diario, p_fecha_devolucion); UPDATE Copia_pelicula SET estado = 'Alquilada' WHERE ID_PELICULA = p_no_pelicula; END
+
+ACTUALIZACION 
+
+CREATE PROCEDURE RegistrarNuevoAlquiler (IN p_no_cliente INT, IN p_no_pelicula INT, IN p_alquiler_diario INT, IN p_fecha_devolucion DATE) BEGIN ATOMIC INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO, FECHA_DEVOLUCION, ESTADO) VALUES (p_no_cliente, p_no_pelicula, CURRENT DATE, p_alquiler_diario, p_fecha_devolucion, 'RENTADO'); UPDATE Copia_pelicula SET estado = 'Alquilada' WHERE ID_PELICULA = p_no_pelicula; END
+1...

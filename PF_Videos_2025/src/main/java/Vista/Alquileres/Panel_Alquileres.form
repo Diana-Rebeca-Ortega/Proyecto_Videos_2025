@@ -133,7 +133,7 @@
                 <Column editable="true" title="fecha_alquiler" type="java.lang.Object"/>
                 <Column editable="true" title="fecha_devolucion" type="java.lang.Object"/>
                 <Column editable="true" title="Estado" type="java.lang.Object"/>
-                <Column editable="true" title="Acciones(Editar/Eliminar)" type="java.lang.Object"/>
+                <Column editable="true" title="Tarifa Final" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

@@ -323,17 +323,11 @@ public Alquiler getAlquiler() {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(49, 49, 49)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel26)
-                            .addComponent(txt_fechaRenta, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)))
+                    .addComponent(jLabel26)
+                    .addComponent(txt_fechaRenta, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -341,30 +335,35 @@ public Alquiler getAlquiler() {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(71, 71, 71)
+                .addGap(112, 112, 112)
                 .addComponent(jLabel28)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel24)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel26)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel24)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel26)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel28)
+                                .addGap(16, 16, 16)))
                         .addComponent(txt_fechaRenta))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel28)))
+                        .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel29)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(dateDevolucion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jLabel29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         btnRentar.setBackground(new java.awt.Color(153, 255, 153));
@@ -450,35 +449,30 @@ public Alquiler getAlquiler() {
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
  // 1. Obtener la Fecha de Devolución
     java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
-    
     // 2. Validación Inicial: La Fecha de Devolución no puede ser nula.
     if (fechaDevolucionUtil == null) {
         javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
         return;
     }
-
     Alquiler nuevoAlquiler = new Alquiler();
     java.sql.Date fechaRentaSQL = null;
-    
-    try {
+        try {
         // 3. Obtener y Validar IDs (Pelicula y Cliente)
-        
         // ID de Película
         int idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText()); 
         nuevoAlquiler.setIdPelicula(idPelicula);
-        
         // ID de Cliente
         int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
-        nuevoAlquiler.setIdCliente(idCliente);
-        
+        nuevoAlquiler.setIdCliente(idCliente);       
+        String costoDiarioStr = txt_AlquilerDiario.getText().trim();
+        double costoDiario = Double.parseDouble(costoDiarioStr);
+        nuevoAlquiler.setCostoDiario(costoDiario);
         // 4. Obtener y Convertir Fecha de Renta (del JLabel)
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
         String fechaRentaStr = txt_fechaRenta.getText(); // Ejemplo: 21/11/2025
-        java.util.Date fechaRentaUtil = dateFormat.parse(fechaRentaStr);
-        
+        java.util.Date fechaRentaUtil = dateFormat.parse(fechaRentaStr);        
         // Conversión final a java.sql.Date para el modelo/base de datos
-        fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());
-        
+        fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());        
     } catch (NumberFormatException e) {
         // Captura si los IDs no son números (el campo de búsqueda tiene texto no numérico)
         javax.swing.JOptionPane.showMessageDialog(this, "Error: El ID de Película o Cliente no es un número válido. Verifique la búsqueda.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -491,13 +485,11 @@ public Alquiler getAlquiler() {
     } 
     
     // 5. Convertir la Fecha de Devolución a java.sql.Date
-    java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());
-    
+    java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
     // 6. Asignar Fechas y Estado al objeto Alquiler
     nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
     nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
-    nuevoAlquiler.setEstado("RENTADO");
-    
+    nuevoAlquiler.setEstado("RENTADO");    
     // 7. Preparar la Salida del Diálogo
     // Guardar el objeto preparado en la variable de instancia
     this.alquiler = nuevoAlquiler;

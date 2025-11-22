@@ -11,12 +11,19 @@ public class Alquiler {
     private Date fechaDevolucion; // FECHA_DEVOLUCION (DATE)
     private String estado;       // ESTADO (VARCHAR(45))
     private int idSucursal;      // ID_SUCURSAL (SMALLINT) 
-
+    private double costoFinal;
     public Alquiler() {
         // Constructor vacío
     }
 
+    public double getCostoDiario() {
+        return costoFinal;
+    }
+
     // --- Getters y Setters ---
+    public void setCostoDiario(double costoDiario) {
+        this.costoFinal = costoDiario;
+    }
 
     public int getIdAlquiler() {
         return idAlquiler;
