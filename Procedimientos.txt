@@ -16,3 +16,28 @@ CREATE PROCEDURE RegistrarNuevaSucursal (IN p_no_telefono VARCHAR(45), IN p_call
 ACTUALIZACION 
 CREATE PROCEDURE RegistrarNuevaSucursal (IN p_nombre_sucursal VARCHAR(45), IN p_no_telefono VARCHAR(45), IN p_numero_exterior INT, IN p_calle VARCHAR(45), IN p_colonia VARCHAR(45), IN p_ciudad VARCHAR(45), IN p_estado VARCHAR(45), IN p_cp VARCHAR(45)) LANGUAGE SQL BEGIN ATOMIC INSERT INTO Sucursal (NOMBRE_SUCURSAL, NO_TELEFONO, NUMEROEXTERIOR, CALLE, COLONIA, CIUDAD, ESTADO, CP) VALUES (p_nombre_sucursal, p_no_telefono, p_numero_exterior, p_calle, p_colonia, p_ciudad, p_estado, p_cp); END
 2...
+
+3...
+DELIMITER // CREATE PROCEDURE DIANA931.GenerarCopiasStock ( IN p_id_catalogo SMALLINT, IN p_stock_total SMALLINT, IN p_id_sucursal SMALLINT ) BEGIN DECLARE v_contador SMALLINT DEFAULT 1; DECLARE v_id_copia SMALLINT; SELECT COALESCE(MAX(ID_PELICULA), 0) + 1 INTO v_id_copia FROM DIANA931.COPIA_PELICULA; WHILE v_contador <= p_stock_total DO INSERT INTO DIANA931.COPIA_PELICULA (ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO) VALUES (v_id_copia, p_id_catalogo, p_id_sucursal, 'Disponible'); SET v_contador = v_contador + 1; SET v_id_copia = v_id_copia + 1; END WHILE; END// DELIMITER ;
+3...
+
+
+
+
+1....
+CONTAR COPIAS DISPONIBLES
+CREATE FUNCTION ContarCopiasDisponibles (no_catalogo INT) RETURNS INT LANGUAGE SQL READS SQL DATA RETURN (SELECT COUNT(ID_PELICULA) FROM DIANA931.COPIA_PELICULA WHERE ID_CATALOGO = no_catalogo AND ESTADO = 'Disponible');
+1....
+
+
+2...
+
+CREATE FUNCTION CalcularDiasRenta (p_id_alquiler INT) RETURNS INT LANGUAGE SQL READS SQL DATA BEGIN DECLARE v_fecha_alquiler DATE; DECLARE v_fecha_devolucion DATE; DECLARE v_dias_renta INT; SELECT CAST(fecha_alquiler AS DATE), CASE WHEN fecha_devolucion IS NOT NULL THEN CAST(fecha_devolucion AS DATE) ELSE CURRENT DATE END INTO v_fecha_alquiler, v_fecha_devolucion FROM DIANA931.Alquiler WHERE ID_alquiler = p_id_alquiler; SET v_dias_renta = DAYS(v_fecha_devolucion) - DAYS(v_fecha_alquiler); RETURN v_dias_renta; END
+2...
+
+
+
+
+
+
+

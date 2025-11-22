@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import ConneccionBD.ConexionBD;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class PeliculaDAO {
 
@@ -61,32 +63,47 @@ public class PeliculaDAO {
     }
 }
 
-    // --- R: READ (OBTENER TODOS) ---
-    public List<Pelicula> obtenerTodasLasPeliculas() {
+    public List<Pelicula> obtenerPeliculasPorCategoria(String categoria) {
         List<Pelicula> lista = new ArrayList<>();
-        // CORREGIDO: Nombres de columnas en la SELECT
+        
+        // La consulta base. Si 'categoria' es vacío o "Mostrar Todo", se ajustará más abajo.
         String sql = "SELECT ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total FROM DIANA931.PELICULA";
         
+        // Usamos StringBuilder para construir la consulta de forma segura
+        StringBuilder sb = new StringBuilder(sql);
+        boolean filtrar = categoria != null && !categoria.trim().isEmpty() && !categoria.equals("Buscar Por Categoria"); // Evitar el filtro si es la opción "Todos"
+        
+        if (filtrar) {
+            // Añade la cláusula WHERE si hay que filtrar
+            sb.append(" WHERE CATEGORIA = ?");
+        }
+        
         try (Connection con = ConexionBD.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = con.prepareStatement(sb.toString())) { // Usa la consulta construida
 
-            while (rs.next()) {
-                Pelicula pelicula = new Pelicula();
-                pelicula.setIdPelicula(rs.getInt("ID_PELICULA"));
-                pelicula.setTitulo(rs.getString("TITULO"));
-                pelicula.setCategoria(rs.getString("CATEGORIA"));
-                pelicula.setDirector(rs.getString("DIRECTOR"));
-                
-                // CORREGIDO: Nombres de columnas al leer el ResultSet
-                pelicula.setPrecioAlquiler(rs.getDouble("alquiler_diario")); 
-                pelicula.setCosteAdquisicion(rs.getDouble("coste_venta")); 
-                pelicula.setStockTotal(rs.getInt("Stock_total")); 
-                
-                lista.add(pelicula);
+            // 1. Asignar el parámetro SOLO si hay filtro
+            int index = 1;
+            if (filtrar) {
+                ps.setString(index, categoria);
+            }
+
+            // 2. Ejecutar la consulta
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Pelicula pelicula = new Pelicula();
+                    pelicula.setIdPelicula(rs.getInt("ID_PELICULA"));
+                    pelicula.setTitulo(rs.getString("TITULO"));
+                    pelicula.setCategoria(rs.getString("CATEGORIA"));
+                    pelicula.setDirector(rs.getString("DIRECTOR"));
+                    pelicula.setPrecioAlquiler(rs.getDouble("alquiler_diario")); 
+                    pelicula.setCosteAdquisicion(rs.getDouble("coste_venta")); 
+                    pelicula.setStockTotal(rs.getInt("Stock_total")); 
+                    
+                    lista.add(pelicula);
+                }
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener películas: " + e.getMessage());
+            System.err.println("Error al obtener películas por categoría: " + e.getMessage());
             e.printStackTrace();
         }
         return lista;
@@ -224,4 +241,54 @@ public class PeliculaDAO {
         return false;
     }
 }
+ public DefaultTableModel cargarDatosTabla(String filtroCategoria) {
+    // Definir las columnas de la tabla (ajusta los nombres si es necesario)
+   String columnasSelect = "ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, ALQUILER_DIARIO, COSTE_VENTA, STOCK_TOTAL";
+   String[] columnNames = {"ID_Pelicula", "Titulo", "Categoría", "Director", "Alquiler", "Coste", "Stock Total"};
+  DefaultTableModel model = new DefaultTableModel(null, columnNames);
+    String sql;
+    boolean tieneFiltro = filtroCategoria != null 
+                          && !filtroCategoria.isEmpty()
+                          && !filtroCategoria.equals("Todas las Categorías"); 
+
+    // ¡CORRECCIÓN CLAVE AQUÍ! Se cambia 'Peliculas' por 'PELICULA'
+    if (tieneFiltro) {
+    sql = "SELECT " + columnasSelect + " FROM PELICULA WHERE CATEGORIA = ?";
+} else {
+    sql = "SELECT " + columnasSelect + " FROM PELICULA";
+}
+
+    try (Connection con = ConexionBD.getInstance().getConnection();
+         PreparedStatement pstmt = con.prepareStatement(sql)) {
+        
+        if (tieneFiltro) {
+            pstmt.setString(1, filtroCategoria); 
+        }
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Object[] row = new Object[7]; 
+                
+                row[0] = rs.getInt("ID_Pelicula");
+                row[1] = rs.getString("titulo");
+                row[2] = rs.getString("categoria"); 
+                row[3] = rs.getString("director");  
+                row[4] = rs.getDouble("ALQUILER_DIARIO");
+                row[5] = rs.getDouble("COSTE_VENTA"); 
+               row[6] = rs.getInt("STOCK_TOTAL");
+                
+                model.addRow(row);
+            }
+        }
+        return model; 
+        
+    } catch (SQLException e) {
+        // Mejoramos la impresión del error para saber qué pasó
+        System.err.println("Error SQL al cargar/filtrar datos: " + e.getMessage());
+        e.printStackTrace();
+        return model; // Devuelve el modelo vacío en caso de fallo
+    }
+}
+  
 }
