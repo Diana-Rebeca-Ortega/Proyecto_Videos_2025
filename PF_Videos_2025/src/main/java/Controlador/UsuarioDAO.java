@@ -62,4 +62,27 @@ public class UsuarioDAO {
         }
         return usuarioAutenticado;
     }
+    public boolean cambiarClave(int idUsuario, String nuevaClave) {
+    // 1. Definir la sentencia SQL UPDATE
+    String sql = "UPDATE USUARIO SET CONTRASENA_HASH = ? WHERE ID_USUARIO = ?";
+    
+    try (
+        // 2. Establecer conexión
+        Connection conn =  ConexionBD.getInstance().getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        // 3. Establecer parámetros
+        ps.setString(1, nuevaClave); // El nuevo hash de la clave
+        ps.setInt(2, idUsuario);        // El ID del usuario a modificar
+
+        // 4. Ejecutar y verificar filas afectadas
+        int filasAfectadas = ps.executeUpdate();
+        return filasAfectadas > 0;
+
+    } catch (Exception e) {
+        // Manejo de excepciones (logger o imprimir el error)
+        e.printStackTrace();
+        return false;
+    }
+}
 }

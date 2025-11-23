@@ -187,8 +187,6 @@ public class PeliculaDAO {
         }
     }
    public int contarCopiasDisponibles(int idPelicula) {
-    // 🔑 CORRECCIÓN: Usamos SELECT de la FUNCIÓN sobre SYSIBM.SYSDUMMY1
-    // Esto es la forma más estable de llamar una función escalar en DB2 desde JDBC
    String sql = "SELECT DIANA931.CONTARCOPIASDISPONIBLES(?) FROM SYSIBM.SYSDUMMY1";
    int copiasDisponibles = -1;
 

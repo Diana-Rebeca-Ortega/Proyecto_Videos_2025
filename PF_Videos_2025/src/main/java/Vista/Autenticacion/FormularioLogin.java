@@ -50,6 +50,8 @@ public class FormularioLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 51));
@@ -132,6 +134,16 @@ public class FormularioLogin extends javax.swing.JFrame {
         jPanel2.add(jLabel4);
         jLabel4.setBounds(450, 320, 24, 24);
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setText("Contraseña");
+        jPanel2.add(jLabel2);
+        jLabel2.setBounds(110, 300, 180, 16);
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setText("Usuario");
+        jPanel2.add(jLabel7);
+        jLabel7.setBounds(110, 200, 180, 16);
+
         getContentPane().add(jPanel2);
         jPanel2.setBounds(550, 0, 940, 700);
 
@@ -197,10 +209,12 @@ public Usuario getUsuarioAutenticado() {
     private javax.swing.JButton btnIngresar;
     private javax.swing.JLabel img;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPasswordField txtClave;

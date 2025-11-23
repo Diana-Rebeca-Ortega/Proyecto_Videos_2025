@@ -11,10 +11,6 @@ public class AlquilerDAO {
 
     private static final String ESQUEMA_TABLA = "DIANA931.ALQUILER"; // Ajusta el nombre de tu tabla de alquileres
 
-    /**
-     * Recupera todos los registros de alquiler de la base de datos.
-     * @return Una lista de objetos Alquiler.
-     */
     public List<Alquiler> obtenerTodosLosAlquileres() {
         List<Alquiler> lista = new ArrayList<>();
      String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO " 
@@ -85,15 +81,13 @@ public class AlquilerDAO {
  //VISTA ALQUILER COMPLETO//////////////////////////////////////////////
     public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
         List<AlquilerCompleto> listado = new ArrayList<>();
-        // Usamos la VISTA que acabamos de crear
-        // 🔑 CAMBIO TEMPORAL: CONSULTA SIN FILTRO DE SUCURSAL
+      
     String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO";
-        //String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO WHERE ID_sucursal = ?";
+      
         
         try (Connection con = ConexionBD.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             
-            //ps.setInt(1, idSucursal);
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
