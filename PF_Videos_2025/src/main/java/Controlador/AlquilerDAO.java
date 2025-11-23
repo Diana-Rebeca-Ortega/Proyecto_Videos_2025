@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import ConneccionBD.ConexionBD; // Reutiliza tu clase de conexión
+import Modelo.AlquilerCompleto;
 
 public class AlquilerDAO {
 
@@ -64,8 +65,7 @@ public class AlquilerDAO {
         cs.setInt(2, alquiler.getIdPelicula());
         cs.setInt(3, alquiler.getIdCopia());
         // 4. Asignar p_alquiler_diario
-        // Debes asegurarte de que tu objeto Alquiler también guarde el costo diario.
-        // Asumiendo que obtienes el costo de la película asociada:
+       
         cs.setDouble(4, alquiler.getCostoDiario()); // Asumir que tienes este campo
         
         java.sql.Date fechaDevolucionSQL = new java.sql.Date(alquiler.getFechaDevolucion().getTime());
@@ -82,6 +82,38 @@ public class AlquilerDAO {
     }
     }
 
-    // Opcionalmente, puedes añadir métodos de Modificar, Eliminar y ObtenerPorID
-    // usando la estructura de ClienteDAO como guía.
+ //VISTA ALQUILER COMPLETO//////////////////////////////////////////////
+    public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
+        List<AlquilerCompleto> listado = new ArrayList<>();
+        // Usamos la VISTA que acabamos de crear
+        // 🔑 CAMBIO TEMPORAL: CONSULTA SIN FILTRO DE SUCURSAL
+    String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO";
+        //String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO WHERE ID_sucursal = ?";
+        
+        try (Connection con = ConexionBD.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            //ps.setInt(1, idSucursal);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AlquilerCompleto ac = new AlquilerCompleto(
+                        rs.getInt("ID_ALQUILER"),
+                        rs.getString("Nombre_Cliente"),
+                        rs.getString("Titulo_Pelicula"),
+                        rs.getDate("fecha_alquiler"),
+                        rs.getDate("fecha_devolucion"),
+                        rs.getString("Estado_Alquiler"),
+                        rs.getDouble("TARIFA_ALQUILER")
+                        // Aquí incluirías el resto de campos si los necesitas
+                    );
+                    listado.add(ac);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener listado de alquileres desde la VISTA: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return listado;
+    }
 }

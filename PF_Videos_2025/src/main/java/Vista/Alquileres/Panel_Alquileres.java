@@ -36,59 +36,78 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     private void initComponents() {
 
         pnl_Encabezado_Alquileres = new javax.swing.JPanel();
-        txt_alquileres = new java.awt.Label();
         jPanel1 = new javax.swing.JPanel();
         button1 = new java.awt.Button();
+        btn_VistaCompleta = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        txt_alquileres = new java.awt.Label();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbla_alquileres = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.BorderLayout());
 
-        pnl_Encabezado_Alquileres.setBackground(new java.awt.Color(255, 255, 255));
+        pnl_Encabezado_Alquileres.setBackground(new java.awt.Color(204, 153, 255));
         pnl_Encabezado_Alquileres.setMaximumSize(new java.awt.Dimension(2147483647, 50));
         pnl_Encabezado_Alquileres.setMinimumSize(new java.awt.Dimension(0, 50));
         pnl_Encabezado_Alquileres.setPreferredSize(new java.awt.Dimension(0, 40));
         pnl_Encabezado_Alquileres.setLayout(new java.awt.BorderLayout());
 
-        txt_alquileres.setBackground(new java.awt.Color(255, 2, 255));
-        txt_alquileres.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        txt_alquileres.setMaximumSize(new java.awt.Dimension(32767, 40));
-        txt_alquileres.setText("GESTIÓN DE ALQUILERES");
-        pnl_Encabezado_Alquileres.add(txt_alquileres, java.awt.BorderLayout.LINE_START);
-
-        jPanel1.setBackground(new java.awt.Color(255, 255, 233));
-        jPanel1.setPreferredSize(new java.awt.Dimension(184, 50));
+        jPanel1.setBackground(new java.awt.Color(204, 153, 255));
+        jPanel1.setPreferredSize(new java.awt.Dimension(284, 50));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         button1.setActionCommand("btn_nuevo");
+        button1.setBackground(new java.awt.Color(204, 255, 204));
         button1.setLabel("Nuevo");
         button1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button1ActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(55, Short.MAX_VALUE)
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
-        );
-
+        jPanel1.add(button1, java.awt.BorderLayout.EAST);
         button1.getAccessibleContext().setAccessibleName("nuevo");
+
+        btn_VistaCompleta.setBackground(new java.awt.Color(204, 204, 255));
+        btn_VistaCompleta.setText("VISTA_ALQUILERES_COMPLETO");
+        btn_VistaCompleta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_VistaCompletaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btn_VistaCompleta, java.awt.BorderLayout.WEST);
 
         pnl_Encabezado_Alquileres.add(jPanel1, java.awt.BorderLayout.LINE_END);
 
-        add(pnl_Encabezado_Alquileres, java.awt.BorderLayout.NORTH);
+        txt_alquileres.setBackground(new java.awt.Color(255, 2, 255));
+        txt_alquileres.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        txt_alquileres.setMaximumSize(new java.awt.Dimension(32767, 40));
+        txt_alquileres.setText("GESTIÓN DE ALQUILERES");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 313, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(txt_alquileres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 40, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(txt_alquileres, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        pnl_Encabezado_Alquileres.add(jPanel2, java.awt.BorderLayout.WEST);
+
+        add(pnl_Encabezado_Alquileres, java.awt.BorderLayout.PAGE_START);
 
         tbla_alquileres.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -158,6 +177,20 @@ public class Panel_Alquileres extends javax.swing.JPanel {
         }
     }
     }//GEN-LAST:event_button1ActionPerformed
+
+    private void btn_VistaCompletaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_VistaCompletaActionPerformed
+   int idSucursalDelUsuario = 0; 
+    
+    // 1. Crear la instancia del nuevo Dialog
+    Vista_AlquileresCompletos vista = new Vista_AlquileresCompletos(
+        (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), // Parent
+        true, // Modal
+        idSucursalDelUsuario
+    );
+    
+    // 2. Mostrar la ventana
+    vista.setVisible(true);
+    }//GEN-LAST:event_btn_VistaCompletaActionPerformed
 public void cargarAlquileresATabla() {
         // Define el modelo de la tabla
         DefaultTableModel modelo = new DefaultTableModel();
@@ -200,8 +233,10 @@ public void cargarAlquileresATabla() {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_VistaCompleta;
     private java.awt.Button button1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnl_Encabezado_Alquileres;
     private javax.swing.JTable tbla_alquileres;
