@@ -22,6 +22,7 @@ public class PanelCatalogo extends javax.swing.JPanel {
 private JPopupMenu popupMenu;
     private JMenuItem menuItemModificar;
     private JMenuItem menuItemEliminar;
+     private JMenuItem menuItemCopias;
     /**
      * Creates new form PanelCatalogo
      */
@@ -35,9 +36,11 @@ private void inicializarMenuContextual() {
         popupMenu = new JPopupMenu();
         menuItemModificar = new JMenuItem("Modificar Película");
         menuItemEliminar = new JMenuItem("Eliminar Película");
+        menuItemCopias = new JMenuItem("Ver Copias");
         
         popupMenu.add(menuItemModificar);
         popupMenu.add(menuItemEliminar);
+         popupMenu.add(menuItemCopias);
         
         configurarAccionesMenu();
     }
@@ -53,6 +56,13 @@ private void configurarAccionesMenu() {
         menuItemEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 ejecutarEliminarPelicula();
+            }
+        });
+        //ACion ver Copias
+        menuItemCopias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                ejecutarVerCopiaPelicula();
+               System.out.print("dedededede");
             }
         });
     }
@@ -141,6 +151,36 @@ private void configurarAccionesMenu() {
             } else {
                 JOptionPane.showMessageDialog(this, "Error al eliminar la película. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+    private void ejecutarVerCopiaPelicula() {
+        int filaSeleccionada = tablaPELICULA.getSelectedRow();
+        final int ID_SUCURSAL_ACTUAL =0;
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una película de la tabla para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return; 
+        }
+        try {
+         
+            int idPelicula = (int) tablaPELICULA.getValueAt(filaSeleccionada, 0); 
+            // 2. Obtener la referencia al Frame padre
+            Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(this);
+            // 3. Abrir el JDialog ModificacionesPelicula
+            // Asegúrate de que ModificacionesPelicula tenga un constructor (Frame, boolean, int)
+            CopiasDePelicula cdp = new CopiasDePelicula(framePadre, true, idPelicula , ID_SUCURSAL_ACTUAL);
+          cdp.setVisible(true);
+
+            // 4. Recargar la tabla si hubo cambios
+            if (cdp.isDatosGuardados()) { 
+                cargarPeliculasATabla(); 
+                JOptionPane.showMessageDialog(this, "Película modificada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        } catch (ClassCastException e) {
+            JOptionPane.showMessageDialog(this, "Error: El ID de la película no es un número entero. Revisar columna 0.", "Error de Datos", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al intentar abrir la ventana de modificación: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
     

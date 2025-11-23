@@ -5,6 +5,7 @@
 package Vista.Alquileres;
 
 import Controlador.AlquilerDAO; 
+import Controlador.CopiaPeliculaDAO;
 import Modelo.Alquiler;     
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -118,20 +119,44 @@ public class Panel_Alquileres extends javax.swing.JPanel {
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
    FormularioRealizarRenta form = new FormularioRealizarRenta(null, true);
-        form.setVisible(true);
-        // 2. Verificar si la renta fue exitosa y guardada
-        if (form.isDatosGuardados()) {
-            Alquiler nuevoAlquiler = form.getAlquiler(); 
-            AlquilerDAO dao = new AlquilerDAO();
-            // Asegúrate de que tu AlquilerDAO tenga un método 'insertarAlquiler'
-            if (dao.insertarAlquiler(nuevoAlquiler)) {
-                JOptionPane.showMessageDialog(this, "Renta registrada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    form.setVisible(true);
+
+    // 2. Verificar si la renta fue exitosa y guardada
+    if (form.isDatosGuardados()) {
+        Alquiler nuevoAlquiler = form.getAlquiler(); // Contiene el ID de la copia
+        AlquilerDAO daoAlquiler = new AlquilerDAO();
+        
+        // 1. Intentar insertar la Renta en la tabla ALQUILER
+        if (daoAlquiler.insertarAlquiler(nuevoAlquiler)) {
+            
+            // 2. LÓGICA CLAVE: Actualizar el estado de la Copia
+            int idCopiaRentada = nuevoAlquiler.getIdCopia(); 
+            
+            // 🚨 Debes crear y usar el DAO de la copia aquí
+            CopiaPeliculaDAO daoCopia = new CopiaPeliculaDAO(); 
+            
+            // Ejecutar el UPDATE que dispara los TRIGGERS
+            boolean estadoCambiado = daoCopia.actualizarEstadoCopia(idCopiaRentada, "RENTADO"); 
+
+            if (estadoCambiado) {
+                // Éxito completo: Renta registrada y copia actualizada (triggers disparados)
+                JOptionPane.showMessageDialog(this, "Renta registrada con éxito y copia actualizada.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                
                 // 3. Recargar la tabla para ver el nuevo registro
                 cargarAlquileresATabla();
+                
+                // Si tienes una función para recargar el stock/copias, llámala aquí
+                // recargarTablaPeliculas(); 
             } else {
-                JOptionPane.showMessageDialog(this, "Error al registrar la renta. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
+                // Alerta de Consistencia: Renta registrada, pero la copia sigue "Disponible"
+                JOptionPane.showMessageDialog(this, "Alerta: Renta registrada, pero falló el cambio de estado de la Copia ID: " + idCopiaRentada + ". Revise logs y base de datos.", "Alerta de Consistencia", JOptionPane.WARNING_MESSAGE);
+                // NOTA: En un sistema robusto, se debería intentar hacer un ROLLBACK de la renta.
             }
+        } else {
+            // Fallo en la inserción de la renta (error en el Stored Procedure o DB)
+            JOptionPane.showMessageDialog(this, "Error al registrar la renta. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
     }//GEN-LAST:event_button1ActionPerformed
 public void cargarAlquileresATabla() {
         // Define el modelo de la tabla
@@ -164,7 +189,7 @@ public void cargarAlquileresATabla() {
             fila[3] = a.getFechaAlquiler();
             fila[4] = a.getFechaDevolucion();
             fila[5] = a.getEstado(); // Ej: "Rentado", "Devuelto", "Vencido"
-            fila[6] = String.format("$%.2f", a.getCostoDiario());
+            fila[6] = String.format("$%.2f", a.getCostoFinal());
 
             modelo.addRow(fila);
         }

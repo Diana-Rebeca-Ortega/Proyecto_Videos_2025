@@ -12,8 +12,25 @@ public class Alquiler {
     private String estado;       // ESTADO (VARCHAR(45))
     private int idSucursal;      // ID_SUCURSAL (SMALLINT) 
     private double costoFinal;
+    private int idCopia;
     public Alquiler() {
         // Constructor vacío
+    }
+
+    public double getCostoFinal() {
+        return costoFinal;
+    }
+
+    public void setCostoFinal(double costoFinal) {
+        this.costoFinal = costoFinal;
+    }
+
+    public int getIdCopia() {
+        return idCopia;
+    }
+
+    public void setIdCopia(int idCopia) {
+        this.idCopia = idCopia;
     }
 
     public double getCostoDiario() {

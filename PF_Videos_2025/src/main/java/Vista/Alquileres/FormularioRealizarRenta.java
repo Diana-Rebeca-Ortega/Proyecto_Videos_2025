@@ -5,6 +5,7 @@
 
 package Vista.Alquileres;
 import Controlador.ClienteDAO;
+import Controlador.CopiaPeliculaDAO;
 import Controlador.PeliculaDAO;
 import Modelo.Alquiler;
 import Modelo.Cliente;
@@ -463,56 +464,96 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
- // 1. Obtener la Fecha de Devolución
-    java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
-    // 2. Validación Inicial: La Fecha de Devolución no puede ser nula.
-    if (fechaDevolucionUtil == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    Alquiler nuevoAlquiler = new Alquiler();
-    java.sql.Date fechaRentaSQL = null;
+// 1. Obtener la Fecha de Devolución
+        java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
+
+        // 2. Validación Inicial: La Fecha de Devolución no puede ser nula.
+        if (fechaDevolucionUtil == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Alquiler nuevoAlquiler = new Alquiler();
+        CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
+
+        int idPelicula = -1;
+        int idCopiaRentada = -1; // Inicializar la variable de la copia
+        java.sql.Date fechaRentaSQL = null;
+        double costoDiario = 0; // Se moverá la declaración fuera del try para usarla abajo
+        java.util.Date fechaRentaUtil = null; // Se moverá la declaración fuera del try para usarla abajo
+
         try {
-        // 3. Obtener y Validar IDs (Pelicula y Cliente)
-        // ID de Película
-        int idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText()); 
-        nuevoAlquiler.setIdPelicula(idPelicula);
-        // ID de Cliente
-        int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
-        nuevoAlquiler.setIdCliente(idCliente);       
-        String costoDiarioStr = txt_AlquilerDiario.getText().trim();
-        double costoDiario = Double.parseDouble(costoDiarioStr);
-        nuevoAlquiler.setCostoDiario(costoDiario);
-        // 4. Obtener y Convertir Fecha de Renta (del JLabel)
-        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
-        String fechaRentaStr = txt_fechaRenta.getText(); // Ejemplo: 21/11/2025
-        java.util.Date fechaRentaUtil = dateFormat.parse(fechaRentaStr);        
-        // Conversión final a java.sql.Date para el modelo/base de datos
-        fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());        
-    } catch (NumberFormatException e) {
-        // Captura si los IDs no son números (el campo de búsqueda tiene texto no numérico)
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: El ID de Película o Cliente no es un número válido. Verifique la búsqueda.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return; 
-    } catch (java.text.ParseException ex) {
-        // Captura si el formato de fecha del JLabel es incorrecto
-        System.err.println("Error al parsear la fecha de renta: " + ex.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Error de Sistema: La fecha de renta no tiene el formato correcto.", "Error Interno", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    } 
+            // 3. Obtener y Validar IDs (Pelicula y Cliente)
+            idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText());  
+            int idSucursal = 0; 
+
+            // 🔑 BÚSQUEDA DE COPIA DISPONIBLE
+            idCopiaRentada = copiaDao.obtenerIdCopiaDisponible(idPelicula, idSucursal);
+
+            if (idCopiaRentada == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this, "No hay copias disponibles para esta película en esta sucursal.", "Error de Stock", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return; // Detiene la ejecución si no hay copias
+            }
+
+            nuevoAlquiler.setIdPelicula(idPelicula);
+
+            // ID de Cliente
+            int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
+            nuevoAlquiler.setIdCliente(idCliente);    
+
+            String costoDiarioStr = txt_AlquilerDiario.getText().trim();
+            costoDiario = Double.parseDouble(costoDiarioStr); // Usamos la variable declarada arriba
+            nuevoAlquiler.setCostoDiario(costoDiario); // Esto es el costo por día
+
+            // 4. Obtener y Convertir Fecha de Renta (del JLabel)
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String fechaRentaStr = txt_fechaRenta.getText();
+            fechaRentaUtil = dateFormat.parse(fechaRentaStr); // Usamos la variable declarada arriba  
+            // Conversión final a java.sql.Date
+            fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());    
+
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error: El ID de Película, Cliente o Costo no es un número válido. Verifique la búsqueda.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;  
+        } catch (java.text.ParseException ex) {
+            System.err.println("Error al parsear la fecha de renta: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Error de Sistema: La fecha de renta no tiene el formato correcto.", "Error Interno", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 5. Convertir la Fecha de Devolución a java.sql.Date
+        java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
+        
+        // --- 🔑 INICIO DEL CÁLCULO DE LA TARIFA FINAL ---
+        
+        // Calcular la diferencia en milisegundos
+        long diffMilli = fechaDevolucionUtil.getTime() - fechaRentaUtil.getTime();
+        
+        // Convertir milisegundos a días
+        long diffDays = diffMilli / (24 * 60 * 60 * 1000); 
+
+        // Asegurarse de que sea al menos 1 día
+        if (diffDays == 0) {
+            diffDays = 1;
+        }
+        
+        // Calcular la tarifa total
+        double tarifaTotal = costoDiario * (double) diffDays;
+        
+        // 6. Asignar Fechas, Estado y COPIA al objeto Alquiler
+        nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
+        nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
+        nuevoAlquiler.setEstado("RENTADO");        
+        nuevoAlquiler.setIdCopia(idCopiaRentada);    
+
+        // 🔑 ASIGNACIÓN DEL COSTO TOTAL
+        nuevoAlquiler.setCostoFinal(tarifaTotal); 
+        
+        // 7. Preparar la Salida del Diálogo
+        this.alquiler = nuevoAlquiler;
+        this.datosGuardados = true;
+        this.dispose();
     
-    // 5. Convertir la Fecha de Devolución a java.sql.Date
-    java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
-    // 6. Asignar Fechas y Estado al objeto Alquiler
-    nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
-    nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
-    nuevoAlquiler.setEstado("RENTADO");    
-    // 7. Preparar la Salida del Diálogo
-    // Guardar el objeto preparado en la variable de instancia
-    this.alquiler = nuevoAlquiler;
-    // Marcar que los datos están listos para ser guardados por la clase principal
-    this.datosGuardados = true; 
-    // Cerrar la ventana, permitiendo que la clase que la llamó continúe la ejecución
-    this.dispose();
     }//GEN-LAST:event_btnRentarActionPerformed
 
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed
