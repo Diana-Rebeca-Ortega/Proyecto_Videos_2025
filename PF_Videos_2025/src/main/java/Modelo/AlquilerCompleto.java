@@ -10,10 +10,25 @@ public class AlquilerCompleto {
     private Date fechaDevolucion;
     private String estado;
     private double tarifaTotal;
-    
-    
+    private int idCopiaPelicula;
+private int idSucursal;
 
-public AlquilerCompleto(int idAlquiler, String nombreCliente, String tituloPelicula, Date fechaAlquiler, Date fechaDevolucion, String estado, double tarifaTotal) {
+    public int getIdSucursal() {
+        return idSucursal;
+    }
+
+    public void setIdSucursal(int idSucursal) {
+        this.idSucursal = idSucursal;
+    }
+    public int getIdCopiaPelicula() {
+        return idCopiaPelicula;
+    }
+
+    public void setIdCopiaPelicula(int idCopiaPelicula) {
+        this.idCopiaPelicula = idCopiaPelicula;
+    }
+
+    public AlquilerCompleto(int idAlquiler, String nombreCliente, String tituloPelicula, Date fechaAlquiler, Date fechaDevolucion, String estado, double tarifaTotal, int idCopiaPelicula, int idSucursal) {
         this.idAlquiler = idAlquiler;
         this.nombreCliente = nombreCliente;
         this.tituloPelicula = tituloPelicula;
@@ -21,7 +36,12 @@ public AlquilerCompleto(int idAlquiler, String nombreCliente, String tituloPelic
         this.fechaDevolucion = fechaDevolucion;
         this.estado = estado;
         this.tarifaTotal = tarifaTotal;
+        this.idCopiaPelicula = idCopiaPelicula;
+        this.idSucursal = idSucursal;
     }
+
+  
+    
 
     public int getIdAlquiler() {
         return idAlquiler;

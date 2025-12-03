@@ -41,11 +41,6 @@ public class AlquilerDAO {
         return lista;
     }
 
-    /**
-     * Inserta un nuevo registro de alquiler en la base de datos.
-     * @param alquiler El objeto Alquiler con los datos a guardar.
-     * @return true si la inserción fue exitosa, false en caso contrario.
-     */
     public boolean insertarAlquiler(Alquiler alquiler) {
     String call = "{CALL RegistrarNuevoAlquiler(?, ?, ?,?,?)}"; 
         try (Connection conn = ConexionBD.getInstance().getConnection();
@@ -97,9 +92,11 @@ public class AlquilerDAO {
                         rs.getString("Titulo_Pelicula"),
                         rs.getDate("fecha_alquiler"),
                         rs.getDate("fecha_devolucion"),
-                        rs.getString("Estado_Alquiler"),
-                        rs.getDouble("TARIFA_ALQUILER")
-                        // Aquí incluirías el resto de campos si los necesitas
+                        rs.getString("ESTADO_ALQUILER"),
+                        rs.getDouble("TARIFA_ALQUILER"),
+                            rs.getInt("ID_SUCURSAL"),
+                        rs.getInt("ID_COPIA_PELICULA")
+                            
                     );
                     listado.add(ac);
                 }
@@ -110,4 +107,46 @@ public class AlquilerDAO {
         }
         return listado;
     }
+public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws SQLException {
+    Connection con = null;
+    PreparedStatement psAlquiler = null;
+    PreparedStatement psCopia = null;
+    boolean exito = false;
+    String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = CURRENT_DATE, ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?";
+    String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'DISPONIBLE' WHERE ID_PELICULA = ?";
+    try {
+        con = ConexionBD.getInstance().getConnection();
+        con.setAutoCommit(false); // 1. INICIA la transacción
+
+        // Ejecutar UPDATE ALQUILER
+        psAlquiler = con.prepareStatement(sqlAlquiler);
+        psAlquiler.setInt(1, idAlquiler);
+        int filasAlquiler = psAlquiler.executeUpdate();
+
+        // Ejecutar UPDATE COPIA_PELICULA
+        psCopia = con.prepareStatement(sqlCopia);
+        psCopia.setInt(1, idCopiaPelicula);
+        int filasCopia = psCopia.executeUpdate();
+
+        if (filasAlquiler > 0 && filasCopia > 0) {
+            con.commit(); // 2. CONFIRMA
+            exito = true;
+        } else {
+            con.rollback(); // 2. DESHACE
+        }
+    } catch (SQLException e) {
+        if (con != null) {
+            con.rollback(); // DESHACE en caso de error
+        }
+        throw e;
+    } finally {
+        if (psAlquiler != null) psAlquiler.close();
+        if (psCopia != null) psCopia.close();
+        if (con != null) {
+            con.setAutoCommit(true); // RESTABLECE
+            con.close(); 
+        }
+    }
+    return exito;
+}
 }

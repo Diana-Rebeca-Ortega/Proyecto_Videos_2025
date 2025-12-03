@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package Vista.Alquileres;
 
+import Controlador.AlquilerDAO;
 import Controlador.VistaAlquilerDevolucionDAO;
 import Modelo.VistaAlquilerDevolucion;
 import java.sql.SQLException;
@@ -18,60 +15,115 @@ import javax.swing.table.DefaultTableModel;
 public class FormularioDevolverPelicula extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioDevolverPelicula.class.getName());
-    private VistaAlquilerDevolucionDAO alquilerDAO;
-  
+    private AlquilerDAO alquilerDAO;
+    private VistaAlquilerDevolucionDAO alquilerDevolucionDAO;
+  private javax.swing.JPopupMenu popupMenuDevolucion;
+private javax.swing.JMenuItem miDevolver;
     public FormularioDevolverPelicula(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        this.alquilerDAO = new VistaAlquilerDevolucionDAO();
+        this.alquilerDAO = new AlquilerDAO();
+         this.alquilerDevolucionDAO = new VistaAlquilerDevolucionDAO();
         initComponents();
+        configurarPopupMenu();
         cargarDatosTabla();
     }
 private void cargarDatosTabla() {
-        if (alquilerDAO == null) {
-            return; // No se puede cargar sin conexión/DAO
-        }
-        
+        if (alquilerDAO == null) { return; }
         try {
-            // 1. Obtener la lista de alquileres pendientes
-            List<VistaAlquilerDevolucion> lista = alquilerDAO.obtenerAlquileresPendientes();
-            
-            // 2. Definir las cabeceras (deben coincidir con el orden de tu JTable)
+            List<VistaAlquilerDevolucion> lista = alquilerDevolucionDAO.obtenerAlquileresPendientes();
             String[] columnas = {
-                "ID_Alquiler", "Cliente", "Título Película", "ID_Película", 
-                "Fecha Alquiler", "Fecha Devolución", "Estado de Entrega"
-            };
-            
-            // Usaremos un modelo de datos que se pueda modificar
+            "ID_Alquiler", 
+            "No_Cliente",      
+            "Cliente",         
+            "Título Película", 
+            "ID_Película",      
+            "Fecha Alquiler",  
+            "Fecha Vencimiento", 
+            "Estado Actual", 
+            "ID_Copia Película",
+            "Estado de Entrega UI" 
+        };
             DefaultTableModel modelo = new DefaultTableModel(columnas, 0); 
-            
-            // 3. Llenar las filas del modelo con los datos del DAO
             for (VistaAlquilerDevolucion item : lista) {
-                // Asegúrate de que los campos coinciden con el orden de 'columnas'
-                Object[] fila = new Object[7]; 
+                Object[] fila = new Object[10]; 
                 fila[0] = item.getIdAlquiler();
-                // Usamos el NOMBRE_CLIENTE completo (C.nombre || ' ' || C.apellido1)
                 fila[1] = item.getNombreCliente(); 
                 fila[2] = item.getTituloPelicula(); 
                 fila[3] = item.getIdPelicula();
                 fila[4] = item.getFechaAlquiler();
-                fila[5] = item.getFechaDevolucion(); // Será NULL para los pendientes
-                // Columna ENUM calculada por la vista V_ALQUILERES_CON_ESTADO
-                fila[6] = item.getEstadoEntregaUI(); 
-                
+               fila[5] = item.getFechaDevolucion();
+                fila[6] = item.getEstadoEntregaUI();  
+                fila[7] = item.getEstadoActual();     
+            fila[8] = item.getIdCopiaPelicula();    
+            fila[9] = item.getNoCliente();
                 modelo.addRow(fila);
-            }
-            
-            // 4. Asignar el nuevo modelo a la JTable
-            jTable1.setModel(modelo);
-            
-            // Opcional: Configurar el Pop-up Menu aquí después de cargar los datos
-            // configurarPopupMenu(); 
-            
+            } jTable1.setModel(modelo);            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar los alquileres: " + e.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
             logger.log(java.util.logging.Level.SEVERE, "Error al cargar la tabla de alquileres", e);
         }
     }
+private void configurarPopupMenu() {
+    // 1. Inicializar el menú emergente
+    popupMenuDevolucion = new javax.swing.JPopupMenu();
+    miDevolver = new javax.swing.JMenuItem("Registrar Devolución");
+    // 2. Añadir el Listener al elemento del menú
+    miDevolver.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            // Llama al método que contendrá la lógica de devolución
+            ejecutarDevolucionSeleccionada(); 
+        }
+    });    
+    // 3. Agregar el elemento al menú
+    popupMenuDevolucion.add(miDevolver);    
+    // 4. Añadir el MouseListener a la tabla para detectar el clic derecho
+    jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseReleased(java.awt.event.MouseEvent evt) {
+            // isPopupTrigger() detecta el clic derecho específico de cada SO
+         if (evt.isPopupTrigger()) {                
+                // Seleccionar la fila donde se hizo clic para trabajar con ella
+                int r = jTable1.rowAtPoint(evt.getPoint());
+                if (r >= 0 && r < jTable1.getRowCount()) {
+                    jTable1.setRowSelectionInterval(r, r);
+                } else {
+                    jTable1.clearSelection();
+                }                
+                popupMenuDevolucion.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+        }
+    });
+}
+private void ejecutarDevolucionSeleccionada() {
+    int selectedRow = jTable1.getSelectedRow();
+    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para registrar la devolución.");
+        return;
+    }
+    int idAlquiler = (int) jTable1.getValueAt(selectedRow, 0); 
+       int idCopiaPelicula = (int) jTable1.getValueAt(selectedRow, 8); 
+       System.out.println(idCopiaPelicula+"el id de pelicula ");
+    int respuesta = JOptionPane.showConfirmDialog(this, 
+            "¿Confirmar devolución del Alquiler ID: " + idAlquiler + "?", 
+            "Confirmar", JOptionPane.YES_NO_OPTION);
+
+    if (respuesta == JOptionPane.YES_OPTION) {
+        try {
+            // Llama al método del DAO que implementaste
+            boolean exito = alquilerDAO.registrarDevolucion(idAlquiler, idCopiaPelicula);
+
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Devolución registrada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                cargarDatosTabla(); // Recargar la tabla para mostrar que el ítem desapareció
+            } else {
+                JOptionPane.showMessageDialog(this, "Fallo al registrar la devolución.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -111,7 +163,7 @@ private void cargarDatosTabla() {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID_Alquiler", "Cliente", "ID_CopiaPelicula", "Fecha Alquiler", "Fecha Devolucion", "Entrega de Pelicula", "Title 7"
+                "ID_Alquiler", "Cliente", "ID_CopiaPelicula", "Fecha Alquiler", "Fecha Devolucion", "Entrega de Pelicula", "Estado de Entrega"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -132,7 +184,7 @@ private void cargarDatosTabla() {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_buscarPelicula))
                             .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 133, Short.MAX_VALUE)))
+                        .addGap(0, 424, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,7 +199,7 @@ private void cargarDatosTabla() {
                     .addComponent(textField1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         pack();
@@ -160,43 +212,6 @@ private void cargarDatosTabla() {
     private void textField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textField1ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                FormularioDevolverPelicula dialog = new FormularioDevolverPelicula(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_buscarPelicula;

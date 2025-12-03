@@ -1,59 +1,128 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package Vista.Alquileres;
 
 import Controlador.AlquilerDAO;
+import Controlador.VistaAlquilerDevolucionDAO;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import Modelo.AlquilerCompleto;
-/**
- *
- * @author Diana
- */
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
 public class Vista_AlquileresCompletos extends javax.swing.JDialog {
     private AlquilerDAO alquilerDao = new AlquilerDAO();
     private int idSucursalActual;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Vista_AlquileresCompletos.class.getName());
-
+private JPopupMenu popupMenu;
+private JMenuItem devolverMenuItem;
     public Vista_AlquileresCompletos(java.awt.Frame parent, boolean modal, int idSucursal) {
         super(parent, modal);
         initComponents();
         this.idSucursalActual = idSucursal;
+        inicializarMenuContextual();
         cargarTablaAlquileresVista(); 
     }
 public void cargarTablaAlquileresVista() {
-        // Usar la JTable de este nuevo Dialog
-        DefaultTableModel modelo = (DefaultTableModel) tablaVistaAlquileres.getModel();
-        
-        // 1. Establecer las cabeceras de la VISTA (Nombres/Títulos)
-        String[] nuevasColumnas = {"ID", "Cliente", "Película", "Alquiler", "Devolución", "Estado", "Tarifa"};
-        modelo.setColumnIdentifiers(nuevasColumnas);
-        modelo.setRowCount(0);
-
-        // 2. Obtener los datos de la VISTA
-        List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(this.idSucursalActual);
-        
-        // 3. Llenar la tabla
-        for (AlquilerCompleto ac : listado) {
-            Object[] fila = new Object[] {
-                ac.getIdAlquiler(),
-                ac.getNombreCliente(),   // VISTA: Nombre del Cliente
-                ac.getTituloPelicula(),  // VISTA: Título de la Película
-                ac.getFechaAlquiler(),
-                ac.getFechaDevolucion(),
-                ac.getEstado(),
-                ac.getTarifaTotal()
-            };
-            modelo.addRow(fila);
+    DefaultTableModel modelo = (DefaultTableModel) tablaVistaAlquileres.getModel();
+    
+    // 🚩 CORRECCIÓN 1: Añadir ID_SUCURSAL a los encabezados para que sean 9 columnas (índice 0 a 8)
+    String[] nuevasColumnas = {"ID_Alquiler", "Cliente", "Película", "Alquiler", "Devolución", "Estado", "Tarifa", "ID_SUCURSAL", "ID_COPIA"};
+    modelo.setColumnIdentifiers(nuevasColumnas);
+    modelo.setRowCount(0);
+    
+    List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(this.idSucursalActual);
+    
+    for (AlquilerCompleto ac : listado) {
+        Object[] fila = new Object[] {
+            ac.getIdAlquiler(),
+            ac.getNombreCliente(),    
+            ac.getTituloPelicula(),  
+            ac.getFechaAlquiler(),
+            ac.getFechaDevolucion(),
+            ac.getEstado(),
+            ac.getTarifaTotal(),
+            
+            // 🚩 Campo ID_SUCURSAL (Índice 7)
+            ac.getIdSucursal(),
+            
+            // 🚩 Campo ID_COPIA_PELICULA (Índice 8)
+            ac.getIdCopiaPelicula()
+        };
+        modelo.addRow(fila);
+    }
+    
+}
+   private void inicializarMenuContextual() {
+    popupMenu = new JPopupMenu();
+    devolverMenuItem = new JMenuItem("DEVOLVER PELÍCULA");
+    devolverMenuItem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("se activo el jemun item ");
+            ejecutarDevolucion();
+        } 
+    });
+    popupMenu.add(devolverMenuItem);
+    tablaVistaAlquileres.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) { 
+            // Esto detecta si el evento debe mostrar el menú (clic derecho en la mayoría de OS)
+            if (e.isPopupTrigger()) { 
+                int row = tablaVistaAlquileres.rowAtPoint(e.getPoint());
+                if (row >= 0 && row < tablaVistaAlquileres.getRowCount()) {
+                    tablaVistaAlquileres.setRowSelectionInterval(row, row);
+                    
+                    // Opcional: Deshabilitar el menú si el estado no es "Sin entregar" (Columna 5)
+                    String estado = (String) tablaVistaAlquileres.getValueAt(row, 5);
+                    devolverMenuItem.setEnabled(estado.equals("Sin entregar")); 
+                    
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        }
+    });
+}
+   
+private void ejecutarDevolucion() {
+    int selectedRow = tablaVistaAlquileres.getSelectedRow();    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un alquiler pendiente de la tabla.");
+        return;    }        
+    String estadoActual = (String) tablaVistaAlquileres.getValueAt(selectedRow, 5);
+    if (!estadoActual.equals("RENTADO")) { // Usamos RENTADO porque es lo que se ve en la tabla (image_0c45fb.png)
+        JOptionPane.showMessageDialog(this, "Esta película ya fue devuelta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    } 
+    int idAlquiler = (int) tablaVistaAlquileres.getValueAt(selectedRow, 0);        
+    int idCopiaPelicula = (int) tablaVistaAlquileres.getValueAt(selectedRow, 8); 
+    String nombreCliente = (String) tablaVistaAlquileres.getValueAt(selectedRow, 1); 
+    String tituloPelicula = (String) tablaVistaAlquileres.getValueAt(selectedRow, 2); 
+   
+    int respuesta = JOptionPane.showConfirmDialog(this,
+        "¿Confirma la devolución de la película:\n" + 
+        "'" + tituloPelicula + "' para el cliente " + nombreCliente + "?",
+        "Confirmar Devolución", JOptionPane.YES_NO_OPTION);  
+    if (respuesta == JOptionPane.YES_OPTION) {
+        try {           
+            boolean exito = alquilerDao.registrarDevolucion(idAlquiler, idCopiaPelicula);            
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Devolución registrada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                cargarTablaAlquileresVista(); // Recargar la tabla para mostrar el estado actualizado
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la devolución. Consulte la consola.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error de base de datos durante la devolución: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -78,19 +147,19 @@ public void cargarTablaAlquileresVista() {
 
         tablaVistaAlquileres.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9"
             }
         ));
         jScrollPane1.setViewportView(tablaVistaAlquileres);
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(40, 180, 980, 280);
+        jScrollPane1.setBounds(20, 180, 980, 280);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
