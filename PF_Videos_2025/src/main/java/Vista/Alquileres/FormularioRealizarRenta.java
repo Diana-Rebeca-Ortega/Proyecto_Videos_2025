@@ -472,7 +472,6 @@ public Alquiler getAlquiler() {
             javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         Alquiler nuevoAlquiler = new Alquiler();
         CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
 
@@ -494,9 +493,7 @@ public Alquiler getAlquiler() {
                 javax.swing.JOptionPane.showMessageDialog(this, "No hay copias disponibles para esta película en esta sucursal.", "Error de Stock", javax.swing.JOptionPane.ERROR_MESSAGE);
                 return; // Detiene la ejecución si no hay copias
             }
-
             nuevoAlquiler.setIdPelicula(idPelicula);
-
             // ID de Cliente
             int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
             nuevoAlquiler.setIdCliente(idCliente);    

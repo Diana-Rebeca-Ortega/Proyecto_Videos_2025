@@ -41,6 +41,7 @@ public class Panel_Alquileres extends javax.swing.JPanel {
         btn_VistaCompleta = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txt_alquileres = new java.awt.Label();
+        btnDevolucion = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbla_alquileres = new javax.swing.JTable();
 
@@ -106,6 +107,15 @@ public class Panel_Alquileres extends javax.swing.JPanel {
         );
 
         pnl_Encabezado_Alquileres.add(jPanel2, java.awt.BorderLayout.WEST);
+
+        btnDevolucion.setBackground(new java.awt.Color(255, 204, 255));
+        btnDevolucion.setText("Devolución de Peliculas");
+        btnDevolucion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDevolucionActionPerformed(evt);
+            }
+        });
+        pnl_Encabezado_Alquileres.add(btnDevolucion, java.awt.BorderLayout.CENTER);
 
         add(pnl_Encabezado_Alquileres, java.awt.BorderLayout.PAGE_START);
 
@@ -191,6 +201,11 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     // 2. Mostrar la ventana
     vista.setVisible(true);
     }//GEN-LAST:event_btn_VistaCompletaActionPerformed
+
+    private void btnDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDevolucionActionPerformed
+  FormularioDevolverPelicula vistaDevolucion = new FormularioDevolverPelicula( (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true);
+    vistaDevolucion.setVisible(true);
+    }//GEN-LAST:event_btnDevolucionActionPerformed
 public void cargarAlquileresATabla() {
         // Define el modelo de la tabla
         DefaultTableModel modelo = new DefaultTableModel();
@@ -233,6 +248,7 @@ public void cargarAlquileresATabla() {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDevolucion;
     private javax.swing.JButton btn_VistaCompleta;
     private java.awt.Button button1;
     private javax.swing.JPanel jPanel1;
