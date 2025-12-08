@@ -1,15 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Modelo;
-
 import java.sql.Date;
-
-/**
- *
- * @author Diana
- */
 public class Cliente {
    
     private int noCliente; 
@@ -23,7 +13,7 @@ public class Cliente {
     private String estado;
     private String cp; 
     private java.sql.Date fechaRegistro; 
-    private String noSucursal;
+    private short noSucursal;
 
     public Cliente() {
     }
@@ -100,14 +90,13 @@ public class Cliente {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public String getNoSucursal() {
+    public short getNoSucursal() {
         return noSucursal;
     }
 
-    public void setNoSucursal(String noSucursal) {
+    public void setNoSucursal(short noSucursal) {
         this.noSucursal = noSucursal;
     }
-
     public int getNo_exterior() {
         return No_exterior;
     }

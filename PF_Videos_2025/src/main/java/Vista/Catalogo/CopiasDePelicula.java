@@ -1,30 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+
 package Vista.Catalogo;
 
 import Controlador.CopiaPeliculaDAO;
 import Controlador.PeliculaDAO;
 import Modelo.CopiaPelicula;
 import Modelo.Pelicula;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
-/**
- *
- * @author Diana
- */
 public class CopiasDePelicula extends javax.swing.JDialog {
     private Pelicula peliculaActual;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CopiasDePelicula.class.getName());
-private final int idPelicula;  
-private int idSucursalActual;
-  private boolean datosGuardados = false; 
-    /**
-     * Creates new form CopiasDePelicula
-     */
+    private final int idPelicula;  
+    private int idSucursalActual;
+    private boolean datosGuardados = false; 
+    
     public CopiasDePelicula(java.awt.Frame parent, boolean modal, int idPelicula, int idSucursalActual) {
         super(parent, modal);
         initComponents();
@@ -32,11 +27,33 @@ private int idSucursalActual;
         this.idSucursalActual = idSucursalActual;
         this.setLocationRelativeTo(null);
         cargarDatosCopiaPelicula(this.idPelicula, this.idSucursalActual);
-        
+        aplicarEstiloTabla();
     }
- 
+ private void aplicarEstiloTabla() {
     
-    
+    Color COLOR_PRIMARIO_OSCURO = new Color(0, 51, 102); // Azul oscuro (como su menú lateral)
+    Color COLOR_ENCABEZADO_FONDO = new Color(240, 240, 240); // Gris muy claro para el fondo
+    Color COLOR_SELECCION_FILA = new Color(210, 230, 255); // Azul claro suave
+    Color COLOR_TEXTO_ENCABEZADO = Color.BLACK;
+    JTableHeader header = tabla_copias_peliculas.getTableHeader();
+    header.setFont(new Font("Segoe UI", Font.BOLD, 13)); // Fuente en negrita
+    header.setBackground(COLOR_ENCABEZADO_FONDO);
+    header.setForeground(COLOR_TEXTO_ENCABEZADO);
+    header.setBorder(null);
+    tabla_copias_peliculas.setBackground(Color.WHITE); 
+    tabla_copias_peliculas.setSelectionBackground(COLOR_SELECCION_FILA); 
+    tabla_copias_peliculas.setRowHeight(25); 
+    tabla_copias_peliculas.setShowGrid(false); 
+    tabla_copias_peliculas.setIntercellSpacing(new java.awt.Dimension(0, 0)); 
+    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+    centerRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+     for (int i = 0; i < tabla_copias_peliculas.getColumnCount(); i++) {        
+        if (i != 1 && i != 2 && i != 3) { 
+             tabla_copias_peliculas.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+    }
+}
+        
     public final void cargarDatosCopiaPelicula(int idPelicula, int idSucursalActual) {
         PeliculaDAO peliculaDao = new PeliculaDAO();
         
@@ -177,8 +194,8 @@ private int idSucursalActual;
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_director, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(3, 3, 3)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_sucursal, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 676, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(48, Short.MAX_VALUE))

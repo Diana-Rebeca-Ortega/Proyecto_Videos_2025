@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
-
 package Vista.Alquileres;
 import Controlador.ClienteDAO;
 import Controlador.CopiaPeliculaDAO;
@@ -20,15 +15,16 @@ private boolean datosGuardados;
         initComponents();
         dateDevolucion.setEnabled(false);
         mostrarFechaActual();
+        this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
         dateDevolucion.setMinSelectableDate(new java.util.Date());
     }
+      
      public boolean isDatosGuardados() {
         return datosGuardados;
     }
 public Alquiler getAlquiler() {
     return alquiler;
 }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -464,10 +460,7 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
-// 1. Obtener la Fecha de Devolución
         java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
-
-        // 2. Validación Inicial: La Fecha de Devolución no puede ser nula.
         if (fechaDevolucionUtil == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -476,30 +469,26 @@ public Alquiler getAlquiler() {
         CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
 
         int idPelicula = -1;
-        int idCopiaRentada = -1; // Inicializar la variable de la copia
+        int idCopiaRentada = -1; 
         java.sql.Date fechaRentaSQL = null;
-        double costoDiario = 0; // Se moverá la declaración fuera del try para usarla abajo
-        java.util.Date fechaRentaUtil = null; // Se moverá la declaración fuera del try para usarla abajo
-
+        double costoDiario = 0; 
+        java.util.Date fechaRentaUtil = null;
         try {
             // 3. Obtener y Validar IDs (Pelicula y Cliente)
             idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText());  
             int idSucursal = 0; 
-
-            // 🔑 BÚSQUEDA DE COPIA DISPONIBLE
+            // BÚSQUEDA DE COPIA DISPONIBLE
             idCopiaRentada = copiaDao.obtenerIdCopiaDisponible(idPelicula, idSucursal);
-
             if (idCopiaRentada == -1) {
                 javax.swing.JOptionPane.showMessageDialog(this, "No hay copias disponibles para esta película en esta sucursal.", "Error de Stock", javax.swing.JOptionPane.ERROR_MESSAGE);
-                return; // Detiene la ejecución si no hay copias
+                return;
             }
-            nuevoAlquiler.setIdPelicula(idPelicula);
-            // ID de Cliente
+            nuevoAlquiler.setIdPelicula(idPelicula);          
             int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
             nuevoAlquiler.setIdCliente(idCliente);    
 
             String costoDiarioStr = txt_AlquilerDiario.getText().trim();
-            costoDiario = Double.parseDouble(costoDiarioStr); // Usamos la variable declarada arriba
+            costoDiario = Double.parseDouble(costoDiarioStr); 
             nuevoAlquiler.setCostoDiario(costoDiario); // Esto es el costo por día
 
             // 4. Obtener y Convertir Fecha de Renta (del JLabel)
@@ -521,7 +510,7 @@ public Alquiler getAlquiler() {
         // 5. Convertir la Fecha de Devolución a java.sql.Date
         java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
         
-        // --- 🔑 INICIO DEL CÁLCULO DE LA TARIFA FINAL ---
+        // --- InICIO DEL CÁLCULO DE LA TARIFA FINAL ---
         
         // Calcular la diferencia en milisegundos
         long diffMilli = fechaDevolucionUtil.getTime() - fechaRentaUtil.getTime();
@@ -543,7 +532,7 @@ public Alquiler getAlquiler() {
         nuevoAlquiler.setEstado("RENTADO");        
         nuevoAlquiler.setIdCopia(idCopiaRentada);    
 
-        // 🔑 ASIGNACIÓN DEL COSTO TOTAL
+        //  ASIGNACIÓN DEL COSTO TOTAL
         nuevoAlquiler.setCostoFinal(tarifaTotal); 
         
         // 7. Preparar la Salida del Diálogo

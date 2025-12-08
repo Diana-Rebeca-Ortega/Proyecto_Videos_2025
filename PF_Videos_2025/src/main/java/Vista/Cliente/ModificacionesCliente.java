@@ -1,79 +1,111 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package Vista.Cliente;
 import Modelo.Cliente;
 import javax.swing.JOptionPane;
 import Controlador.ClienteDAO;
-/**
- *
- * @author Diana
- */
+import Vista.Filtros.MaximoDigitosFilter;
+import Vista.Filtros.SoloLetrasFilter;
+import Vista.Filtros.SoloNumerosFilter;
+import javax.swing.text.AbstractDocument;
+import java.awt.event.ActionEvent;
+
 public class ModificacionesCliente extends javax.swing.JDialog {
     private Cliente cliente; 
     private final int idCliente;
     private boolean datosGuardados = false; // Bandera para saber si se guardó
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ModificacionesCliente.class.getName());
-
-    /**
-     * Creates new form ModificacionesCliente
-     */
-   public ModificacionesCliente(java.awt.Frame parent, boolean modal, int idCliente) {
+private static final java.awt.Color COLOR_PRIMARIO = new java.awt.Color(0, 51, 153); // Azul oscuro
+private static final java.awt.Color COLOR_EXITO = new java.awt.Color(51, 153, 51); // Verde
+private static final java.awt.Color COLOR_PELIGRO = new java.awt.Color(255, 51, 51); // Rojo
+private static final java.awt.Color COLOR_TEXTO_OSCURO = java.awt.Color.BLACK;
+private static final java.awt.Font FUENTE_TITULO = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 28);
+private static final java.awt.Font FUENTE_SUBTITULO = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14);
+private static final java.awt.Font FUENTE_ETIQUETA = new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12);
+    public ModificacionesCliente(java.awt.Frame parent, boolean modal, int idCliente) {
         super(parent, modal);
         initComponents();
         this.idCliente = idCliente;
+        aplicarEstiloModificaciones();
         cargarDatosCliente(this.idCliente);
+        this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
+         this.setLocationRelativeTo(parent); 
     }
-   public boolean isDatosGuardados() {
+    private void aplicarEstiloModificaciones() {
+       
+        SoloLetrasFilter letrasFilter = new SoloLetrasFilter();
+        SoloNumerosFilter numerosFilter = new SoloNumerosFilter();
+        MaximoDigitosFilter cpFilter = new MaximoDigitosFilter(5); // Asumiendo que tienes esta clase
+        
+        ((AbstractDocument) caja_nombre.getDocument()).setDocumentFilter(letrasFilter);
+        ((AbstractDocument) caja_apellido1.getDocument()).setDocumentFilter(letrasFilter);
+        ((AbstractDocument) caja_apellido2.getDocument()).setDocumentFilter(letrasFilter);
+        ((AbstractDocument) caja_ciudad.getDocument()).setDocumentFilter(letrasFilter);
+        ((AbstractDocument) caja_calle.getDocument()).setDocumentFilter(letrasFilter);
+        ((AbstractDocument) caja_colonia.getDocument()).setDocumentFilter(letrasFilter);
+        
+        ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(numerosFilter);       
+        ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(cpFilter);
+        
+        jLabel17.setFont(FUENTE_TITULO);
+        jLabel17.setForeground(COLOR_PRIMARIO);
+        jLabel4.setFont(FUENTE_SUBTITULO); // Datos Personales
+        jLabel4.setForeground(COLOR_PRIMARIO);
+        jLabel5.setFont(FUENTE_SUBTITULO); // Domicilio
+        jLabel5.setForeground(COLOR_PRIMARIO);
+        jLabel10.setFont(FUENTE_SUBTITULO); // Etiqueta ID_Cliente:
+        jLabel10.setForeground(COLOR_PRIMARIO);
+        jLabel11.setFont(FUENTE_SUBTITULO);
+        jLabel11.setForeground(COLOR_TEXTO_OSCURO);
+        
+        javax.swing.JLabel[] labels = {jLabel1, jLabel2, jLabel3, jLabel6, jLabel7, jLabel8, jLabel9, jLabel13, jLabel14};
+        java.awt.Color colorEtiqueta = COLOR_TEXTO_OSCURO;
+        java.awt.Font fontEtiqueta = FUENTE_ETIQUETA;
+
+        for (javax.swing.JLabel label : labels) {
+            label.setFont(fontEtiqueta);
+            label.setForeground(colorEtiqueta);
+        }
+        javax.swing.JTextField[] textFields = {caja_nombre, caja_apellido1, caja_apellido2, caja_calle, caja_ciudad, caja_colonia, caja_CP, caja_num_exterior};
+        for (javax.swing.JTextField field : textFields) {           
+            field.setForeground(COLOR_TEXTO_OSCURO);
+            field.setBackground(java.awt.Color.WHITE);
+        }
+
+        btn_cambiarCliente.setBackground(COLOR_EXITO);
+        btn_cambiarCliente.setForeground(java.awt.Color.WHITE);
+        btn_cambiarCliente.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+        
+        btn_cancelarCAMBIOSCliente.setBackground(COLOR_PELIGRO);
+        btn_cancelarCAMBIOSCliente.setForeground(java.awt.Color.WHITE);
+        btn_cancelarCAMBIOSCliente.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+    }
+    public boolean isDatosGuardados() {
     return datosGuardados;
-}
-   
-   public void cargarDatosCliente(int idCliente) {
+}   
+    public void cargarDatosCliente(int idCliente) {
     Controlador.ClienteDAO dao = new Controlador.ClienteDAO();
    
-    try {
-        // Asumiendo que tienes un método 'obtenerClientePorId(int id)' en tu DAO
-       this.cliente = dao.obtenerClientePorId(idCliente);
-
+    try {       
+        this.cliente = dao.obtenerClientePorId(idCliente);
         if (cliente != null) {
-            // 2. Llenar los JTextField y JComboBox del formulario con los datos del cliente
-            // Asigna la información a las cajas de texto
             jLabel11.setText(String.valueOf(idCliente));
             caja_nombre.setText(cliente.getNombre());
             caja_apellido1.setText(cliente.getApellido1());
             caja_apellido2.setText(cliente.getApellido2());
-            
-            // NO_EXTERIOR es INTEGER en el objeto Cliente, pero es String en DB2 (Character(5)).
-            // Si tu getter devuelve int, usa String.valueOf()
             caja_num_exterior.setText(String.valueOf(cliente.getNo_exterior())); 
             
             caja_calle.setText(cliente.getCalle());
             caja_colonia.setText(cliente.getColonia());
             caja_ciudad.setText(cliente.getCiudad());
             caja_CP.setText(cliente.getCp());
-            
-            // Asigna los JComboBox. Debes iterar o usar un método para seleccionar el item
             combo_estados.setSelectedItem(cliente.getEstado());
-            // comboSucursales.setSelectedItem(cliente.getNoSucursal());
-            
-            // Puedes mostrar el ID en algún JLabel o campo oculto si es necesario
-            // txt_id_cliente.setText(String.valueOf(idCliente)); 
-            
         } else {
             JOptionPane.showMessageDialog(this, "Cliente con ID " + idCliente + " no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     } catch (Exception e) {
-        // Capturar cualquier error (SQL, NullPointerException, etc.)
         JOptionPane.showMessageDialog(this, "Error al cargar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -309,15 +341,13 @@ public class ModificacionesCliente extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void combo_estadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_estadosActionPerformed
-        // TODO add your handling code here:
+       
     }//GEN-LAST:event_combo_estadosActionPerformed
 
     private void btn_cambiarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cambiarClienteActionPerformed
-
-        // 1. Validar campos obligatorios (NO_CLIENTE, NOMBRE, etc.)
         if (caja_nombre.getText().isEmpty() || caja_apellido1.getText().isEmpty()  ) {
             JOptionPane.showMessageDialog(this, "El Nombre y Apellido1 son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return; // Detiene la ejecución si faltan datos esenciales
+            return;
         }
         if (caja_num_exterior.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El Número Exterior es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -327,46 +357,32 @@ public class ModificacionesCliente extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "El Código Postal (CP) es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-
         if (combo_estados.getSelectedItem().toString().equals("Item 1")) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un 'Estado'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        try {
-        // 1. **VERIFICAR** que el cliente se haya cargado previamente
+        try {        
         if (this.cliente == null) {
             JOptionPane.showMessageDialog(this, "Error: No hay datos de cliente cargados para modificar.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // 2. **ACTUALIZAR** el objeto 'this.cliente' existente con los nuevos valores
         this.cliente.setNombre(caja_nombre.getText());
         this.cliente.setApellido1(caja_apellido1.getText());
         this.cliente.setApellido2(caja_apellido2.getText());
-        
-        // Conversión a Int (Asegúrate de manejar NumberFormatException aquí también)
         this.cliente.setNo_exterior(Integer.parseInt(caja_num_exterior.getText().trim()));
-        
         this.cliente.setCalle(caja_calle.getText());
         this.cliente.setColonia(caja_colonia.getText());
         this.cliente.setCiudad(caja_ciudad.getText());
         this.cliente.setCp(caja_CP.getText());
         this.cliente.setEstado(String.valueOf(combo_estados.getSelectedItem()));
-
-        // **3. LLAMAR al DAO para la MODIFICACIÓN**
         ClienteDAO dao = new ClienteDAO();
-        boolean modificadoExitosamente = dao.modificarCliente(this.cliente); // Debes implementar este método
-
+        boolean modificadoExitosamente = dao.modificarCliente(this.cliente); 
         if (modificadoExitosamente) {
-            // 4. Marcar como guardado y cerrar solo si el DAO tuvo éxito
             datosGuardados = true;
-            this.dispose(); // Cierra el JDialog
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "La modificación en la base de datos falló.", "Error BD", JOptionPane.ERROR_MESSAGE);
-        }
-        
+        }        
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Error de formato en campos numéricos (Exterior o CP).", "Error", JOptionPane.ERROR_MESSAGE);
     } catch (Exception e) {

@@ -28,7 +28,7 @@ public List<Cliente> obtenerTodosLosClientes() {
             cliente.setCp(rs.getString("CP"));
             cliente.setEstado(rs.getString("ESTADO")); // Asumo que el campo se llama ESTADO
             cliente.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
-            cliente.setNoSucursal(rs.getString("NO_SUCURSAL"));
+            cliente.setNoSucursal(rs.getShort("NO_SUCURSAL"));
             // ----------------------------------------------------
             lista.add(cliente);
         }
@@ -67,7 +67,7 @@ public boolean insertarCliente(Cliente cliente) {
         
         // 4. Sucursal (Índice 10)
         // FECHA_REGISTRO se salta porque usa CURRENT DATE
-        ps.setString(10, cliente.getNoSucursal()); // NO_SUCURSAL (Último parámetro '?', índice 10)
+        ps.setShort(10, cliente.getNoSucursal()); // NO_SUCURSAL (Último parámetro '?', índice 10)
         
         // --- FIN DE LOS 10 PARÁMETROS ---
         
@@ -97,7 +97,7 @@ public boolean modificarCliente(Cliente cliente) {
         ps.setString(5, cliente.getCiudad());
         ps.setString(6, cliente.getEstado());
         ps.setString(7, cliente.getCp());
-        ps.setString(8, cliente.getNoSucursal());
+        ps.setShort(8, cliente.getNoSucursal());
         
         // 2. CORRECCIÓN: Usar String para NO_EXTERIOR (posicion 9)
         // Ya que asumes que es CHAR(5) en DB2, la conversión a String aquí es correcta.
@@ -171,7 +171,7 @@ public Cliente obtenerClientePorId(int idCliente) {
                 
                 // Mapeo de otros datos
                 cliente.setFechaRegistro(rs.getDate("FECHA_REGISTRO"));
-                cliente.setNoSucursal(rs.getString("NO_SUCURSAL"));
+              cliente.setNoSucursal(rs.getShort("NO_SUCURSAL"));
             }
             // Si rs.next() es false, el cliente queda como null, lo cual es correcto.
         }

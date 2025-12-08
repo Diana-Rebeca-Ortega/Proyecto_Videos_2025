@@ -29,8 +29,8 @@
                       <EmptySpace min="-2" pref="419" max="-2" attributes="0"/>
                       <Component id="btn_cancelarRegistroCliente" min="-2" pref="115" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btn_altasClientes" min="-2" pref="106" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
+                      <Component id="btn_altasClientes" min="-2" pref="144" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
@@ -157,9 +157,9 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JTextField" name="caja_calle">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
-      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="caja_calleActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
       <Properties>
@@ -169,6 +169,7 @@
     <Component class="javax.swing.JTextField" name="caja_CP">
       <Properties>
         <Property name="text" type="java.lang.String" value="12345"/>
+        <Property name="toolTipText" type="java.lang.String" value="Solo 5 digitos"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
@@ -219,9 +220,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="caja_colonia">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel15">
       <Properties>
@@ -267,9 +265,6 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="caja_ciudad">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField2"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
@@ -299,8 +294,11 @@
     </Component>
     <Component class="javax.swing.JTextField" name="caja_nombreSucursal">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1234567890"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="caja_nombreSucursalActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -309,7 +307,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="caja_Telefono">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1234567890"/>
+        <Property name="toolTipText" type="java.lang.String" value="Solo 10 digitos"/>
       </Properties>
     </Component>
   </SubComponents>

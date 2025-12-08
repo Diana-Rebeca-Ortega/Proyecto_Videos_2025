@@ -14,8 +14,7 @@ public class CopiaPeliculaDAO {
 public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int idSucursal) {
     List<CopiaPelicula> lista = new ArrayList<>();
     
-    // 🔑 CORREGIDO: Uso de ID_PELICULA (PK de copia), ID_CATALOGO (FK) y MAYÚSCULAS.
-    String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
+   String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
 
     try (Connection con = ConexionBD.getInstance().getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {

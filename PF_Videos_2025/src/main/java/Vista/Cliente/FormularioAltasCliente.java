@@ -1,9 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+
 package Vista.Cliente;
+import Controlador.SucursalDAO;
 import Modelo.Cliente;
+import Modelo.Sucursal;
 import Vista.Filtros.MaximoDigitosFilter;
 import Vista.Filtros.SoloLetrasFilter;
 import Vista.Filtros.SoloNumerosFilter;
@@ -14,6 +13,7 @@ import java.text.ParseException; // Para manejar el formato de fecha
 import javax.swing.text.AbstractDocument; 
 import java.util.Date; // para la fecha
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 
 /**
@@ -24,58 +24,117 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     private Cliente cliente; 
     private boolean datosGuardados = false; // Bandera para saber si se guardó
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioAltasCliente.class.getName());
-
-    /**
-     * Creates new form FormularioAltasCliente
-     */
+    private SucursalDAO sucursalDAO = new SucursalDAO();
+    private List<Sucursal> listaSucursales;
     public FormularioAltasCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-          // Centrar la ventana al iniciar
-        this.setLocationRelativeTo(null); 
-        // 1. Obtener la fecha actual del sistema
+        this.setLocationRelativeTo(null);        
+        aplicarEstilo();
+        this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
+    }
+    
+    private void cargarSucursales() {
+        try {
+            listaSucursales = sucursalDAO.obtenerTodasLasSucursales();
+            comboSucursales.removeAllItems();
+            comboSucursales.addItem("Seleccione una Sucursal");
+            for (Sucursal s : listaSucursales) {
+                String itemFormateado = String.format("%03d - %s", s.getNoSucursal(), s.getNombreSucursal());
+                comboSucursales.addItem(itemFormateado); 
+            }            
+            comboSucursales.setSelectedIndex(0);             
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar las sucursales: " + e.getMessage(), "Error DB", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "Error al cargar sucursales", e);
+        }
+    }
+private static final java.awt.Color COLOR_FONDO_CLARO = new java.awt.Color(240, 240, 240);
+private static final java.awt.Color COLOR_TITULO = new java.awt.Color(0, 0, 51); // Azul oscuro
+private static final java.awt.Color COLOR_PRIMARIO = new java.awt.Color(0, 102, 204); // Azul fuerte (para títulos/botones)
+private static final java.awt.Color COLOR_TEXTO_OSCURO = new java.awt.Color(51, 51, 51); // Gris oscuro (Texto general)
+private static final java.awt.Color COLOR_EXITO = new java.awt.Color(40, 167, 69); // Verde Bootstrap
+private static final java.awt.Color COLOR_PELIGRO = new java.awt.Color(220, 53, 69); // Rojo Bootstrap
+    
+private static final java.awt.Font FUENTE_TITULO = new java.awt.Font("Arial", java.awt.Font.BOLD, 28);
+private static final java.awt.Font FUENTE_SUBTITULO = new java.awt.Font("Arial", java.awt.Font.BOLD, 16);
+private static final java.awt.Font FUENTE_ETIQUETA = new java.awt.Font("Arial", java.awt.Font.PLAIN, 12);
+
+    
+private void aplicarEstilo() {          
+    cargarSucursales(); 
     Date fechaActual = new Date();
+    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    String fechaStr = format.format(fechaActual);
+    jLabel16.setText(fechaStr);
     SoloLetrasFilter letrasFilter = new SoloLetrasFilter();
     ((AbstractDocument) caja_nombre.getDocument()).setDocumentFilter(letrasFilter);
     ((AbstractDocument) caja_apellido1.getDocument()).setDocumentFilter(letrasFilter);
     ((AbstractDocument) caja_apellido2.getDocument()).setDocumentFilter(letrasFilter);
-    
-    // Aplicar el filtro a campos de dirección (ciudad, calle, colonia)
     ((AbstractDocument) caja_ciudad.getDocument()).setDocumentFilter(letrasFilter);
     ((AbstractDocument) caja_calle.getDocument()).setDocumentFilter(letrasFilter);
     ((AbstractDocument) caja_colonia.getDocument()).setDocumentFilter(letrasFilter);
-   
+    
     SoloNumerosFilter numerosFilter = new SoloNumerosFilter();
-    ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(numerosFilter);
-    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(numerosFilter);
-    
     MaximoDigitosFilter cpFilter = new MaximoDigitosFilter(5);
-    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(cpFilter);
-     ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(cpFilter);
     
-    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(numerosFilter);
+    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(numerosFilter);    
+    ((AbstractDocument) caja_CP.getDocument()).setDocumentFilter(cpFilter);    
+    ((AbstractDocument) caja_num_exterior.getDocument()).setDocumentFilter(cpFilter); 
+    java.awt.Font fontTituloSeccion = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14);
     
-    // 3. Formatear la fecha a String
-    String fechaStr = format.format(fechaActual);
+    jLabel4.setFont(fontTituloSeccion);
+    jLabel5.setFont(fontTituloSeccion); 
+    jLabel10.setFont(fontTituloSeccion);
     
-    // 4. Asignar la fecha al JLabel (jLabel16)
-    jLabel16.setText(fechaStr);
+    
+        jLabel17.setFont(FUENTE_TITULO);
+        jLabel17.setForeground(COLOR_PRIMARIO);
+       
+        jLabel4.setFont(FUENTE_SUBTITULO);
+        jLabel4.setForeground(COLOR_PRIMARIO);
+        jLabel5.setFont(FUENTE_SUBTITULO); 
+        jLabel5.setForeground(COLOR_PRIMARIO);
+        jLabel10.setFont(FUENTE_SUBTITULO);
+        jLabel10.setForeground(COLOR_PRIMARIO);
+      
+        java.awt.Color colorEtiqueta = COLOR_TEXTO_OSCURO;
+        java.awt.Font fontEtiqueta = FUENTE_ETIQUETA;
 
-    }
-      public Cliente getCliente() {
+        // Iterar sobre todos los JLabels (asumiendo que son las etiquetas de campos)
+        javax.swing.JLabel[] labels = {jLabel1, jLabel2, jLabel3, jLabel6, jLabel7, jLabel8, jLabel9, jLabel11, jLabel12, jLabel13, jLabel14, jLabel15};
+        for (javax.swing.JLabel label : labels) {
+            label.setFont(fontEtiqueta);
+            label.setForeground(colorEtiqueta);
+        }
+        // Estilo de la fecha de registro
+        jLabel16.setFont(FUENTE_ETIQUETA);
+        jLabel16.setForeground(COLOR_TEXTO_OSCURO);
+
+        // Estilo de los campos de texto
+        javax.swing.JTextField[] textFields = {caja_nombre, caja_apellido1, caja_apellido2, caja_calle, caja_ciudad, caja_colonia, caja_CP, caja_num_exterior};
+        for (javax.swing.JTextField field : textFields) {           
+            field.setForeground(COLOR_TEXTO_OSCURO);
+            field.setBackground(java.awt.Color.WHITE); // Fondo blanco para campos de texto
+        }        
+        txt_No_sucursal.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+        txt_No_sucursal.setForeground(COLOR_PRIMARIO);
+      
+        btn_altasClientes.setBackground(COLOR_EXITO);
+        btn_altasClientes.setForeground(java.awt.Color.WHITE);
+        btn_altasClientes.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+        
+        btn_cancelarRegistroCliente.setBackground(COLOR_PELIGRO);
+        btn_cancelarRegistroCliente.setForeground(java.awt.Color.WHITE);
+        btn_cancelarRegistroCliente.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
+}
+    public Cliente getCliente() {
         return cliente;
     }
-
     public boolean isDatosGuardados() {
         return datosGuardados;
     }
-
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -117,18 +176,13 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         jLabel2.setText("Apellido 1");
 
-        caja_nombre.setText("jTextField1");
         caja_nombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 caja_nombreActionPerformed(evt);
             }
         });
 
-        caja_apellido1.setText("jTextField1");
-
         jLabel3.setText("Apellido2");
-
-        caja_apellido2.setText("jTextField1");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("Datos Personales");
@@ -139,8 +193,6 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         jLabel6.setText("Calle");
 
         jLabel7.setText("Ciudad");
-
-        caja_calle.setText("jTextField1");
 
         jLabel8.setText("CP");
 
@@ -178,8 +230,6 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
 
         jLabel14.setText("Colonia/Fraccionamiento");
 
-        caja_colonia.setText("jTextField1");
-
         jLabel15.setText("Fecha de Registro");
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -204,7 +254,11 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
             }
         });
 
-        caja_ciudad.setText("jTextField2");
+        caja_ciudad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                caja_ciudadActionPerformed(evt);
+            }
+        });
 
         caja_num_exterior.setText("12");
         caja_num_exterior.addActionListener(new java.awt.event.ActionListener() {
@@ -218,7 +272,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(161, 161, 161)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -361,30 +415,21 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_combo_estadosActionPerformed
 
     private void btn_altasClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_altasClientesActionPerformed
-   // 1. Validar campos obligatorios al inicio
     String nombreStr = caja_nombre.getText().trim();
     String apellido1Str = caja_apellido1.getText().trim();
     String numExteriorStr = caja_num_exterior.getText().trim();
-    String cpStr = caja_CP.getText().trim();
-    
+    String cpStr = caja_CP.getText().trim();    
     if (nombreStr.isEmpty() || apellido1Str.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El Nombre y Apellido1 son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
-    }
-    
+    }    
     if (numExteriorStr.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El Número Exterior es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
-    }
-    
-    // **NOTA IMPORTANTE:** El CP es VARCHAR(5) en la DB2, por lo que NO DEBERÍA fallar en Integer.parseInt().
-    // Sin embargo, si quieres validar que sea un número (aunque sea string), la validación de isEmpty está bien.
-    if (cpStr.isEmpty()) {
+    } if (cpStr.isEmpty()) {
         JOptionPane.showMessageDialog(this, "El Código Postal (CP) es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
-    
-    // Validar JComboBox
     if (comboSucursales.getSelectedItem() == null || comboSucursales.getSelectedItem().toString().equals("Seleccione una Opcion")) {
         JOptionPane.showMessageDialog(this, "Debe seleccionar una 'Nombre Sucursal'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
@@ -394,24 +439,13 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, "Debe seleccionar un 'Estado'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
-
-    try {
-        // 2. Crear el objeto Cliente y asignar los valores
-        cliente = new Cliente();
-        
-        // CONVERSIÓN CRÍTICA: NO_EXTERIOR
-        // Si numExteriorStr es "" (vacío), la validación inicial lo atrapa. 
-        // Si numExteriorStr contiene solo números, se convierte.
+    try {       
+        cliente = new Cliente();        
         int noExterior = Integer.parseInt(numExteriorStr);
         cliente.setNo_exterior(noExterior);
-
-        // Si necesitas validar que CP sea un número a pesar de ser VARCHAR en DB2:
-        // Integer.parseInt(cpStr); // Si esto falla, el catch de NumberFormatException lo atrapará.
-        
-        // Asignar todos los demás campos
         cliente.setNombre(nombreStr);
         cliente.setApellido1(apellido1Str);
-        cliente.setApellido2(caja_apellido2.getText().trim()); // Aplicar trim a los campos no obligatorios
+        cliente.setApellido2(caja_apellido2.getText().trim()); 
         
         cliente.setCalle(caja_calle.getText().trim());
         cliente.setColonia(caja_colonia.getText().trim());
@@ -420,7 +454,7 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
         
         // Asignar JComboBox
         cliente.setEstado(combo_estados.getSelectedItem().toString());
-        cliente.setNoSucursal(txt_No_sucursal.getText());
+        cliente.setNoSucursal(Short.parseShort( txt_No_sucursal.getText()));
         
         // 4. Marcar como guardado y cerrar
         datosGuardados = true;
@@ -441,49 +475,29 @@ public class FormularioAltasCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_cancelarRegistroClienteActionPerformed
 
     private void comboSucursalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSucursalesActionPerformed
-        // TODO add your handling code here:
+    int selectedIndex = comboSucursales.getSelectedIndex();
+    if (selectedIndex > 0 && listaSucursales != null) {
+        int listaIndex = selectedIndex - 1;        
+        if (listaIndex < listaSucursales.size()) {
+            Sucursal sucursalElegida = listaSucursales.get(listaIndex);
+            short idSucursal = sucursalElegida.getNoSucursal();
+            txt_No_sucursal.setText(String.valueOf(idSucursal));
+        } else {
+            txt_No_sucursal.setText("0"); 
+        }
+    } else if (selectedIndex == 0) {      
+        txt_No_sucursal.setText("0");
+    }
     }//GEN-LAST:event_comboSucursalesActionPerformed
 
     private void caja_num_exteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caja_num_exteriorActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_caja_num_exteriorActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void caja_ciudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caja_ciudadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_caja_ciudadActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                FormularioAltasCliente dialog = new FormularioAltasCliente(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_altasClientes;
