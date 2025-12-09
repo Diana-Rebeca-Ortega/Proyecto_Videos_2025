@@ -149,4 +149,34 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     }
     return exito;
 }
+public int calcularDiasRenta(java.util.Date fechaRentaUtil, java.util.Date fechaDevolucionUtil) {
+    // Apunta a la nueva función que creaste
+    String sql = "SELECT DIANA931.CALCULARDIASRENTA_FECHAS(?, ?) FROM SYSIBM.SYSDUMMY1";
+    int dias = 0;
+
+    // Convertir java.util.Date a java.sql.Date para el PreparedStatement
+    java.sql.Date sqlFechaRenta = new java.sql.Date(fechaRentaUtil.getTime());
+    java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());
+
+    try (Connection con = ConexionBD.getInstance().getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setDate(1, sqlFechaRenta);       // Primer parámetro de la función (Fecha de Alquiler)
+        ps.setDate(2, sqlFechaDevolucion);  // Segundo parámetro de la función (Fecha de Devolución)
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                dias = rs.getInt(1); // Obtiene el valor INT devuelto por la función
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al ejecutar la función CALCULARDIASRENTA_FECHAS: " + e.getMessage());
+        e.printStackTrace();
+        return 1; // Devuelve 1 día en caso de error para evitar fallos catastróficos.
+    }
+    
+    // Esto asegura que, si por alguna razón la función devuelve 0 o menos, Java lo corrija a 1.
+    return Math.max(1, dias); 
+}
+
 }

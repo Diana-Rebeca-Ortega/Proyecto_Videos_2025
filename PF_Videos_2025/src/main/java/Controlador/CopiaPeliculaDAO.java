@@ -63,7 +63,7 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
     return idCopia;
 }
 public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
-    // 🔑 CRÍTICO: Este UPDATE es el que dispara el Trigger que ajusta el STOCK.
+    // Este UPDATE es el que dispara el Trigger que ajusta el STOCK.
     String sql = "UPDATE " + ESQUEMA + ".COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
 
     try (Connection con = ConexionBD.getInstance().getConnection();
@@ -80,5 +80,33 @@ public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
         e.printStackTrace();
         return false;
     }
+}
+public CopiaPelicula obtenerCopiaPorId(int idCopia) {
+    CopiaPelicula copia = null;
+    
+    // Asumimos que ID_PELICULA es la clave primaria de la copia.
+    String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_PELICULA = ?";
+
+    try (Connection con = ConexionBD.getInstance().getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idCopia);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                copia = new CopiaPelicula();
+                
+                // Mapeo de la copia encontrada
+                copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
+                copia.setIdPelicula(rs.getInt("ID_CATALOGO")); // Usando ID_CATALOGO como referencia a la Película
+                copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
+                copia.setEstado(rs.getString("ESTADO"));
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al obtener copia por ID: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return copia;
 }
 }

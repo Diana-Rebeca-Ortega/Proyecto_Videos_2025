@@ -1,20 +1,25 @@
 package Vista.Alquileres;
+import Controlador.AlquilerDAO;
 import Controlador.ClienteDAO;
 import Controlador.CopiaPeliculaDAO;
 import Controlador.PeliculaDAO;
 import Modelo.Alquiler;
 import Modelo.Cliente;
+import Modelo.CopiaPelicula;
 import Modelo.Pelicula;
 import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 private Alquiler alquiler;
+private int idCopiaSeleccionada = -1; 
+private double alquilerDiarioCargado = 0.0;
 private boolean datosGuardados;
       public FormularioRealizarRenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         dateDevolucion.setEnabled(false);
         mostrarFechaActual();
+         btnRentar.setEnabled(false);
         this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
         dateDevolucion.setMinSelectableDate(new java.util.Date());
     }
@@ -43,11 +48,12 @@ public Alquiler getAlquiler() {
         txt_AlquilerDiario = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txt_IDpelicula = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txt_CopiasDisponibles = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -80,7 +86,7 @@ public Alquiler getAlquiler() {
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
-        jLabel1.setText("ID de Pelicula");
+        jLabel1.setText("Escanee el Codigo de la Copia de Pelicula o Escriba su ID ");
 
         cajaBuscadorPelicula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,10 +120,6 @@ public Alquiler getAlquiler() {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("Datos de Pelicula");
 
-        jLabel23.setBackground(new java.awt.Color(0, 0, 204));
-        jLabel23.setForeground(new java.awt.Color(0, 0, 255));
-        jLabel23.setText("Realizar busqueda por titulo");
-
         jLabel5.setText("ID_Pelicula");
 
         txt_IDpelicula.setText("...");
@@ -125,6 +127,12 @@ public Alquiler getAlquiler() {
         jLabel2.setText("Copias Disponibles");
 
         txt_CopiasDisponibles.setText("...");
+
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/codigo-qr.png"))); // NOI18N
+        jButton3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/escaneo-de-codigo-de-barras.png"))); // NOI18N
+        jButton4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -136,13 +144,6 @@ public Alquiler getAlquiler() {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(cajaBuscadorPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_buscarPelicula)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel23))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txt_Director, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -162,7 +163,18 @@ public Alquiler getAlquiler() {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
-                                    .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(cajaBuscadorPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_buscarPelicula))
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton4)))
                         .addContainerGap(13, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
@@ -173,16 +185,20 @@ public Alquiler getAlquiler() {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel23)
+                .addComponent(jLabel4)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cajaBuscadorPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_buscarPelicula))))
+                            .addComponent(btn_buscarPelicula)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton4)
+                            .addComponent(jButton3))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -325,6 +341,7 @@ public Alquiler getAlquiler() {
 
         jLabel28.setText("Fecha de Devolución/Vencimiento");
 
+        dateDevolucion.setToolTipText("Para habilitar el calendario debe seleccionar Pelicula y Cliente");
         dateDevolucion.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dateDevolucionPropertyChange(evt);
@@ -451,39 +468,23 @@ public Alquiler getAlquiler() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cajaBuscadorPeliculaActionPerformed
-
     private void cajaBuscadorClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorClienteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
         java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
-        if (fechaDevolucionUtil == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una Fecha de Devolución.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        
         Alquiler nuevoAlquiler = new Alquiler();
         CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
 
-        int idPelicula = -1;
         int idCopiaRentada = -1; 
         java.sql.Date fechaRentaSQL = null;
         double costoDiario = 0; 
         java.util.Date fechaRentaUtil = null;
-        try {
-            // 3. Obtener y Validar IDs (Pelicula y Cliente)
-            idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText());  
-            int idSucursal = 0; 
-            // BÚSQUEDA DE COPIA DISPONIBLE
-            idCopiaRentada = copiaDao.obtenerIdCopiaDisponible(idPelicula, idSucursal);
-            if (idCopiaRentada == -1) {
-                javax.swing.JOptionPane.showMessageDialog(this, "No hay copias disponibles para esta película en esta sucursal.", "Error de Stock", javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            nuevoAlquiler.setIdPelicula(idPelicula);          
+    
+            idCopiaRentada = Integer.parseInt(cajaBuscadorPelicula.getText());              
+            nuevoAlquiler.setIdPelicula(idCopiaRentada);          
             int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
             nuevoAlquiler.setIdCliente(idCliente);    
 
@@ -494,38 +495,28 @@ public Alquiler getAlquiler() {
             // 4. Obtener y Convertir Fecha de Renta (del JLabel)
             java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
             String fechaRentaStr = txt_fechaRenta.getText();
-            fechaRentaUtil = dateFormat.parse(fechaRentaStr); // Usamos la variable declarada arriba  
+    try {
+        fechaRentaUtil = dateFormat.parse(fechaRentaStr); // Usamos la variable declarada arriba  
+    } catch (ParseException ex) {
+        System.getLogger(FormularioRealizarRenta.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+    }
             // Conversión final a java.sql.Date
             fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());    
-
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error: El ID de Película, Cliente o Costo no es un número válido. Verifique la búsqueda.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;  
-        } catch (java.text.ParseException ex) {
-            System.err.println("Error al parsear la fecha de renta: " + ex.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Error de Sistema: La fecha de renta no tiene el formato correcto.", "Error Interno", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
         // 5. Convertir la Fecha de Devolución a java.sql.Date
         java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
         
         // --- InICIO DEL CÁLCULO DE LA TARIFA FINAL ---
-        
         // Calcular la diferencia en milisegundos
-        long diffMilli = fechaDevolucionUtil.getTime() - fechaRentaUtil.getTime();
-        
+        long diffMilli = fechaDevolucionUtil.getTime() - fechaRentaUtil.getTime();        
         // Convertir milisegundos a días
         long diffDays = diffMilli / (24 * 60 * 60 * 1000); 
-
         // Asegurarse de que sea al menos 1 día
         if (diffDays == 0) {
             diffDays = 1;
-        }
-        
+        }        
         // Calcular la tarifa total
-        double tarifaTotal = costoDiario * (double) diffDays;
-        
+        double tarifaTotal = costoDiario * (double) diffDays;        
         // 6. Asignar Fechas, Estado y COPIA al objeto Alquiler
         nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
         nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
@@ -539,57 +530,15 @@ public Alquiler getAlquiler() {
         this.alquiler = nuevoAlquiler;
         this.datosGuardados = true;
         this.dispose();
-    
     }//GEN-LAST:event_btnRentarActionPerformed
 
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed
         this.dispose();
     }//GEN-LAST:event_btn_cancelarRegistroClienteActionPerformed
 
-    private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-    String idTexto = cajaBuscadorPelicula.getText().trim();
-        if (idTexto.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la película.", "Error de Búsqueda", javax.swing.JOptionPane.WARNING_MESSAGE);
-        limpiarDatosPelicula(); // Método para limpiar los JLabel si está vacío
-        return; }
-        try {
-              int idPelicula = Integer.parseInt(idTexto);
-                PeliculaDAO peliculaDAO = new PeliculaDAO(); 
-                Pelicula peliculaEncontrada = peliculaDAO.obtenerPeliculaPorId(idPelicula);
-                // 4. Verificar el resultado de la búsqueda
-        if (peliculaEncontrada != null) {
-            int copiasDisponibles = peliculaDAO.contarCopiasDisponibles(idPelicula);
-            if (copiasDisponibles > 0) {
-                txt_CopiasDisponibles.setText(String.valueOf(copiasDisponibles));
-                // Opcional: Habilitar el botón RENTAR
-                btnRentar.setEnabled(true); 
-            } else {
-                txt_CopiasDisponibles.setText("0");
-                // Opcional: Deshabilitar el botón RENTAR si no hay copias
-                btnRentar.setEnabled(false);
-                javax.swing.JOptionPane.showMessageDialog(this, "Esta película no tiene copias disponibles para la renta.", "Sin Stock", javax.swing.JOptionPane.WARNING_MESSAGE);
-            }
-            // A. PELÍCULA ENCONTRADA: Cargar los datos en los JLabel
-            cargarDatosPelicula(peliculaEncontrada);
-            javax.swing.JOptionPane.showMessageDialog(this, "Película cargada exitosamente.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            // B. PELÍCULA NO ENCONTRADA: Mostrar error y limpiar
-            javax.swing.JOptionPane.showMessageDialog(this, "No se encontró ninguna película con el ID: " + idPelicula, "Película No Encontrada", javax.swing.JOptionPane.ERROR_MESSAGE);
-            limpiarDatosPelicula();
-        }
-        } catch (NumberFormatException e) {
-        // Manejar error si el usuario no ingresó un número
-        javax.swing.JOptionPane.showMessageDialog(this, "El ID de Película debe ser un número válido.", "Error de Formato", javax.swing.JOptionPane.ERROR_MESSAGE);
-        limpiarDatosPelicula();
-    } catch (Exception e) {
-        // Manejar cualquier otro error (ej. error de conexión a DB)
-        javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar en la base de datos: " + e.getMessage(), "Error de Sistema", javax.swing.JOptionPane.ERROR_MESSAGE);
-        limpiarDatosPelicula();
-    }
-    }//GEN-LAST:event_btn_buscarPeliculaActionPerformed
-
     private void btn_buscadorClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscadorClienteActionPerformed
-     String idTexto = cajaBuscadorCliente.getText().trim();
+     verificarEstadoBotonRentar();
+        String idTexto = cajaBuscadorCliente.getText().trim();
     
     if (idTexto.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar el ID del cliente.", "Error de Búsqueda", javax.swing.JOptionPane.WARNING_MESSAGE);
@@ -622,16 +571,90 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_btn_buscadorClienteActionPerformed
 
     private void dateDevolucionPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateDevolucionPropertyChange
-     if ("date".equals(evt.getPropertyName())) {
+            if ("date".equals(evt.getPropertyName())) {
+            verificarEstadoBotonRentar();
         calcularCostoFinal();
     }
     }//GEN-LAST:event_dateDevolucionPropertyChange
+
+    private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
+    verificarEstadoBotonRentar();
+        String idTexto = cajaBuscadorPelicula.getText().trim();
+         // 1. Validar que el campo no esté vacío
+        if (idTexto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la copia de la película.", "Error de Búsqueda", javax.swing.JOptionPane.WARNING_MESSAGE);
+            limpiarDatosPelicula();
+            return;
+        }
+        try {
+            int idCopia = Integer.parseInt(idTexto);
+            CopiaPeliculaDAO copiaDAO = new CopiaPeliculaDAO();
+            CopiaPelicula copiaEncontrada = copiaDAO.obtenerCopiaPorId(idCopia); // <-- Nuevo método a crear
+            
+            if (copiaEncontrada != null) {
+                
+                // 2. Validar el estado de la copia
+                if ("DISPONIBLE".equals(copiaEncontrada.getEstado().toUpperCase())) {
+                    
+                    // 3. Obtener los metadatos de la Película (Título, Tarifa, Director, etc.)
+                    PeliculaDAO peliculaDAO = new PeliculaDAO();
+                    Pelicula peliculaEncontrada = peliculaDAO.obtenerPeliculaPorId(copiaEncontrada.getIdPelicula());
+                    
+                    if (peliculaEncontrada != null) {
+                        // A. COPIA VÁLIDA: Cargar datos de la Película
+                        cargarDatosPelicula(peliculaEncontrada);
+                        
+                        // Cargar el ID de la Copia para usarlo en el botón RENTAR
+                        // (Asegúrate de tener una variable global para almacenar este ID)
+                        this.idCopiaSeleccionada = idCopia; 
+                        
+                        // Muestra disponibilidad, que ahora siempre será "1" para la copia seleccionada
+                        txt_CopiasDisponibles.setText("1");                        
+                        javax.swing.JOptionPane.showMessageDialog(this, "Copia ID " + idCopia + " cargada. Lista para rentar.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        
+                        // Opcional: Calcular y mostrar la tarifa inicial
+                        calcularCostoFinal();
+                    } else {
+                        // Esto sería un error grave (copia existe, pero la película no)
+                        javax.swing.JOptionPane.showMessageDialog(this, "Error: La copia existe, pero la película asociada no fue encontrada.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        limpiarDatosPelicula();
+                    }                    
+                } else {
+                    // B. COPIA NO DISPONIBLE
+                    javax.swing.JOptionPane.showMessageDialog(this, "La copia ID " + idCopia + " no está disponible. Estado: " + copiaEncontrada.getEstado(), "Copia No Disponible", javax.swing.JOptionPane.WARNING_MESSAGE);
+                    limpiarDatosPelicula();
+                    btnRentar.setEnabled(false);
+                }
+                
+            } else {
+                // C. COPIA NO ENCONTRADA
+                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró ninguna copia con el ID: " + idCopia, "Copia No Encontrada", javax.swing.JOptionPane.ERROR_MESSAGE);
+                limpiarDatosPelicula();
+                btnRentar.setEnabled(false);
+            }
+            
+        } catch (NumberFormatException e) {
+            // Manejar error si el usuario no ingresó un número
+            javax.swing.JOptionPane.showMessageDialog(this, "El ID de Copia debe ser un número válido.", "Error de Formato", javax.swing.JOptionPane.ERROR_MESSAGE);
+            limpiarDatosPelicula();
+        } catch (Exception e) {
+            // Manejar cualquier otro error (ej. error de conexión a DB)
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar en la base de datos: " + e.getMessage(), "Error de Sistema", javax.swing.JOptionPane.ERROR_MESSAGE);
+            limpiarDatosPelicula();
+        }
+    }//GEN-LAST:event_btn_buscarPeliculaActionPerformed
+
+    private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cajaBuscadorPeliculaActionPerformed
 //METODOS EXTRAS 
     private void limpiarDatosPelicula() {
     txt_TituloPelicula.setText("...");
     txt_Director.setText("...");
     txt_Categoria.setText("...");
     txt_AlquilerDiario.setText("...");
+    txt_IDpelicula.setText("...");
+    txt_CopiasDisponibles.setText("...");
     verificarHabilitacionFecha();
     }
     private void cargarDatosPelicula(Pelicula p) {
@@ -677,66 +700,51 @@ public Alquiler getAlquiler() {
     java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
     String fechaHoy = dateFormat.format(new java.util.Date());
     txt_fechaRenta.setText(fechaHoy);
-    jLabel16.setText(fechaHoy);
-    
+    jLabel16.setText(fechaHoy);    
 }
-    private void calcularCostoFinal() {
-    // 1. Obtener Costo Diario (debe ser un valor numérico sin el '$')
-    String costoDiarioTexto = txt_AlquilerDiario.getText().trim();
-    double costoDiario = 0.0;
-    
-    // Si la película no está cargada, sale y mantiene el costo en $0.00
+    private void calcularCostoFinal() {   
+    String costoDiarioTexto = txt_AlquilerDiario.getText().trim(); // 1. Obtener Costo Diario (debe ser un valor numérico sin el '$')
+    double costoDiario = 0.0;    
     if (costoDiarioTexto.equals("...")) {
         jLabel30.setText("$0.00");
         return;
-    }
-    
-    try {
-        // Se asegura de que el ID sea numérico (aunque no se usa para el cálculo del precio)
-        int idPelicula = Integer.parseInt(cajaBuscadorPelicula.getText()); 
-        // Intenta obtener el costo diario de la película
+    }    
+    try {              
         costoDiario = Double.parseDouble(costoDiarioTexto);
     } catch (NumberFormatException e) {
         System.err.println("Error al convertir costo diario a número: " + e.getMessage());
         jLabel30.setText("ERROR");
         return;
     }
-
-    // 2. Obtener Fechas
-    // La fecha de renta se considera la fecha actual del sistema.
+    // 2. Obtener Fechas   
     java.util.Date fechaRenta = new java.util.Date(); 
-    java.util.Date fechaDevolucion = dateDevolucion.getDate(); 
+    java.util.Date fechaDevolucion = dateDevolucion.getDate();     
     
-    // Validación de fecha de devolución y comparación
-    if (fechaDevolucion == null || fechaDevolucion.before(fechaRenta)) {
-        // Si no hay fecha de devolución seleccionada o es anterior a la renta:
+    if (fechaDevolucion == null || fechaDevolucion.before(fechaRenta)) {  // Si no hay fecha de devolución seleccionada o es anterior a la renta:
         jLabel30.setText("$0.00");
         return;
-    }
+    }    
+    // 3. Calcular la diferencia en días AQUI UTILIZAMOS LA FUNCION   CALCULARDIASRENTA_FECHAS  
+    AlquilerDAO alquilerDAO = new AlquilerDAO();
+    int diferenciaDias = alquilerDAO.calcularDiasRenta(fechaRenta, fechaDevolucion);
+    double costoTotal = costoDiario * (double) diferenciaDias;
     
-    // 3. Calcular la diferencia en días
-    
-    // Calcula la diferencia en milisegundos
-    long diffMillis = fechaDevolucion.getTime() - fechaRenta.getTime();
-    
-    // 1 día en milisegundos: 24 horas * 60 minutos * 60 segundos * 1000 milisegundos
-    final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
-    
-    // Calcula el número de días, redondeando hacia arriba para incluir el día completo si es necesario
-    long diferenciaDias = (long) Math.ceil((double) diffMillis / MILLIS_PER_DAY);
-    
-    // Asegura que el número mínimo de días sea 1 si la fecha de devolución es hoy
-    if (diferenciaDias == 0) {
-        diferenciaDias = 1;
-    }
-    
-    // 4. Calcular Costo Total
-    double costoTotal = costoDiario * diferenciaDias;
-    
-    // 5. Mostrar resultado en el JLabel (jLabel30)
     jLabel30.setText("$" + String.format("%.2f", costoTotal));
 }
  
+    private void verificarEstadoBotonRentar() {
+    // Condición 1: Copia de Película validada y lista para rentarse.    
+    boolean copiaOK = (this.idCopiaSeleccionada != -1); 
+    // Condición 2: ID de Cliente ingresado (asumimos que ya se buscó y se cargó)
+    boolean clienteOK = !cajaBuscadorCliente.getText().trim().isEmpty(); 
+    // Condición 3: Fecha de Devolución seleccionada
+    boolean fechaOK = (dateDevolucion.getDate() != null);     
+    if (copiaOK && clienteOK && fechaOK) {
+        btnRentar.setEnabled(true);
+    } else {
+        btnRentar.setEnabled(false);
+    }
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRentar;
     private javax.swing.JButton btn_buscadorCliente;
@@ -745,6 +753,8 @@ public Alquiler getAlquiler() {
     private javax.swing.JTextField cajaBuscadorCliente;
     private javax.swing.JTextField cajaBuscadorPelicula;
     private com.toedter.calendar.JDateChooser dateDevolucion;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -757,7 +767,6 @@ public Alquiler getAlquiler() {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel28;

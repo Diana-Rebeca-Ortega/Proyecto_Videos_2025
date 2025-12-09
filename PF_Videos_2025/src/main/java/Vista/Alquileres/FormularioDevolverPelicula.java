@@ -8,21 +8,17 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Diana
- */
 public class FormularioDevolverPelicula extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioDevolverPelicula.class.getName());
     private AlquilerDAO alquilerDAO;
     private VistaAlquilerDevolucionDAO alquilerDevolucionDAO;
-  private javax.swing.JPopupMenu popupMenuDevolucion;
-private javax.swing.JMenuItem miDevolver;
+    private javax.swing.JPopupMenu popupMenuDevolucion;
+    private javax.swing.JMenuItem miDevolver;
     public FormularioDevolverPelicula(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.alquilerDAO = new AlquilerDAO();
-         this.alquilerDevolucionDAO = new VistaAlquilerDevolucionDAO();
+        this.alquilerDevolucionDAO = new VistaAlquilerDevolucionDAO();
         initComponents();
         configurarPopupMenu();
         cargarDatosTabla();
