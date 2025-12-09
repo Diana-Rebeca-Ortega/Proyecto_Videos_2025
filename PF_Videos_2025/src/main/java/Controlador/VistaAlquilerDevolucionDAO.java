@@ -35,22 +35,21 @@ public class VistaAlquilerDevolucionDAO {
      String sql = "SELECT * FROM V_ALQUILERES_CON_ESTADO WHERE " +
 "ESTADO_ENTREGA_UI = 'RENTADO' AND " + 
 "(TITULO_PELICULA LIKE ? OR NOMBRE_CLIENTE LIKE ? OR ID_ALQUILER = ?)";
-        try (Connection con = ConexionBD.getInstance().getConnection(); // <-- CONEXIÓN EN EL DAO
+        try (Connection con = ConexionBD.getInstance().getConnection(); 
              PreparedStatement ps = con.prepareStatement(sql)) {
            
         }
         return listaAlquileres;
     }
 
-    // Método de Transacción de Devolución (también modificado)
-   
-    // Método para mapear una fila del ResultSet a un objeto VistaAlquilerDevolucion
     private VistaAlquilerDevolucion mapearResultado(ResultSet rs) throws SQLException {
         VistaAlquilerDevolucion av = new VistaAlquilerDevolucion();
         av.setIdAlquiler(rs.getInt("ID_ALQUILER"));
         av.setNoCliente(rs.getInt("NO_CLIENTE"));
         av.setNombreCliente(rs.getString("NOMBRE_CLIENTE"));
         av.setTituloPelicula(rs.getString("TITULO_PELICULA"));
+        av.setIdPelicula(rs.getInt("ID_PELICULA"));
+        av.setEstadoActual(rs.getString("ESTADO_ACTUAL"));
         av.setIdCopiaPelicula(rs.getInt("ID_COPIA_PELICULA"));
         av.setFechaAlquiler(rs.getDate("FECHA_ALQUILER"));
        av.setFechaDevolucion(rs.getDate("FECHA_VENCIMIENTO"));

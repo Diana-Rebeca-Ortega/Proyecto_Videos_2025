@@ -27,33 +27,34 @@ private void cargarDatosTabla() {
         if (alquilerDAO == null) { return; }
         try {
             List<VistaAlquilerDevolucion> lista = alquilerDevolucionDAO.obtenerAlquileresPendientes();
-            String[] columnas = {
-            "ID_Alquiler", 
-            "No_Cliente",      
+          String[] columnas = {
+            "ID_Alquiler",        
+            "No_Cliente",        
             "Cliente",         
             "Título Película", 
-            "ID_Película",      
-            "Fecha Alquiler",  
+            "ID_Película",       
+            "Fecha Alquiler",   
             "Fecha Vencimiento", 
-            "Estado Actual", 
-            "ID_Copia Película",
-            "Estado de Entrega UI" 
+            "Estado Actual",     
+            "ID_Copia Película", 
+            "Estado de Entrega UI"
         };
             DefaultTableModel modelo = new DefaultTableModel(columnas, 0); 
-            for (VistaAlquilerDevolucion item : lista) {
-                Object[] fila = new Object[10]; 
-                fila[0] = item.getIdAlquiler();
-                fila[1] = item.getNombreCliente(); 
-                fila[2] = item.getTituloPelicula(); 
-                fila[3] = item.getIdPelicula();
-                fila[4] = item.getFechaAlquiler();
-               fila[5] = item.getFechaDevolucion();
-                fila[6] = item.getEstadoEntregaUI();  
-                fila[7] = item.getEstadoActual();     
-            fila[8] = item.getIdCopiaPelicula();    
-            fila[9] = item.getNoCliente();
-                modelo.addRow(fila);
-            } jTable1.setModel(modelo);            
+           for (VistaAlquilerDevolucion item : lista) {
+            Object[] fila = new Object[10];             
+            fila[0] = item.getIdAlquiler();
+            fila[1] = item.getNoCliente();
+            fila[2] = item.getNombreCliente();
+            fila[3] = item.getTituloPelicula();  
+            fila[4] = item.getIdPelicula();   
+            fila[5] = item.getFechaAlquiler();    
+            fila[6] = item.getFechaDevolucion(); 
+            fila[7] = item.getEstadoActual();  
+            fila[8] = item.getIdCopiaPelicula(); 
+            fila[9] = item.getEstadoEntregaUI();  
+            
+            modelo.addRow(fila);
+        }jTable1.setModel(modelo);            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar los alquileres: " + e.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
             logger.log(java.util.logging.Level.SEVERE, "Error al cargar la tabla de alquileres", e);

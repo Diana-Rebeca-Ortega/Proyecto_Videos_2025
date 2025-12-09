@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class PeliculaDAO {
-
     // --- C: CREATE (INSERCIÓN) ---
    public boolean insertarPelicula(Pelicula pelicula, int stockInicial, int idSucursal) {
    String sql = "INSERT INTO DIANA931.PELICULA (TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total, ID_SUCURSAL) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -27,8 +26,7 @@ public class PeliculaDAO {
         ps.setInt(7, pelicula.getIdSucursal());
         int filasAfectadas = ps.executeUpdate();
 
-        if (filasAfectadas > 0) {
-            
+        if (filasAfectadas > 0) {            
             // 1. OBTENER el ID de la película recién insertada
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -36,13 +34,10 @@ public class PeliculaDAO {
                     pelicula.setIdPelicula(nuevoIdPelicula); // Guardar el ID en el objeto
                 }
             }
-
             // 2. LLAMAR al método que genera el stock
-            if (nuevoIdPelicula != -1) {
-                
+            if (nuevoIdPelicula != -1) {                
                 // NOTA: Asume que el método 'generarStock' existe en este mismo DAO.
-                boolean stockGenerado = generarStock(nuevoIdPelicula, stockInicial, pelicula.getIdSucursal()); 
-                
+                boolean stockGenerado = generarStock(nuevoIdPelicula, stockInicial, pelicula.getIdSucursal());                
                 if (stockGenerado) {
                     System.out.println("Película y stock inicial generados con éxito.");
                     return true;
@@ -76,17 +71,14 @@ public class PeliculaDAO {
         if (filtrar) {
             // Añade la cláusula WHERE si hay que filtrar
             sb.append(" WHERE CATEGORIA = ?");
-        }
-        
+        }        
         try (Connection con = ConexionBD.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sb.toString())) { // Usa la consulta construida
-
+             PreparedStatement ps = con.prepareStatement(sb.toString())) {
             // 1. Asignar el parámetro SOLO si hay filtro
             int index = 1;
             if (filtrar) {
                 ps.setString(index, categoria);
             }
-
             // 2. Ejecutar la consulta
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
