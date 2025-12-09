@@ -43,7 +43,7 @@
     </Component>
     <Component class="java.awt.TextArea" name="textArea1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="La vista realiza las siguientes uniones para vincular los datos:&#xa;&#xa;ALQUILER A con PELICULA P: Se une por el campo ID_PELICULA para obtener el t&#xed;tulo de la pel&#xed;cula.&#xa;&#xa;ALQUILER A con CLIENTES C: Se une por A.NO_CLIENTE = C.NO_CLIENTE para obtener los datos del cliente."/>
+        <Property name="text" type="java.lang.String" value="&#xa;La vista realiza las siguientes UNIONES IZQUIERDAS (LEFT JOIN) para vincular los datos:&#xa;ALQUILER (A) con CLIENTES (C): Se une por A.NO_CLIENTE = C.NO_CLIENTE para obtener el nombre del cliente.&#xa;ALQUILER (A) con PELICULA (P): Se une por A.ID_PELICULA = P.ID_PELICULA para obtener el t&#xed;tulo de la pel&#xed;cula."/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

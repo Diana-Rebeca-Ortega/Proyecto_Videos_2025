@@ -19,8 +19,8 @@ public class Vista_AlquileresCompletos extends javax.swing.JDialog {
     private AlquilerDAO alquilerDao = new AlquilerDAO();
     private int idSucursalActual;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Vista_AlquileresCompletos.class.getName());
-private JPopupMenu popupMenu;
-private JMenuItem devolverMenuItem;
+    private JPopupMenu popupMenu;
+    private JMenuItem devolverMenuItem;
     public Vista_AlquileresCompletos(java.awt.Frame parent, boolean modal, int idSucursal) {
         super(parent, modal);
         initComponents();
@@ -30,13 +30,11 @@ private JMenuItem devolverMenuItem;
     }
 public void cargarTablaAlquileresVista() {
     DefaultTableModel modelo = (DefaultTableModel) tablaVistaAlquileres.getModel();
-    
-    // 🚩 CORRECCIÓN 1: Añadir ID_SUCURSAL a los encabezados para que sean 9 columnas (índice 0 a 8)
     String[] nuevasColumnas = {"ID_Alquiler", "Cliente", "Película", "Alquiler", "Devolución", "Estado", "Tarifa", "ID_SUCURSAL", "ID_COPIA"};
     modelo.setColumnIdentifiers(nuevasColumnas);
     modelo.setRowCount(0);
     
-    List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(this.idSucursalActual);
+    List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(1);
     
     for (AlquilerCompleto ac : listado) {
         Object[] fila = new Object[] {
@@ -76,12 +74,9 @@ public void cargarTablaAlquileresVista() {
             if (e.isPopupTrigger()) { 
                 int row = tablaVistaAlquileres.rowAtPoint(e.getPoint());
                 if (row >= 0 && row < tablaVistaAlquileres.getRowCount()) {
-                    tablaVistaAlquileres.setRowSelectionInterval(row, row);
-                    
-                    // Opcional: Deshabilitar el menú si el estado no es "Sin entregar" (Columna 5)
+                    tablaVistaAlquileres.setRowSelectionInterval(row, row);                    
                     String estado = (String) tablaVistaAlquileres.getValueAt(row, 5);
-                    devolverMenuItem.setEnabled(estado.equals("Sin entregar")); 
-                    
+                    devolverMenuItem.setEnabled(estado.equals("RENTADO"));                     
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -141,7 +136,7 @@ private void ejecutarDevolucion() {
         getContentPane().add(label1);
         label1.setBounds(0, 10, 1168, 32);
 
-        textArea1.setText("La vista realiza las siguientes uniones para vincular los datos:\n\nALQUILER A con PELICULA P: Se une por el campo ID_PELICULA para obtener el título de la película.\n\nALQUILER A con CLIENTES C: Se une por A.NO_CLIENTE = C.NO_CLIENTE para obtener los datos del cliente.");
+        textArea1.setText("\nLa vista realiza las siguientes UNIONES IZQUIERDAS (LEFT JOIN) para vincular los datos:\nALQUILER (A) con CLIENTES (C): Se une por A.NO_CLIENTE = C.NO_CLIENTE para obtener el nombre del cliente.\nALQUILER (A) con PELICULA (P): Se une por A.ID_PELICULA = P.ID_PELICULA para obtener el título de la película.");
         getContentPane().add(textArea1);
         textArea1.setBounds(10, 52, 639, 118);
 

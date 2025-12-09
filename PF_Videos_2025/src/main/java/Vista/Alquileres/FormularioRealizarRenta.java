@@ -11,6 +11,7 @@ import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 private Alquiler alquiler;
+AlquilerDAO alquilerDAO = new AlquilerDAO();
 private int idCopiaSeleccionada = -1; 
 private double alquilerDiarioCargado = 0.0;
 private boolean datosGuardados;
@@ -19,7 +20,7 @@ private boolean datosGuardados;
         initComponents();
         dateDevolucion.setEnabled(false);
         mostrarFechaActual();
-         btnRentar.setEnabled(false);
+        btnRentar.setEnabled(false);
         this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
         dateDevolucion.setMinSelectableDate(new java.util.Date());
     }
@@ -50,8 +51,6 @@ public Alquiler getAlquiler() {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txt_IDpelicula = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txt_CopiasDisponibles = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
@@ -124,10 +123,6 @@ public Alquiler getAlquiler() {
 
         txt_IDpelicula.setText("...");
 
-        jLabel2.setText("Copias Disponibles");
-
-        txt_CopiasDisponibles.setText("...");
-
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/codigo-qr.png"))); // NOI18N
         jButton3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -144,10 +139,7 @@ public Alquiler getAlquiler() {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txt_Director, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_CopiasDisponibles, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_Director, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txt_IDpelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -161,9 +153,7 @@ public Alquiler getAlquiler() {
                                     .addComponent(txt_TituloPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -216,13 +206,9 @@ public Alquiler getAlquiler() {
                     .addComponent(txt_TituloPelicula)
                     .addComponent(txt_AlquilerDiario))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel2))
+                .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_Director)
-                    .addComponent(txt_CopiasDisponibles))
+                .addComponent(txt_Director)
                 .addContainerGap())
         );
 
@@ -288,11 +274,11 @@ public Alquiler getAlquiler() {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_Apellido1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel20))
-                        .addGap(24, 24, 24)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel18)
-                            .addComponent(txt_Apellido2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(110, Short.MAX_VALUE))
+                            .addComponent(txt_Apellido2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel18))))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -306,21 +292,18 @@ public Alquiler getAlquiler() {
                     .addComponent(btn_buscadorCliente)
                     .addComponent(cajaBuscadorCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel22))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_NombreCliente)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_Apellido1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(jLabel18)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_Apellido2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_NombreCliente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_Apellido1)
+                    .addComponent(txt_Apellido2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -473,11 +456,9 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
-        java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
-        
+        java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();        
         Alquiler nuevoAlquiler = new Alquiler();
         CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
-
         int idCopiaRentada = -1; 
         java.sql.Date fechaRentaSQL = null;
         double costoDiario = 0; 
@@ -507,17 +488,10 @@ public Alquiler getAlquiler() {
         java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
         
         // --- InICIO DEL CÁLCULO DE LA TARIFA FINAL ---
-        // Calcular la diferencia en milisegundos
-        long diffMilli = fechaDevolucionUtil.getTime() - fechaRentaUtil.getTime();        
-        // Convertir milisegundos a días
-        long diffDays = diffMilli / (24 * 60 * 60 * 1000); 
-        // Asegurarse de que sea al menos 1 día
-        if (diffDays == 0) {
-            diffDays = 1;
-        }        
-        // Calcular la tarifa total
-        double tarifaTotal = costoDiario * (double) diffDays;        
-        // 6. Asignar Fechas, Estado y COPIA al objeto Alquiler
+        long diffDays = alquilerDAO.calcularDiasRenta(fechaRentaSQL, fechaDevolucionSQL);
+        double tarifaTotal = costoDiario * (double) diffDays;
+        jLabel30.setText(String.format("$%.2f", tarifaTotal));
+        
         nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
         nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
         nuevoAlquiler.setEstado("RENTADO");        
@@ -578,7 +552,7 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-    verificarEstadoBotonRentar();
+        verificarEstadoBotonRentar();
         String idTexto = cajaBuscadorPelicula.getText().trim();
          // 1. Validar que el campo no esté vacío
         if (idTexto.isEmpty()) {
@@ -607,9 +581,7 @@ public Alquiler getAlquiler() {
                         // Cargar el ID de la Copia para usarlo en el botón RENTAR
                         // (Asegúrate de tener una variable global para almacenar este ID)
                         this.idCopiaSeleccionada = idCopia; 
-                        
-                        // Muestra disponibilidad, que ahora siempre será "1" para la copia seleccionada
-                        txt_CopiasDisponibles.setText("1");                        
+                                                                   
                         javax.swing.JOptionPane.showMessageDialog(this, "Copia ID " + idCopia + " cargada. Lista para rentar.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                         
                         // Opcional: Calcular y mostrar la tarifa inicial
@@ -653,8 +625,7 @@ public Alquiler getAlquiler() {
     txt_Director.setText("...");
     txt_Categoria.setText("...");
     txt_AlquilerDiario.setText("...");
-    txt_IDpelicula.setText("...");
-    txt_CopiasDisponibles.setText("...");
+    txt_IDpelicula.setText("...");   
     verificarHabilitacionFecha();
     }
     private void cargarDatosPelicula(Pelicula p) {
@@ -725,7 +696,6 @@ public Alquiler getAlquiler() {
         return;
     }    
     // 3. Calcular la diferencia en días AQUI UTILIZAMOS LA FUNCION   CALCULARDIASRENTA_FECHAS  
-    AlquilerDAO alquilerDAO = new AlquilerDAO();
     int diferenciaDias = alquilerDAO.calcularDiasRenta(fechaRenta, fechaDevolucion);
     double costoTotal = costoDiario * (double) diferenciaDias;
     
@@ -763,7 +733,6 @@ public Alquiler getAlquiler() {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
@@ -784,7 +753,6 @@ public Alquiler getAlquiler() {
     private javax.swing.JLabel txt_Apellido1;
     private javax.swing.JLabel txt_Apellido2;
     private javax.swing.JLabel txt_Categoria;
-    private javax.swing.JLabel txt_CopiasDisponibles;
     private javax.swing.JLabel txt_Director;
     private javax.swing.JLabel txt_IDpelicula;
     private javax.swing.JLabel txt_NombreCliente;

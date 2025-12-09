@@ -114,11 +114,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel4" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="txt_Director" min="-2" pref="396" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_CopiasDisponibles" min="-2" pref="115" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="txt_Director" alignment="0" min="-2" pref="396" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="txt_IDpelicula" alignment="0" min="-2" pref="396" max="-2" attributes="0"/>
@@ -136,10 +132,7 @@
                                       <Component id="jLabel9" alignment="0" min="-2" pref="185" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txt_AlquilerDiario" min="-2" pref="338" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="txt_AlquilerDiario" min="-2" pref="338" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -211,15 +204,9 @@
                       <Component id="txt_AlquilerDiario" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txt_Director" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_CopiasDisponibles" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="txt_Director" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -304,16 +291,6 @@
             <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Copias Disponibles"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="txt_CopiasDisponibles">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="..."/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -382,14 +359,14 @@
                               <Component id="txt_Apellido1" alignment="0" min="-2" pref="295" max="-2" attributes="0"/>
                               <Component id="jLabel20" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                               <Component id="txt_Apellido2" min="-2" pref="295" max="-2" attributes="0"/>
+                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="110" max="32767" attributes="0"/>
+                  <EmptySpace pref="116" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -406,23 +383,19 @@
                       <Component id="cajaBuscadorCliente" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txt_NombreCliente" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txt_Apellido1" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                          <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txt_Apellido2" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="txt_NombreCliente" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel20" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="txt_Apellido1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_Apellido2" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
