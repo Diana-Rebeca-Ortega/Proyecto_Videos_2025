@@ -59,15 +59,13 @@ private void configurarAccionesMenu() {
         });
     }
     private void añadirListenerTabla() {
-        tablaPELICULA.addMouseListener(new MouseAdapter() {
-            
+        tablaPELICULA.addMouseListener(new MouseAdapter() {            
             private void manejarPopupTrigger(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     int fila = tablaPELICULA.rowAtPoint(e.getPoint());
                     if (fila >= 0 && fila < tablaPELICULA.getRowCount()) {
                         tablaPELICULA.setRowSelectionInterval(fila, fila);
-                    }
-                    
+                    }                    
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }            
@@ -133,11 +131,9 @@ private void configurarAccionesMenu() {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una película de la tabla para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return; 
         }
-        try {
-         
+        try {         
             int idPelicula = (int) tablaPELICULA.getValueAt(filaSeleccionada, 0); 
-            Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(this);
-            
+            Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(this);            
           CopiasDePelicula cdp = new CopiasDePelicula(framePadre, true, idPelicula , ID_SUCURSAL_ACTUAL);
           cdp.setVisible(true);
             if (cdp.isDatosGuardados()) { 
@@ -282,8 +278,7 @@ private void configurarRenderizadorPrecios() {
                 }
                 if (isSelected) {            
                     c.setBackground(new Color(251, 190, 79)); 
-                }
-                
+                }                
                 final int COLUMNA_ALQUILER = 4;
                 final int COLUMNA_COSTE = 5;                
                 if (column == COLUMNA_ALQUILER || column == COLUMNA_COSTE) {
@@ -291,8 +286,7 @@ private void configurarRenderizadorPrecios() {
                         Double precio = null;
                         if (value instanceof Number) {
                             precio = ((Number) value).doubleValue();
-                        } else if (value instanceof String) {
-                            
+                        } else if (value instanceof String) {                            
                             precio = Double.parseDouble((String) value);
                         }                        
                         if (precio != null) {

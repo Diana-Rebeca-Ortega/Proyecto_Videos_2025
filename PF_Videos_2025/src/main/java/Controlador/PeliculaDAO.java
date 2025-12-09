@@ -242,7 +242,7 @@ public class PeliculaDAO {
  public DefaultTableModel cargarDatosTabla(String filtroCategoria) {
     // Definir las columnas de la tabla (ajusta los nombres si es necesario)
    String columnasSelect = "ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, ALQUILER_DIARIO, COSTE_VENTA, STOCK_TOTAL";
-   String[] columnNames = {"ID_Pelicula", "Titulo", "Categoría", "Director", "Alquiler", "Coste", "Stock Total"};
+   String[] columnNames = {"ID_Pelicula", "Titulo", "Categoría", "Director", "Alquiler", "Coste", "Stock Disponible"};
   DefaultTableModel model = new DefaultTableModel(null, columnNames);
     String sql;
     boolean tieneFiltro = filtroCategoria != null 

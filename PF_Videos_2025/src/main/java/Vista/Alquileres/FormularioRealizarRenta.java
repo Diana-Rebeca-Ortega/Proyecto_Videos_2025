@@ -9,9 +9,10 @@ import Modelo.CopiaPelicula;
 import Modelo.Pelicula;
 import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
+import javax.swing.JOptionPane;
 public class FormularioRealizarRenta extends javax.swing.JDialog {
-private Alquiler alquiler;
 AlquilerDAO alquilerDAO = new AlquilerDAO();
+Alquiler nuevoAlquiler = new Alquiler();
 private int idCopiaSeleccionada = -1; 
 private double alquilerDiarioCargado = 0.0;
 private boolean datosGuardados;
@@ -29,7 +30,7 @@ private boolean datosGuardados;
         return datosGuardados;
     }
 public Alquiler getAlquiler() {
-    return alquiler;
+    return nuevoAlquiler;
 }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -456,54 +457,79 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
-        java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();        
-        Alquiler nuevoAlquiler = new Alquiler();
-        CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
-        int idCopiaRentada = -1; 
-        java.sql.Date fechaRentaSQL = null;
-        double costoDiario = 0; 
-        java.util.Date fechaRentaUtil = null;
+      java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
+    CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
     
-            idCopiaRentada = Integer.parseInt(cajaBuscadorPelicula.getText());              
-            nuevoAlquiler.setIdPelicula(idCopiaRentada);          
-            int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
-            nuevoAlquiler.setIdCliente(idCliente);    
+    // Declaraciones
+    int idCopiaRentada = -1;
+    int idPeliculaMaestra = -1; // Mantener la inicialización
+    java.sql.Date fechaRentaSQL = null;
+    double costoDiario = 0;
+    java.util.Date fechaRentaUtil = null;
 
-            String costoDiarioStr = txt_AlquilerDiario.getText().trim();
-            costoDiario = Double.parseDouble(costoDiarioStr); 
-            nuevoAlquiler.setCostoDiario(costoDiario); // Esto es el costo por día
-
-            // 4. Obtener y Convertir Fecha de Renta (del JLabel)
-            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
-            String fechaRentaStr = txt_fechaRenta.getText();
+    // --- 1. OBTENER ID DE LA COPIA ---
     try {
-        fechaRentaUtil = dateFormat.parse(fechaRentaStr); // Usamos la variable declarada arriba  
-    } catch (ParseException ex) {
-        System.getLogger(FormularioRealizarRenta.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        // Primero obtenemos el ID de la copia del campo de texto (¡Paso clave!)
+        idCopiaRentada = Integer.parseInt(cajaBuscadorPelicula.getText());
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un ID de Copia válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
     }
-            // Conversión final a java.sql.Date
-            fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());    
+    
+    // --- 2. OBTENER EL ID DE LA PELÍCULA MAESTRA (CATÁLOGO) ---
+    // Ahora sí llamamos al DAO, usando el valor correcto de idCopiaRentada
+    idPeliculaMaestra = copiaDao.obtenerIdPeliculaMaestraPorCopia(idCopiaRentada);
+    
+    if (idPeliculaMaestra == -1) {
+        JOptionPane.showMessageDialog(this, "No se pudo encontrar la película maestra (ID_CATALOGO) para la copia proporcionada.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        // 5. Convertir la Fecha de Devolución a java.sql.Date
-        java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());    
-        
-        // --- InICIO DEL CÁLCULO DE LA TARIFA FINAL ---
-        long diffDays = alquilerDAO.calcularDiasRenta(fechaRentaSQL, fechaDevolucionSQL);
-        double tarifaTotal = costoDiario * (double) diffDays;
-        jLabel30.setText(String.format("$%.2f", tarifaTotal));
-        
-        nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
-        nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
-        nuevoAlquiler.setEstado("RENTADO");        
-        nuevoAlquiler.setIdCopia(idCopiaRentada);    
+    // --- 3. ASIGNAR IDS CORRECTOS AL OBJETO ALQUILER ---
+    nuevoAlquiler.setIdPelicula(idPeliculaMaestra); // <-- ID MAESTRO (ej: 12)
+    nuevoAlquiler.setIdCopia(idCopiaRentada);       // <-- ID COPIA (ej: 1, 2, 3)
 
-        //  ASIGNACIÓN DEL COSTO TOTAL
-        nuevoAlquiler.setCostoFinal(tarifaTotal); 
-        
-        // 7. Preparar la Salida del Diálogo
-        this.alquiler = nuevoAlquiler;
-        this.datosGuardados = true;
-        this.dispose();
+    // --- 4. OBTENER Y ASIGNAR ID CLIENTE Y COSTO DIARIO ---
+    try {
+        int idCliente = Integer.parseInt(cajaBuscadorCliente.getText());
+        nuevoAlquiler.setIdCliente(idCliente);
+
+        String costoDiarioStr = txt_AlquilerDiario.getText().trim();
+        costoDiario = Double.parseDouble(costoDiarioStr);
+        nuevoAlquiler.setCostoDiario(costoDiario);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID de Cliente o Costo Diario inválido.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 5. Obtener y Convertir Fechas (Tu código original)
+    java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    String fechaRentaStr = txt_fechaRenta.getText();
+    try {
+        fechaRentaUtil = dateFormat.parse(fechaRentaStr);
+    } catch (java.text.ParseException ex) {
+        System.getLogger(FormularioRealizarRenta.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        return;
+    }
+    
+    fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());
+    java.sql.Date fechaDevolucionSQL = new java.sql.Date(fechaDevolucionUtil.getTime());
+
+    // 6. Cálculo de la Tarifa
+    long diffDays = alquilerDAO.calcularDiasRenta(fechaRentaSQL, fechaDevolucionSQL);
+    double tarifaTotal = costoDiario * (double) diffDays;
+    jLabel30.setText(String.format("$%.2f", tarifaTotal));
+
+    // 7. Finalizar el Objeto Alquiler
+    nuevoAlquiler.setFechaAlquiler(fechaRentaSQL);
+    nuevoAlquiler.setFechaDevolucion(fechaDevolucionSQL);
+    nuevoAlquiler.setEstado("RENTADO");
+    nuevoAlquiler.setCostoFinal(tarifaTotal);
+    
+    // 8. Preparar la Salida del Diálogo
+    this.nuevoAlquiler = nuevoAlquiler;
+    this.datosGuardados = true;
+    this.dispose();
     }//GEN-LAST:event_btnRentarActionPerformed
 
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed

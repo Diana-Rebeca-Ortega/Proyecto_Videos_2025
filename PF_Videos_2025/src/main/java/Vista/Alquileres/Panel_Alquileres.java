@@ -213,7 +213,7 @@ public void cargarAlquileresATabla() {
         DefaultTableModel modelo = new DefaultTableModel();
         modelo.addColumn("ID_Alquiler");
         modelo.addColumn("ID_Cliente");
-        modelo.addColumn("ID_Pelicula");
+        modelo.addColumn("ID_CopiaPelicula");
         modelo.addColumn("Fecha_Alquiler");
         modelo.addColumn("Fecha_Devolucion");
         modelo.addColumn("Estado");

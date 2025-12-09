@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 public class CopiaPeliculaDAO {
 
-    private static final String ESQUEMA = "DIANA931"; // Asumiendo el mismo esquema que en PeliculaDAO
+private static final String ESQUEMA = "DIANA931"; // Asumiendo el mismo esquema que en PeliculaDAO
 // R: READ (OBTENER POR ID)
 public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int idSucursal) {
     List<CopiaPelicula> lista = new ArrayList<>();
@@ -108,5 +108,23 @@ public CopiaPelicula obtenerCopiaPorId(int idCopia) {
         e.printStackTrace();
     }
     return copia;
+}
+// Nuevo método para obtener el ID MAESTRO de la película a partir del ID de la copia
+public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {
+    // Buscamos la columna ID_CATALOGO (que es el ID de la Película Maestra)
+    String sql = "SELECT ID_CATALOGO FROM DIANA931.COPIA_PELICULA WHERE ID_PELICULA = ?";
+    try (Connection con = ConexionBD.getInstance().getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, idCopia); // ID_PELICULA de COPIA_PELICULA (el ID único de la copia)
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("ID_CATALOGO"); // Devuelve el ID MAESTRO (ej. 12)
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al obtener ID_CATALOGO por ID_COPIA: " + e.getMessage());
+    }
+    return -1;
 }
 }

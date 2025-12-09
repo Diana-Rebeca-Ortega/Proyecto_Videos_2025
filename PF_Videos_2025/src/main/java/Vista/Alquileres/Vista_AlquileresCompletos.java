@@ -44,12 +44,8 @@ public void cargarTablaAlquileresVista() {
             ac.getFechaAlquiler(),
             ac.getFechaDevolucion(),
             ac.getEstado(),
-            ac.getTarifaTotal(),
-            
-            // 🚩 Campo ID_SUCURSAL (Índice 7)
-            ac.getIdSucursal(),
-            
-            // 🚩 Campo ID_COPIA_PELICULA (Índice 8)
+            ac.getTarifaTotal(),            
+            ac.getIdSucursal(),            
             ac.getIdCopiaPelicula()
         };
         modelo.addRow(fila);
@@ -108,7 +104,7 @@ private void ejecutarDevolucion() {
             boolean exito = alquilerDao.registrarDevolucion(idAlquiler, idCopiaPelicula);            
             if (exito) {
                 JOptionPane.showMessageDialog(this, "Devolución registrada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                cargarTablaAlquileresVista(); // Recargar la tabla para mostrar el estado actualizado
+                cargarTablaAlquileresVista();
             } else {
                 JOptionPane.showMessageDialog(this, "Error al registrar la devolución. Consulte la consola.", "Error", JOptionPane.ERROR_MESSAGE);
             }
