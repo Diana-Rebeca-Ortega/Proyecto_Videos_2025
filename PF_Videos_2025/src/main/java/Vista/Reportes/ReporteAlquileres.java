@@ -6,12 +6,12 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class ReporteAlquileresSwing extends JFrame {
+public class ReporteAlquileres extends JFrame {
 
     private JTable tablaReporte;
     private JScrollPane scrollPane;
  
-    public ReporteAlquileresSwing(List<Map<String, Object>> datosReporte, String periodo) {
+    public ReporteAlquileres(List<Map<String, Object>> datosReporte, String periodo) {
         
         // 1. Configuración de la Ventana
         setTitle("📊 Reporte de Alquileres por Período: " + periodo);

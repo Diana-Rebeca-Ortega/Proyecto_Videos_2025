@@ -87,7 +87,7 @@ private ReporteDAO reporteDAO = new ReporteDAO();
             
             if (radioPopulares.isSelected()) {
                 // Generar gráfica (JFreeChart)
-                new ReportePopularesChart(fechaInicio, fechaFin).setVisible(true); 
+                new ReportePopulares(fechaInicio, fechaFin).setVisible(true); 
 
             } else if (radioAlquileres.isSelected()) {
                 // Generar reporte tabular (Swing JTable)
@@ -101,7 +101,7 @@ private ReporteDAO reporteDAO = new ReporteDAO();
                 } else {
                     // 2. Abrir la ventana Swing con el reporte
                     String periodo = fechaInicio.toString() + " a " + fechaFin.toString();
-                    new ReporteAlquileresSwing(datos, periodo); 
+                    new ReporteAlquileres(datos, periodo); 
                 }
             }
 

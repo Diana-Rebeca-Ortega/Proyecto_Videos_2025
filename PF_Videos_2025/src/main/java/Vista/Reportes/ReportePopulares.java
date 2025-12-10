@@ -14,14 +14,14 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class ReportePopularesChart extends JFrame {
+public class ReportePopulares extends JFrame {
 
     /**
      * Constructor que recibe el rango de fechas para generar el reporte de popularidad.
      * @param fechaInicio Fecha de inicio del reporte.
      * @param fechaFin Fecha de fin del reporte.
      */
-    public ReportePopularesChart(Date fechaInicio, Date fechaFin) {
+    public ReportePopulares(Date fechaInicio, Date fechaFin) {
         
         // 1. Configuración básica de la ventana
         setTitle("🍿 Top 10 Películas Populares (" + fechaInicio + " a " + fechaFin + ")");

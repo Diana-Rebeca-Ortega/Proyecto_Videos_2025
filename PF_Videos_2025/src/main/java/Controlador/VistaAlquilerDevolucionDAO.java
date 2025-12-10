@@ -18,7 +18,7 @@ public class VistaAlquilerDevolucionDAO {
     public List<VistaAlquilerDevolucion> obtenerAlquileresPendientes() throws SQLException {
         List<VistaAlquilerDevolucion> listaAlquileres = new ArrayList<>();
        String sql = "SELECT * FROM V_ALQUILERES_CON_ESTADO "; 
-        try (Connection con = ConexionBD.getInstance().getConnection(); // <-- CONEXIÓN EN EL DAO
+        try (Connection con = ConexionBD.getInstance().getConnection(); 
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 

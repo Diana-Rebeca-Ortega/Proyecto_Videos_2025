@@ -99,6 +99,7 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'DISPONIBLE' WHERE ID_PELICULA = ?";
     try {
         con = ConexionBD.getInstance().getConnection();
+        //Desactivamos el autocommit para que las insrucciones se ejecuten en un TODO O NADA con el commit
         con.setAutoCommit(false); // 1. INICIA la transacción
 
         // Ejecutar UPDATE ALQUILER
