@@ -10,6 +10,7 @@ import Modelo.Pelicula;
 import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 AlquilerDAO alquilerDAO = new AlquilerDAO();
 Alquiler nuevoAlquiler = new Alquiler();
@@ -578,68 +579,104 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-        verificarEstadoBotonRentar();
-        String idTexto = cajaBuscadorPelicula.getText().trim();
-         // 1. Validar que el campo no esté vacío
-        if (idTexto.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la copia de la película.", "Error de Búsqueda", javax.swing.JOptionPane.WARNING_MESSAGE);
-            limpiarDatosPelicula();
-            return;
-        }
-        try {
-            int idCopia = Integer.parseInt(idTexto);
-            CopiaPeliculaDAO copiaDAO = new CopiaPeliculaDAO();
-            CopiaPelicula copiaEncontrada = copiaDAO.obtenerCopiaPorId(idCopia); // <-- Nuevo método a crear
-            
-            if (copiaEncontrada != null) {
+        final String idTexto = cajaBuscadorPelicula.getText().trim();
+    
+    // 1. Validar formato (se mantiene en el EDT, es rápido)
+    if (idTexto.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la copia de la película.", "Error de Búsqueda", JOptionPane.WARNING_MESSAGE);
+        limpiarDatosPelicula();
+        return;
+    }
+    
+    final int idCopia;
+    try {
+        idCopia = Integer.parseInt(idTexto);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El ID de Copia debe ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        limpiarDatosPelicula();
+        return;
+    }
+    
+    // Deshabilitar UI antes de iniciar la operación lenta
+    btn_buscarPelicula.setEnabled(false);
+    cajaBuscadorPelicula.setEnabled(false);
+    
+    // 🚀 INICIO DEL HILO THREAD
+    new Thread(new Runnable() {
+        Pelicula peliculaEncontrada = null;
+        CopiaPelicula copiaEncontrada = null;
+        String mensajeAdvertencia = null; // Para mensajes de copia no disponible
+        
+        @Override
+        public void run() {
+            // --- CÓDIGO DE LÓGICA DE NEGOCIO Y DB (FUERA del EDT) ---
+            try {
+                CopiaPeliculaDAO copiaDAO = new CopiaPeliculaDAO();
+                PeliculaDAO peliculaDAO = new PeliculaDAO();
                 
-                // 2. Validar el estado de la copia
-                if ("DISPONIBLE".equals(copiaEncontrada.getEstado().toUpperCase())) {
-                    
-                    // 3. Obtener los metadatos de la Película (Título, Tarifa, Director, etc.)
-                    PeliculaDAO peliculaDAO = new PeliculaDAO();
-                    Pelicula peliculaEncontrada = peliculaDAO.obtenerPeliculaPorId(copiaEncontrada.getIdPelicula());
-                    
-                    if (peliculaEncontrada != null) {
-                        // A. COPIA VÁLIDA: Cargar datos de la Película
-                        cargarDatosPelicula(peliculaEncontrada);
+                // 1. Buscar Copia
+                copiaEncontrada = copiaDAO.obtenerCopiaPorId(idCopia); 
+                
+                if (copiaEncontrada != null) {
+                    // 2. Validar Estado
+                    if ("DISPONIBLE".equals(copiaEncontrada.getEstado().toUpperCase())) {
+                        // 3. Buscar Película Maestra
+                        peliculaEncontrada = peliculaDAO.obtenerPeliculaPorId(copiaEncontrada.getIdPelicula());
                         
-                        // Cargar el ID de la Copia para usarlo en el botón RENTAR
-                        // (Asegúrate de tener una variable global para almacenar este ID)
-                        this.idCopiaSeleccionada = idCopia; 
-                                                                   
-                        javax.swing.JOptionPane.showMessageDialog(this, "Copia ID " + idCopia + " cargada. Lista para rentar.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                        
-                        // Opcional: Calcular y mostrar la tarifa inicial
-                        calcularCostoFinal();
+                        if (peliculaEncontrada == null) {
+                            // Error de integridad (copia existe, pero la película asociada no)
+                            throw new Exception("Error interno: Copia ID " + idCopia + " no tiene una película maestra asociada.");
+                        }
                     } else {
-                        // Esto sería un error grave (copia existe, pero la película no)
-                        javax.swing.JOptionPane.showMessageDialog(this, "Error: La copia existe, pero la película asociada no fue encontrada.", "Error de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-                        limpiarDatosPelicula();
-                    }                    
-                } else {
-                    // B. COPIA NO DISPONIBLE
-                    javax.swing.JOptionPane.showMessageDialog(this, "La copia ID " + idCopia + " no está disponible. Estado: " + copiaEncontrada.getEstado(), "Copia No Disponible", javax.swing.JOptionPane.WARNING_MESSAGE);
-                    limpiarDatosPelicula();
-                    btnRentar.setEnabled(false);
+                        // Copia encontrada, pero NO disponible
+                        mensajeAdvertencia = "La copia ID " + idCopia + " no está disponible. Estado: " + copiaEncontrada.getEstado();
+                    }
                 }
                 
-            } else {
-                // C. COPIA NO ENCONTRADA
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró ninguna copia con el ID: " + idCopia, "Copia No Encontrada", javax.swing.JOptionPane.ERROR_MESSAGE);
-                limpiarDatosPelicula();
-                btnRentar.setEnabled(false);
+            } catch (Exception e) {
+                // Manejo de errores de DB/Sistema
+                System.err.println("Error en hilo de búsqueda: " + e.getMessage());
+                mostrarError("Error al buscar en la base de datos: " + e.getMessage());
             }
-            
-        } catch (NumberFormatException e) {
-            // Manejar error si el usuario no ingresó un número
-            javax.swing.JOptionPane.showMessageDialog(this, "El ID de Copia debe ser un número válido.", "Error de Formato", javax.swing.JOptionPane.ERROR_MESSAGE);
-            limpiarDatosPelicula();
-        } catch (Exception e) {
-            // Manejar cualquier otro error (ej. error de conexión a DB)
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar en la base de datos: " + e.getMessage(), "Error de Sistema", javax.swing.JOptionPane.ERROR_MESSAGE);
-            limpiarDatosPelicula();
+
+            // --- ACTUALIZACIÓN DE UI (DE VUELTA al EDT) ---
+            final Pelicula peliculaResultado = peliculaEncontrada;
+            final String advertencia = mensajeAdvertencia;
+            final CopiaPelicula copiaResultado = copiaEncontrada;
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    // Re-habilitar UI
+                    btn_buscarPelicula.setEnabled(true);
+                    cajaBuscadorPelicula.setEnabled(true);
+                    
+                    if (peliculaResultado != null) {
+                        // A. COPIA VÁLIDA: Cargar datos
+                        cargarDatosPelicula(peliculaResultado);
+                        FormularioRealizarRenta.this.idCopiaSeleccionada = idCopia;
+                        
+                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, "Copia ID " + idCopia + " cargada. Lista para rentar.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        calcularCostoFinal(); // Muestra el costo inicial
+                    } else if (advertencia != null) {
+                        // B. COPIA NO DISPONIBLE
+                        limpiarDatosPelicula();
+                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, advertencia, "Copia No Disponible", JOptionPane.WARNING_MESSAGE);
+                        btnRentar.setEnabled(false);
+                    } else if (copiaResultado == null) {
+                        // C. COPIA NO ENCONTRADA
+                        limpiarDatosPelicula();
+                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, "No se encontró ninguna copia con el ID: " + idCopia, "Copia No Encontrada", JOptionPane.ERROR_MESSAGE);
+                        btnRentar.setEnabled(false);
+                    } else {
+                         // Error capturado por el catch, ya se mostró con mostrarError()
+                         limpiarDatosPelicula(); 
+                    }
+                    verificarEstadoBotonRentar();
+                }
+            });
         }
+    }).start();
     }//GEN-LAST:event_btn_buscarPeliculaActionPerformed
 
     private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
@@ -699,20 +736,31 @@ public Alquiler getAlquiler() {
     txt_fechaRenta.setText(fechaHoy);
     jLabel16.setText(fechaHoy);    
 }
+    private void mostrarError(final String mensaje) {
+    SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+            JOptionPane.showMessageDialog(FormularioRealizarRenta.this, mensaje, "Error en Transacción", JOptionPane.ERROR_MESSAGE);
+            // Asegúrate de re-habilitar los campos si el error ocurrió durante la búsqueda
+            btn_buscarPelicula.setEnabled(true);
+            cajaBuscadorPelicula.setEnabled(true);
+        }
+    });
+}
     private void calcularCostoFinal() {   
     String costoDiarioTexto = txt_AlquilerDiario.getText().trim(); // 1. Obtener Costo Diario (debe ser un valor numérico sin el '$')
     double costoDiario = 0.0;    
     if (costoDiarioTexto.equals("...")) {
         jLabel30.setText("$0.00");
         return;
-    }    /*
+    }    
     try {              
         costoDiario = Double.parseDouble(costoDiarioTexto);
     } catch (NumberFormatException e) {
         System.err.println("Error al convertir costo diario a número: " + e.getMessage());
         jLabel30.setText("ERROR");
         return;
-    }*/
+    }
     // 2. Obtener Fechas   
     java.util.Date fechaRenta = new java.util.Date(); 
     java.util.Date fechaDevolucion = dateDevolucion.getDate();     
