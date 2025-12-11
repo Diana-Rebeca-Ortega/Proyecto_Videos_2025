@@ -230,16 +230,14 @@ public void setActiveButton(javax.swing.JButton button) {
     pnlContent.revalidate();
     pnlContent.repaint();
     }//GEN-LAST:event_btn_sucursalesActionPerformed
-
+private final Panel_Cliente pnlClientes = new Panel_Cliente();
     private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
-              setActiveButton(btn_clientes);
-        Panel_Cliente pnlClientes = new Panel_Cliente();
+              setActiveButton(btn_clientes);        
         pnlClientes.cargarClientesATabla();
             pnlContent.removeAll();
     pnlContent.add(pnlClientes, java.awt.BorderLayout.CENTER); // Asume pnlContent usa BorderLayout
     pnlContent.revalidate();
-    pnlContent.repaint();
-        System.out.println("Vista.Pagina_Principal.btn_clientesActionPerformed()");
+    pnlContent.repaint();        
     }//GEN-LAST:event_btn_clientesActionPerformed
 
     private void btn_reportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reportesActionPerformed

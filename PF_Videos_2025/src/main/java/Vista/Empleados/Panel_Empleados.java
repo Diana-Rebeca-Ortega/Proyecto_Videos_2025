@@ -202,29 +202,17 @@ private JPopupMenu popupMenu;
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 FormularioAltasEmpleado formEmpleado = new FormularioAltasEmpleado(null, true);
-formEmpleado.setVisible(true); // Bloquea la ventana principal hasta que se cierre
-
-// 2. Verificar si el usuario presionó Guardar en el formulario
+formEmpleado.setVisible(true); 
 if (formEmpleado.isDatosGuardados()) {
-    // Obtener el objeto Empleado lleno con los datos del formulario
     Empleado nuevoEmpleado = formEmpleado.getEmpleado();
-
-    // Crear una instancia del objeto de Acceso a Datos (DAO)
     EmpleadoDAO dao = new EmpleadoDAO();
-
-    // 3. Intentar insertar el empleado en la base de datos
     if (dao.insertarEmpleado(nuevoEmpleado)) {
-        // Éxito: Mostrar mensaje y recargar la tabla de la ventana principal
-        // El ID_Empleado se habrá recuperado en el DAO si es autoincremental
         JOptionPane.showMessageDialog(this, 
             "Empleado insertado con éxito. ID: " + nuevoEmpleado.getIdEmpleado(), 
             "Éxito", 
             JOptionPane.INFORMATION_MESSAGE);
-        
-        // 4. Recargar la tabla (método que debe existir en tu clase PanelEmpleados)
         cargarDatosTabla();
     } else {
-        // Error: Mostrar mensaje de fallo
         JOptionPane.showMessageDialog(this, 
             "Error al insertar el empleado. Revisa la consola/logs.", 
             "Error", 

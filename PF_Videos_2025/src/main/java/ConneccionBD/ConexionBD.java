@@ -8,12 +8,11 @@ import java.sql.Statement;
 
 public class ConexionBD {
 
-    private Connection conexion;
+    private Connection conexion ;
     private Statement stm; 
     private ResultSet rs;
-    private static ConexionBD instancia; 
-
-    // Constructor privado: NO debe intentar conectar aquí.
+    private static ConexionBD instancia; // atributo statico del grupo de la clase, para quese cree la unica instancia
+   //Constructor privado parq eu nadie pueda acceder a el 
     private ConexionBD(){
         System.out.println("YEEEEI Casi son ingeniera/o INMORTAL !!!!");
     }
@@ -50,7 +49,4 @@ public class ConexionBD {
         }
         return conexion;
     }
-
-    // ... (Mantén tus métodos ejecutarInstruccionLMD y ejecutarInstruccionSQL) ...
-
 }

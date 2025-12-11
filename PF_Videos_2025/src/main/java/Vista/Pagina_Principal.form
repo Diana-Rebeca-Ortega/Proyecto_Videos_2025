@@ -64,14 +64,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="btn_sucursales" pref="238" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="btn_empleados" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btn_catalogo" alignment="0" pref="238" max="32767" attributes="0"/>
-                              <Component id="btn_clientes" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btn_alquileres" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btn_reportes" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btn_configuracion" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="btn_empleados" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_catalogo" alignment="0" pref="238" max="32767" attributes="0"/>
+                          <Component id="btn_clientes" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_alquileres" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_reportes" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_configuracion" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="36" max="32767" attributes="0"/>
                   </Group>

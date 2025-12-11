@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import ConneccionBD.ConexionBD;
-import javax.swing.JOptionPane;
 
 public class CopiaPeliculaDAO {
 
@@ -13,24 +12,28 @@ private static final String ESQUEMA = "DIANA931"; // Asumiendo el mismo esquema 
 // R: READ (OBTENER POR ID)
 public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int idSucursal) {
     List<CopiaPelicula> lista = new ArrayList<>();
+    String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
+
+    Connection con = null; // ⬅️ Declaración
     
-   String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
+    try {
+        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
 
-    try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        // try-with-resources solo para PreparedStatement
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, idCatalogo); // Búsqueda por ID_CATALOGO
-        ps.setInt(2, idSucursal);
+            ps.setInt(1, idCatalogo);
+            ps.setInt(2, idSucursal);
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                CopiaPelicula copia = new CopiaPelicula();
-                // 🔑 Lectura usando los nombres de DB2
-                copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
-                copia.setIdPelicula(rs.getInt("ID_CATALOGO"));
-                copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
-                copia.setEstado(rs.getString("ESTADO"));
-                lista.add(copia);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CopiaPelicula copia = new CopiaPelicula();
+                    copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
+                    copia.setIdPelicula(rs.getInt("ID_CATALOGO"));
+                    copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
+                    copia.setEstado(rs.getString("ESTADO"));
+                    lista.add(copia);
+                }
             }
         }
     } catch (SQLException e) {
@@ -39,21 +42,26 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
     }
     return lista;
 }
-   public int obtenerIdCopiaDisponible(int idCatalogo, int idSucursal) {
+ public int obtenerIdCopiaDisponible(int idCatalogo, int idSucursal) {
     int idCopia = -1;
-    
-    String sql = "SELECT ID_PELICULA FROM DIANA931.COPIA_PELICULA " + 
-                 "WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ? AND ESTADO = 'Disponible' FETCH FIRST 1 ROW ONLY";
-    try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+    String sql = "SELECT ID_PELICULA FROM DIANA931.COPIA_PELICULA " +
+                  "WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ? AND ESTADO = 'Disponible' FETCH FIRST 1 ROW ONLY";
 
-        ps.setInt(1, idCatalogo);
-        ps.setInt(2, idSucursal);
+    Connection con = null; // ⬅️ Declaración
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                // Si encontramos una copia, devolvemos su ID_PELICULA (que es su PK)
-                idCopia = rs.getInt("ID_PELICULA"); 
+    try {
+        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
+        
+        // try-with-resources solo para PreparedStatement
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idCatalogo);
+            ps.setInt(2, idSucursal);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    idCopia = rs.getInt("ID_PELICULA");
+                }
             }
         }
     } catch (SQLException e) {
@@ -62,45 +70,28 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
     }
     return idCopia;
 }
-public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
-    // Este UPDATE es el que dispara el Trigger que ajusta el STOCK.
-    String sql = "UPDATE " + ESQUEMA + ".COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
-
-    try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-
-        ps.setString(1, nuevoEstado);
-        ps.setInt(2, idCopia);
-
-        int filasAfectadas = ps.executeUpdate();
-        return filasAfectadas > 0;
-
-    } catch (SQLException e) {
-        System.err.println("Error al actualizar estado de la copia: " + e.getMessage());
-        e.printStackTrace();
-        return false;
-    }
-}
 public CopiaPelicula obtenerCopiaPorId(int idCopia) {
     CopiaPelicula copia = null;
-    
-    // Asumimos que ID_PELICULA es la clave primaria de la copia.
     String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_PELICULA = ?";
 
-    try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+    Connection con = null; // ⬅️ Declaración
 
-        ps.setInt(1, idCopia);
+    try {
+        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
+        
+        // try-with-resources solo para PreparedStatement
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                copia = new CopiaPelicula();
-                
-                // Mapeo de la copia encontrada
-                copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
-                copia.setIdPelicula(rs.getInt("ID_CATALOGO")); // Usando ID_CATALOGO como referencia a la Película
-                copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
-                copia.setEstado(rs.getString("ESTADO"));
+            ps.setInt(1, idCopia);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    copia = new CopiaPelicula();
+                    copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
+                    copia.setIdPelicula(rs.getInt("ID_CATALOGO"));
+                    copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
+                    copia.setEstado(rs.getString("ESTADO"));
+                }
             }
         }
     } catch (SQLException e) {
@@ -109,22 +100,47 @@ public CopiaPelicula obtenerCopiaPorId(int idCopia) {
     }
     return copia;
 }
-// Nuevo método para obtener el ID MAESTRO de la película a partir del ID de la copia
+// AGREGAR ESTE MÉTODO A CopiaPeliculaDAO
 public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {
     // Buscamos la columna ID_CATALOGO (que es el ID de la Película Maestra)
     String sql = "SELECT ID_CATALOGO FROM DIANA931.COPIA_PELICULA WHERE ID_PELICULA = ?";
-    try (Connection con = ConexionBD.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        
-        ps.setInt(1, idCopia); // ID_PELICULA de COPIA_PELICULA (el ID único de la copia)
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt("ID_CATALOGO"); // Devuelve el ID MAESTRO (ej. 12)
+    int idMaestra = -1;    
+    Connection con = null;
+    try {
+        con = ConexionBD.getInstance().getConnection();        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, idCopia); // ID_PELICULA de COPIA_PELICULA
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    idMaestra = rs.getInt("ID_CATALOGO");
+                }
             }
         }
     } catch (SQLException e) {
         System.err.println("Error al obtener ID_CATALOGO por ID_COPIA: " + e.getMessage());
+        e.printStackTrace();
     }
-    return -1;
+    return idMaestra;
+}
+// AGREGAR ESTE MÉTODO A CopiaPeliculaDAO
+public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
+    // Este UPDATE es el que dispara el Trigger que ajusta el STOCK.
+    String sql = "UPDATE " + ESQUEMA + ".COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
+    Connection con = null;
+    try {
+        con = ConexionBD.getInstance().getConnection();
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, idCopia);
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al actualizar estado de la copia: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+    }
 }
 }

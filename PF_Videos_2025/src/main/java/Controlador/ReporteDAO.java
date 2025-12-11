@@ -56,8 +56,7 @@ public class ReporteDAO {
             // Si usas try-with-resources, puedes simplificar esto
             try { 
                 if (rs != null) rs.close(); 
-                if (ps != null) ps.close(); 
-                if (con != null) con.close(); 
+                if (ps != null) ps.close();                 
             } catch (Exception e) {
                 System.err.println("Error cerrando recursos: " + e.getMessage());
             }
@@ -113,8 +112,7 @@ public class ReporteDAO {
             // Cierre seguro de recursos
             try { 
                 if (rs != null) rs.close(); 
-                if (ps != null) ps.close(); 
-                if (con != null) con.close(); 
+                if (ps != null) ps.close();                
             } catch (Exception e) {
                 System.err.println("Error cerrando recursos en ReporteDAO: " + e.getMessage());
             }
