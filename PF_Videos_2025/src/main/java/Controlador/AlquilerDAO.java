@@ -137,6 +137,7 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     }
     return exito;
 }
+//LLAMANDO A LA FUNCION 
 public int calcularDiasRenta(java.util.Date fechaRentaUtil, java.util.Date fechaDevolucionUtil) {
     String sql = "SELECT DIANA931.CALCULARDIASRENTA_FECHAS(?, ?) FROM SYSIBM.SYSDUMMY1";
     int dias = 0;

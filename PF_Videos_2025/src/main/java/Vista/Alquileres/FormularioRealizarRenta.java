@@ -705,14 +705,14 @@ public Alquiler getAlquiler() {
     if (costoDiarioTexto.equals("...")) {
         jLabel30.setText("$0.00");
         return;
-    }    
+    }    /*
     try {              
         costoDiario = Double.parseDouble(costoDiarioTexto);
     } catch (NumberFormatException e) {
         System.err.println("Error al convertir costo diario a número: " + e.getMessage());
         jLabel30.setText("ERROR");
         return;
-    }
+    }*/
     // 2. Obtener Fechas   
     java.util.Date fechaRenta = new java.util.Date(); 
     java.util.Date fechaDevolucion = dateDevolucion.getDate();     

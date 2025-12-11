@@ -139,4 +139,35 @@ public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
         return false;
     }
 }
+
+public int contarCopiasDisponibles(int idPelicula) {
+    // La consulta invoca la Función Definida por el Usuario (UDF)
+    String sql = "SELECT " + ESQUEMA + ".CONTARCOPIASDISPONIBLES(?) FROM SYSIBM.SYSDUMMY1";
+    int copiasDisponibles = 0;
+    
+    Connection con = null;
+
+    try {
+        con = ConexionBD.getInstance().getConnection();
+        
+        // Usamos try-with-resources para PreparedStatement y ResultSet
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, idPelicula);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // La UDF devuelve el conteo como un único valor entero (columna 1)
+                    copiasDisponibles = rs.getInt(1); 
+                }
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al ejecutar la función CONTARCOPIASDISPONIBLES: " + e.getMessage());
+        e.printStackTrace();
+        // En caso de error, devolvemos 0 para evitar rentas no validadas
+        return 0; 
+    }
+    return copiasDisponibles;
+}
 }
