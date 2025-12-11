@@ -75,65 +75,40 @@ private ReporteDAO reporteDAO = new ReporteDAO();
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
    try {
-            // Usa los nuevos métodos encapsulados
             Date fechaInicio = obtenerFechaInicio(); 
-            Date fechaFin = obtenerFechaFin();
-            
-            // Verifica que las fechas sean válidas (opcional, pero buena práctica)
+            Date fechaFin = obtenerFechaFin();            
             if (fechaInicio == null || fechaFin == null) {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar ambas fechas.", "Error de Fecha", JOptionPane.WARNING_MESSAGE);
                 return;
-            }
-            
+            }            
             if (radioPopulares.isSelected()) {
-                // Generar gráfica (JFreeChart)
                 new ReportePopulares(fechaInicio, fechaFin).setVisible(true); 
-
-            } else if (radioAlquileres.isSelected()) {
-                // Generar reporte tabular (Swing JTable)
-                // Usaremos la clase ReporteAlquileresSwing que definimos antes.
-                
-                // 1. Obtener la lista de datos del DAO
-                var datos = reporteDAO.obtenerAlquileresPorPeriodo(fechaInicio, fechaFin);
-                
+            } else if (radioAlquileres.isSelected()) {               
+                var datos = reporteDAO.obtenerAlquileresPorPeriodo(fechaInicio, fechaFin);                
                 if (datos.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "No se encontraron alquileres en ese período.", "Sin Datos", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    // 2. Abrir la ventana Swing con el reporte
                     String periodo = fechaInicio.toString() + " a " + fechaFin.toString();
                     new ReporteAlquileres(datos, periodo); 
                 }
             }
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al generar el reporte: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }        
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
-
-private java.sql.Date obtenerFechaInicio() {
-    try {
-        // *** CAMBIADO a 'dateChooserInicio' ***
+private java.sql.Date obtenerFechaInicio() {    
         java.util.Date utilDate = dateChooserInicio.getDate(); 
         if (utilDate != null) {
-            // Asegúrate de importar java.sql.Date también
             return new java.sql.Date(utilDate.getTime());
-        }
-    } catch (Exception e) {
-        // Manejar error si el componente no tiene fecha válida
-    }
+        }   
     return null;
 }
-private java.sql.Date obtenerFechaFin() {
-    try {
-        // *** CAMBIADO a 'dateChooserFin' ***
+private java.sql.Date obtenerFechaFin() {   
         java.util.Date utilDate = dateChooserFin.getDate(); 
         if (utilDate != null) {
             return new java.sql.Date(utilDate.getTime());
-        }
-    } catch (Exception e) {
-        // Manejar error si el componente no tiene fecha válida
-    }
+        }   
     return null;
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables

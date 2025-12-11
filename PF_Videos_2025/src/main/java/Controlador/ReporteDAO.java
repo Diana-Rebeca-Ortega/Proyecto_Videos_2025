@@ -20,12 +20,12 @@ public class ReporteDAO {
         ResultSet rs = null;
 
         // La consulta SQL definida arriba. Asegúrate de ajustar el límite si es necesario.
-        String sql = "SELECT TITULO_PELICULA, COUNT(ID_ALQUILER) AS VECES_ALQUILADA " +
+        String sql = "SELECT TITULO_PELICULA, COUNT(ID_ALQUILER) AS VECES_ALQUILADA " +//salida
                      "FROM V_ALQUILERES_CON_ESTADO " +
-                     "WHERE FECHA_ALQUILER >= ? AND FECHA_ALQUILER <= ? " +
-                     "GROUP BY TITULO_PELICULA " +
-                     "ORDER BY VECES_ALQUILADA DESC " +
-                     "FETCH FIRST 10 ROWS ONLY";
+                     "WHERE FECHA_ALQUILER >= ? AND FECHA_ALQUILER <= ? " +//Restringe los registros a un rango de tiempo específico
+                     "GROUP BY TITULO_PELICULA " +//Agrupa los resultados por el título de la película
+                     "ORDER BY VECES_ALQUILADA DESC " +//ordenarlos
+                     "FETCH FIRST 10 ROWS ONLY";//Limita el conjunto de resultados a las primeras 10 filas
         
         try {
             con = ConexionBD.getInstance().getConnection();
