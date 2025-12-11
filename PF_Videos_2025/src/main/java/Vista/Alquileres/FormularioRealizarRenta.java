@@ -11,9 +11,11 @@ import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 AlquilerDAO alquilerDAO = new AlquilerDAO();
 Alquiler nuevoAlquiler = new Alquiler();
+
 private int idCopiaSeleccionada = -1; 
 private double alquilerDiarioCargado = 0.0;
 private boolean datosGuardados;
@@ -487,8 +489,8 @@ public Alquiler getAlquiler() {
     }
 
     // --- 3. ASIGNAR IDS CORRECTOS AL OBJETO ALQUILER ---
-    nuevoAlquiler.setIdPelicula(idPeliculaMaestra); // <-- ID MAESTRO (ej: 12)
-    nuevoAlquiler.setIdCopia(idCopiaRentada);       // <-- ID COPIA (ej: 1, 2, 3)
+    nuevoAlquiler.setIdPelicula(idPeliculaMaestra); 
+    nuevoAlquiler.setIdCopia(idCopiaRentada);       
 
     // --- 4. OBTENER Y ASIGNAR ID CLIENTE Y COSTO DIARIO ---
     try {

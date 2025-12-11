@@ -13,12 +13,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class PanelCatalogo extends javax.swing.JPanel {
 private JPopupMenu popupMenu;
+private TableRowSorter<DefaultTableModel> sorter;
     private JMenuItem menuItemModificar;
     private JMenuItem menuItemEliminar;
     private JMenuItem menuItemCopias;   
@@ -28,6 +33,7 @@ private JPopupMenu popupMenu;
         cargarPeliculasATabla(); 
         añadirListenerTabla();
         configurarRenderizadorPrecios();
+        configurarTabla();
     }
 private void inicializarMenuContextual() {
         popupMenu = new JPopupMenu();
@@ -41,6 +47,66 @@ private void inicializarMenuContextual() {
         
         configurarAccionesMenu();
     }
+public void configurarTabla() {
+    // Asume que 'tablaResultados' es tu JTable y ya tiene un DefaultTableModel.
+    DefaultTableModel modelo = (DefaultTableModel) tablaPELICULA.getModel();
+    
+    // 1. Crear el TableRowSorter
+    sorter = new TableRowSorter<>(modelo);
+    
+    // 2. Asignarlo a la tabla
+    tablaPELICULA.setRowSorter(sorter);
+    
+    // 3. Llamar al método que enlaza el JTextField
+    enlazarBuscador(); 
+}
+// Dentro de tu clase (PanelCatalogo.java)
+private void enlazarBuscador() {
+    cajaBuscadorPelicula.getDocument().addDocumentListener(new DocumentListener() {
+        
+        // Se llama cuando se inserta texto
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            aplicarFiltro(cajaBuscadorPelicula.getText());
+        }
+
+        // Se llama cuando se elimina texto
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            aplicarFiltro(cajaBuscadorPelicula.getText());
+        }
+
+        // Se llama cuando cambia el estilo del texto (menos común)
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            aplicarFiltro(cajaBuscadorPelicula.getText());
+        }
+    });
+}
+// Dentro de tu clase (PanelCatalogo.java)
+private void aplicarFiltro(String texto) {
+    if (sorter == null) {
+        // Asegúrate de que el sorter esté inicializado
+        return; 
+    }
+    
+    // Si el texto está vacío, elimina el filtro y muestra todo
+    if (texto.trim().length() == 0) {
+        sorter.setRowFilter(null);
+    } else {
+        try {
+            // El patrón (regex) se usa para buscar el texto en cualquier columna.
+            // i? hace que la búsqueda no distinga entre mayúsculas y minúsculas (case-insensitive).
+            RowFilter<Object, Object> rf = RowFilter.regexFilter("(?i)" + texto);
+            sorter.setRowFilter(rf);
+            
+        } catch (java.util.regex.PatternSyntaxException e) {
+            // En caso de que el usuario escriba un caracter inválido para regex
+            // Puedes ignorarlo o mostrar un mensaje
+            System.err.println("Error de sintaxis de filtro: " + e.getMessage());
+        }
+    }
+}
 private void configurarAccionesMenu() {
         menuItemModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -93,6 +159,7 @@ private void configurarAccionesMenu() {
 
             if (formModificar.isDatosGuardados()) { 
                 cargarPeliculasATabla(); 
+                configurarTabla();
                 JOptionPane.showMessageDialog(this, "Película modificada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }
             
@@ -180,6 +247,8 @@ private void configurarAccionesMenu() {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        cajaBuscadorPelicula = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(204, 204, 255));
         setLayout(null);
@@ -214,7 +283,7 @@ private void configurarAccionesMenu() {
         jComboBox1.setBounds(930, 60, 170, 30);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setLayout(new java.awt.GridLayout());
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
 
         jLabel1.setFont(new java.awt.Font("Maiandra GD", 1, 36)); // NOI18N
         jLabel1.setText("CATÁLOGO DE PELÍCULAS");
@@ -234,6 +303,12 @@ private void configurarAccionesMenu() {
 
         add(jPanel1);
         jPanel1.setBounds(0, 0, 1190, 40);
+        add(cajaBuscadorPelicula);
+        cajaBuscadorPelicula.setBounds(20, 60, 590, 30);
+
+        jLabel2.setText("Busca aqui tus peliculas");
+        add(jLabel2);
+        jLabel2.setBounds(20, 40, 250, 16);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -319,9 +394,11 @@ private void configurarRenderizadorPrecios() {
  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField cajaBuscadorPelicula;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tablaPELICULA;
