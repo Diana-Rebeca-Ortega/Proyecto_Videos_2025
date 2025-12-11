@@ -16,7 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class Panel_Empleados extends javax.swing.JPanel {
-private JPopupMenu popupMenu;
+    private JPopupMenu popupMenu;
     private JMenuItem menuItemModificar;
     private JMenuItem menuItemEliminar;
    
@@ -28,26 +28,18 @@ private JPopupMenu popupMenu;
     }
     private void inicializarPopupMenu() {
         popupMenu = new JPopupMenu();
-
-        // Crear la opción Modificar
         menuItemModificar = new JMenuItem("Modificar Empleado");
         popupMenu.add(menuItemModificar);
-
-        // Crear la opción Eliminar
         menuItemEliminar = new JMenuItem("Eliminar Empleado");
         popupMenu.add(menuItemEliminar);
     }
     private void agregarListeners() {
-        
-        // Listener para Modificar
         menuItemModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ejecutarModificarEmpleado();
             }
         });
-
-        // Listener para Eliminar
         menuItemEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -62,29 +54,20 @@ private JPopupMenu popupMenu;
                 }
             }
         });
-        
-        // Listener para mostrar el menú contextual al hacer clic derecho en la tabla
         tbl_empleados.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 manejarMouseClick(evt);
             }
-
             @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 manejarMouseClick(evt);
-            }
-            
+            }            
             private void manejarMouseClick(java.awt.event.MouseEvent evt) {
-                 // Verificar si es el evento que dispara el pop-up (clic derecho)
                 if (evt.isPopupTrigger()) {
                     int row = tbl_empleados.rowAtPoint(evt.getPoint());
-
                     if (row != -1) {
-                        // Forzar la selección de la fila bajo el cursor
                         tbl_empleados.setRowSelectionInterval(row, row);
-                        
-                        // Mostrar el menú en las coordenadas del clic
                         popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
                     }
                 }
@@ -95,20 +78,13 @@ private JPopupMenu popupMenu;
     private void ejecutarModificarEmpleado() {
         int filaSeleccionada = tbl_empleados.getSelectedRow();
         if (filaSeleccionada != -1) {
-            // Obtener el ID de Empleado (asumo que es de tipo INT)
             int idEmpleado = (int) tbl_empleados.getValueAt(filaSeleccionada, 0);
-            
-            // Obtener el Frame padre
             Frame framePadre = (Frame) SwingUtilities.getWindowAncestor(Panel_Empleados.this);
-            
-            // 1. Abrir el formulario de Modificación (DEBES TENER LA CLASE 'ModificacionesEmpleado' CREADA)
-            // Asegúrate de que tu constructor acepte (Frame, boolean, int idEmpleado)
            ModificacionesEmpleado formModificar = new ModificacionesEmpleado(framePadre, true, idEmpleado);
            formModificar.setVisible(true);
-            // 2. Verificar si se guardaron los datos al cerrar
-            if (formModificar.isDatosGuardados()) { // DEBES TENER ESTE MÉTODO EN EL JDialog
+            if (formModificar.isDatosGuardados()) { 
                 JOptionPane.showMessageDialog(this, "Empleado modificado con éxito.");
-                cargarDatosTabla(); // Recargar la tabla
+                cargarDatosTabla(); 
             }
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un empleado para modificar.");
@@ -237,7 +213,6 @@ tbl_empleados.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
 
         // 2. Mantener la selección correcta
         if (isSelected) {
-            // Usa el Amarillo Acento para la fila seleccionada
             c.setBackground(new Color(251, 190, 79)); 
         }
 

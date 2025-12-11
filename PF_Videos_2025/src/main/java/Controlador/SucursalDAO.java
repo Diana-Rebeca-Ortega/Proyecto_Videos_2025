@@ -10,17 +10,12 @@ public class SucursalDAO {
 
     // --- C: CREATE (INSERCIÓN) ---
  public boolean insertarSucursal(Sucursal sucursal) {
-    String call = "{CALL RegistrarNuevaSucursal(?, ?, ?, ?, ?, ?, ?, ?)}";
-    
-    Connection con = null; // ⬅️ Declaración
-    
+     //Llamando al procedimiento999999999999999999999999999999999999999999
+    String call = "{CALL RegistrarNuevaSucursal(?, ?, ?, ?, ?, ?, ?, ?)}";    
+    Connection con = null;
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para CallableStatement
+        con = ConexionBD.getInstance().getConnection(); 
         try (CallableStatement ps = con.prepareCall(call)) {
-
-            // 1. Asignar parámetros (¡DEBEN SER 8 Y EN EL ORDEN CORRECTO!)
             ps.setString(1, sucursal.getNombreSucursal());
             ps.setString(2, sucursal.getNoTelefono());
             ps.setInt(3, sucursal.getNumeroExterior());

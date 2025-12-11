@@ -1,30 +1,24 @@
 package Controlador;
-
-import Modelo.Alquiler; // Asegúrate de tener esta clase de modelo
+import Modelo.Alquiler; 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import ConneccionBD.ConexionBD; // Reutiliza tu clase de conexión
+import ConneccionBD.ConexionBD;
 import Modelo.AlquilerCompleto;
 
 public class AlquilerDAO {
-
+//Los signos de interrogación (?)  se conocen como marcadores de posición (o placeholders).
     private static final String ESQUEMA_TABLA = "DIANA931.ALQUILER"; 
 //CONSULTAS******************************************************************************************
    public List<Alquiler> obtenerTodosLosAlquileres() {
     List<Alquiler> lista = new ArrayList<>();
     String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO "
-        + "FROM " + ESQUEMA_TABLA;
-        
-    Connection con = null; // ⬅️ Declaración
-    
+        + "FROM " + ESQUEMA_TABLA;        
+    Connection con = null;     
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement y ResultSet
+        con = ConexionBD.getInstance().getConnection();  
         try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            
+             ResultSet rs = ps.executeQuery()) {            
             while (rs.next()) {
                 Alquiler alquiler = new Alquiler();
                 alquiler.setIdAlquiler(rs.getInt("ID_ALQUILER"));
@@ -45,32 +39,26 @@ public class AlquilerDAO {
     }
     return lista;
 }
-//ALTAS////Usando el procedimiento almacenado//********************************************************************************************
+//ALTAS////Usando el procedimiento almacenado//99999999999999999999999999999999999999999999999999999
 public boolean insertarAlquiler(Alquiler alquiler) {
-    String call = "{CALL RegistrarNuevoAlquiler(?, ?, ?,?,?)}";
-    
-    Connection conn = null; // ⬅️ Declaración
-    
+    String call = "{CALL RegistrarNuevoAlquiler(?, ?, ?,?,?)}";    
+    Connection conn = null;     
     try {
-        conn = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para CallableStatement
-        try (CallableStatement cs = conn.prepareCall(call)) {
-            
+        conn = ConexionBD.getInstance().getConnection(); 
+        try (CallableStatement cs = conn.prepareCall(call)) {            
             cs.setInt(1, alquiler.getIdCliente());
             cs.setInt(2, alquiler.getIdPelicula());
             cs.setInt(3, alquiler.getIdCopia());
             cs.setDouble(4, alquiler.getCostoDiario());
             java.sql.Date fechaDevolucionSQL = new java.sql.Date(alquiler.getFechaDevolucion().getTime());
-            cs.setDate(5, fechaDevolucionSQL);
-            
+            cs.setDate(5, fechaDevolucionSQL);            
             cs.execute();
             return true;
             
         }
     } catch (SQLException e) {
         System.err.println("Error al llamar al PA RegistrarNuevoAlquiler: " + e.getMessage());
-        e.printStackTrace(); // Añadida impresión de stack trace para mejor depuración
+        e.printStackTrace(); 
         return false;
     }
 }
@@ -79,17 +67,11 @@ public boolean insertarAlquiler(Alquiler alquiler) {
  public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
     List<AlquilerCompleto> listado = new ArrayList<>();
     String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO WHERE ID_SUCURSAL = ?";
-    
-    Connection con = null; // ⬅️ Declaración
-
+    Connection con = null; 
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            
+        con = ConexionBD.getInstance().getConnection(); 
+        try (PreparedStatement ps = con.prepareStatement(sql)) {            
             ps.setInt(1, idSucursal);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     AlquilerCompleto ac = new AlquilerCompleto(
@@ -158,21 +140,14 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
 public int calcularDiasRenta(java.util.Date fechaRentaUtil, java.util.Date fechaDevolucionUtil) {
     String sql = "SELECT DIANA931.CALCULARDIASRENTA_FECHAS(?, ?) FROM SYSIBM.SYSDUMMY1";
     int dias = 0;
-    
-    // Convertir java.util.Date a java.sql.Date para el PreparedStatement
     java.sql.Date sqlFechaRenta = new java.sql.Date(fechaRentaUtil.getTime());
-    java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());
-    
-    Connection con = null; // ⬅️ Declaración
-
+    java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());    
+    Connection con = null;
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement
+        con = ConexionBD.getInstance().getConnection();         
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setDate(1, sqlFechaRenta);
-            ps.setDate(2, sqlFechaDevolucion);
-            
+            ps.setDate(2, sqlFechaDevolucion);            
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     dias = rs.getInt(1);

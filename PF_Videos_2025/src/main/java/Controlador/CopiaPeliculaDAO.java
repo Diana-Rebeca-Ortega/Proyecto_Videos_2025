@@ -47,10 +47,10 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
     String sql = "SELECT ID_PELICULA FROM DIANA931.COPIA_PELICULA " +
                   "WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ? AND ESTADO = 'Disponible' FETCH FIRST 1 ROW ONLY";
 
-    Connection con = null; // ⬅️ Declaración
+    Connection con = null; 
 
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
+        con = ConexionBD.getInstance().getConnection(); 
         
         // try-with-resources solo para PreparedStatement
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -100,9 +100,7 @@ public CopiaPelicula obtenerCopiaPorId(int idCopia) {
     }
     return copia;
 }
-// AGREGAR ESTE MÉTODO A CopiaPeliculaDAO
-public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {
-    // Buscamos la columna ID_CATALOGO (que es el ID de la Película Maestra)
+public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {   
     String sql = "SELECT ID_CATALOGO FROM DIANA931.COPIA_PELICULA WHERE ID_PELICULA = ?";
     int idMaestra = -1;    
     Connection con = null;
@@ -124,9 +122,7 @@ public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {
     }
     return idMaestra;
 }
-// AGREGAR ESTE MÉTODO A CopiaPeliculaDAO
 public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
-    // Este UPDATE es el que dispara el Trigger que ajusta el STOCK.
     String sql = "UPDATE " + ESQUEMA + ".COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
     Connection con = null;
     try {

@@ -4,9 +4,13 @@ import Controlador.ReporteDAO;
 import java.sql.Date;
 import java.util.Map;
 import javax.swing.JOptionPane;
-
+import Controlador.AuditoriaClaveDAO;
+import Modelo.AuditoriaClave;
+import Vista.Reportes.ReporteAuditoriaClave;
+import java.util.List;
 public class Panel_Reportes extends javax.swing.JPanel {
 private ReporteDAO reporteDAO = new ReporteDAO();
+private AuditoriaClaveDAO auditoriaClaveDAO = new AuditoriaClaveDAO();
 
     public Panel_Reportes() {
         initComponents();
@@ -25,6 +29,7 @@ private ReporteDAO reporteDAO = new ReporteDAO();
         btnGenerarReporte = new javax.swing.JButton();
         lblFechaInicio = new javax.swing.JLabel();
         lblFechaFin = new javax.swing.JLabel();
+        radioAuditoriaClave = new javax.swing.JRadioButton();
 
         setBackground(new java.awt.Color(204, 204, 255));
         setLayout(null);
@@ -71,6 +76,11 @@ private ReporteDAO reporteDAO = new ReporteDAO();
         lblFechaFin.setText("Fecha Fin");
         add(lblFechaFin);
         lblFechaFin.setBounds(790, 50, 110, 16);
+
+        buttonGroup1.add(radioAuditoriaClave);
+        radioAuditoriaClave.setText("Reporte de Auditoría de Contraseñas");
+        add(radioAuditoriaClave);
+        radioAuditoriaClave.setBounds(20, 110, 280, 21);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
@@ -91,6 +101,14 @@ private ReporteDAO reporteDAO = new ReporteDAO();
                     String periodo = fechaInicio.toString() + " a " + fechaFin.toString();
                     new ReporteAlquileres(datos, periodo); 
                 }
+            }
+            else if (radioAuditoriaClave.isSelected()) {
+                List<AuditoriaClave> historial = auditoriaClaveDAO.obtenerTodosLosRegistros();
+                if (historial.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron registros de auditoría de contraseñas.", "Sin Datos", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                new ReporteAuditoriaClave(historial).setVisible(true);
+            }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al generar el reporte: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -119,6 +137,7 @@ private java.sql.Date obtenerFechaFin() {
     private javax.swing.JLabel lblFechaFin;
     private javax.swing.JLabel lblFechaInicio;
     private javax.swing.JRadioButton radioAlquileres;
+    private javax.swing.JRadioButton radioAuditoriaClave;
     private javax.swing.JRadioButton radioPopulares;
     private java.awt.Label txt_alquileres;
     // End of variables declaration//GEN-END:variables
