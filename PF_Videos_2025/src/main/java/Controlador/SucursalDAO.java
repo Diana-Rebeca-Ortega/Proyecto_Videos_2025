@@ -39,7 +39,7 @@ public class SucursalDAO {
     // --- R: READ (OBTENER TODOS) ---
  public List<Sucursal> obtenerTodasLasSucursales() {
     List<Sucursal> lista = new ArrayList<>();
-    String sql = "SELECT NO_Sucursal, nombre_sucursal, no_telefono, numeroExterior, calle, colonia, ciudad, estado, CP FROM DIANA931.Sucursal";
+    String sql = "SELECT NO_Sucursal, nombre_sucursal, no_telefono, numeroExterior, calle, colonia, ciudad, estado, CP FROM SUCURSAL";
     
     Connection con = null; // ⬅️ Declaración
     

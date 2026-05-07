@@ -1,0 +1,31 @@
+Base de dtaos sql server 
+
+-- 1. Crear la base de datos (si aún no existe)
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'bd_videos_proyecto_final')
+BEGIN
+    CREATE DATABASE bd_videos_proyecto_final;
+END
+GO
+
+-- 2. Crear el login 'diana' con contraseña 'diana'
+-- (Si ya lo creaste antes, esta línea podría dar un aviso, pero no pasa nada)
+IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'diana')
+BEGIN
+    CREATE LOGIN diana WITH PASSWORD = 'diana', CHECK_POLICY = OFF;
+END
+GO
+
+-- 3. Asignar el usuario a la base de datos y darle permisos de dueño
+USE bd_videos_proyecto_final;
+GO
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'diana')
+BEGIN
+    CREATE USER diana FOR LOGIN diana;
+END
+GO
+ALTER ROLE db_owner ADD MEMBER diana;
+GO
+
+-- 4. Permiso extra para que pueda administrar todo
+ALTER SERVER ROLE sysadmin ADD MEMBER diana;
+GO

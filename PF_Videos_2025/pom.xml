@@ -16,6 +16,12 @@
     </dependency>
     
     <dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>12.2.0.jre11</version>
+    </dependency>
+
+    <dependency>
         <groupId>org.jfree</groupId>
         <artifactId>jcommon</artifactId>
         <version>1.0.24</version>

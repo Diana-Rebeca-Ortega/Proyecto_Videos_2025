@@ -7,8 +7,7 @@ import java.util.List;
 import ConneccionBD.ConexionBD;
 
 public class EmpleadoDAO {
-    private static final String NOMBRE_TABLA = "DIANA931.EMPLEADO";
-    // --- C: CREATE (INSERCIÓN) ---
+  private static final String NOMBRE_TABLA = "EMPLEADO";
     public boolean insertarEmpleado(Empleado empleado) {
     String sql = "INSERT INTO " + NOMBRE_TABLA + 
                  " (NOMBRE, FNAME, LNAME, CATEGORIA, ID_SUCURSAL) " +
