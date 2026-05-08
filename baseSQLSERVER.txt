@@ -29,3 +29,40 @@ GO
 -- 4. Permiso extra para que pueda administrar todo
 ALTER SERVER ROLE sysadmin ADD MEMBER diana;
 GO
+
+
+
+CREAR TABLA SUCURSALES 
+USE bd_videos_proyecto_final;
+GO
+
+CREATE TABLE SUCURSAL (
+    ID_Sucursal INT PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(100),
+    Telefono VARCHAR(20),
+    No_Exterior VARCHAR(10),
+    Calle VARCHAR(100),
+    Colonia VARCHAR(100),
+    Ciudad VARCHAR(100),
+    Estado VARCHAR(100),
+    CP VARCHAR(10)
+);
+GO
+
+
+CREAR PROCEDIMIENTO RegistrarNuevaSucursal
+CREATE PROCEDURE RegistrarNuevaSucursal
+    @Nombre VARCHAR(100),
+    @Telefono VARCHAR(20),
+    @No_Exterior VARCHAR(10),
+    @Calle VARCHAR(100),
+    @Colonia VARCHAR(100),
+    @Ciudad VARCHAR(100),
+    @Estado VARCHAR(100),
+    @CP VARCHAR(10)
+AS
+BEGIN
+    INSERT INTO SUCURSAL (Nombre, Telefono, No_Exterior, Calle, Colonia, Ciudad, Estado, CP)
+    VALUES (@Nombre, @Telefono, @No_Exterior, @Calle, @Colonia, @Ciudad, @Estado, @CP);
+END
+GO

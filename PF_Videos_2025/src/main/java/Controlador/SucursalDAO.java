@@ -40,7 +40,6 @@ public class SucursalDAO {
  public List<Sucursal> obtenerTodasLasSucursales() {
     List<Sucursal> lista = new ArrayList<>();
     String sql = "SELECT NO_Sucursal, nombre_sucursal, no_telefono, numeroExterior, calle, colonia, ciudad, estado, CP FROM SUCURSAL";
-    
     Connection con = null; // ⬅️ Declaración
     
     try {
@@ -73,7 +72,7 @@ public class SucursalDAO {
 }
     // --- U: UPDATE (MODIFICAR) ---
  public boolean modificarSucursal(Sucursal sucursal) {
-    String sql = "UPDATE DIANA931.Sucursal SET nombre_sucursal=?, no_telefono=?, numeroExterior=?, calle=?, colonia=?, ciudad=?, estado=?, CP=? WHERE NO_Sucursal=?";
+    String sql = "UPDATE SUCURSAL SET nombre_sucursal=?, no_telefono=?, numeroExterior=?, calle=?, colonia=?, ciudad=?, estado=?, CP=? WHERE NO_Sucursal=?";
     
     Connection conn = null; // ⬅️ Declaración
     
@@ -107,7 +106,7 @@ public class SucursalDAO {
 }
     // --- D: DELETE (ELIMINAR) ---
  public boolean eliminarSucursal(short id) {
-    String sql = "DELETE FROM DIANA931.Sucursal WHERE NO_Sucursal = ?";
+    String sql = "DELETE FROM SUCURSAL  WHERE NO_Sucursal = ?";
     
     Connection conn = null; // ⬅️ Declaración
     
