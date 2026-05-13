@@ -8,12 +8,12 @@ import Modelo.AlquilerCompleto;
 
 public class AlquilerDAO {
 //Los signos de interrogación (?)  se conocen como marcadores de posición (o placeholders).
-    private static final String ESQUEMA_TABLA = "DIANA931.ALQUILER"; 
+   private static final String TABLA = "ALQUILER";
 //CONSULTAS******************************************************************************************
    public List<Alquiler> obtenerTodosLosAlquileres() {
     List<Alquiler> lista = new ArrayList<>();
-    String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO "
-        + "FROM " + ESQUEMA_TABLA;        
+   String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO "
+                   + "FROM " + TABLA;     
     Connection con = null;     
     try {
         con = ConexionBD.getInstance().getConnection();  
@@ -41,7 +41,7 @@ public class AlquilerDAO {
 }
 //ALTAS////Usando el procedimiento almacenado//99999999999999999999999999999999999999999999999999999
 public boolean insertarAlquiler(Alquiler alquiler) {
-    String call = "{CALL RegistrarNuevoAlquiler(?, ?, ?,?,?)}";    
+   String call = "{call RegistrarNuevoAlquiler(?, ?, ?, ?, ?)}";
     Connection conn = null;     
     try {
         conn = ConexionBD.getInstance().getConnection(); 
@@ -100,11 +100,9 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     PreparedStatement psAlquiler = null;
     PreparedStatement psCopia = null;
     boolean exito = false;
-    String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = CURRENT_DATE, ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?";
-    String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'DISPONIBLE' WHERE ID_PELICULA = ?";
-    try {
+        String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = GETDATE(), ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?";
+        String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'Disponible' WHERE ID_COPIA = ?";  try {
         con = ConexionBD.getInstance().getConnection();
-        //Desactivamos el autocommit para que las insrucciones se ejecuten en un TODO O NADA con el commit
         con.setAutoCommit(false); // 1. INICIA la transacción
 
         // Ejecutar UPDATE ALQUILER
@@ -139,7 +137,7 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
 }
 //LLAMANDO A LA FUNCION 
 public int calcularDiasRenta(java.util.Date fechaRentaUtil, java.util.Date fechaDevolucionUtil) {
-    String sql = "SELECT DIANA931.CALCULARDIASRENTA_FECHAS(?, ?) FROM SYSIBM.SYSDUMMY1";
+    String sql = "SELECT dbo.CALCULARDIASRENTA_FECHAS(?, ?)";
     int dias = 0;
     java.sql.Date sqlFechaRenta = new java.sql.Date(fechaRentaUtil.getTime());
     java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());    

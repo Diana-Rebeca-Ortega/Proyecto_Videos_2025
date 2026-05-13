@@ -1,0 +1,43 @@
+CREATE PROCEDURE RegistrarNuevoAlquiler 
+    @p_no_cliente INT, 
+    @p_no_pelicula INT, 
+    @p_alquiler_diario INT, 
+    @p_fecha_devolucion DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Insertar el registro de alquiler
+    INSERT INTO Alquiler (NO_CLIENTE, ID_PELICULA, FECHA_ALQUILER, ALQUILER_DIARIO, FECHA_DEVOLUCION, ESTADO) 
+    VALUES (@p_no_cliente, @p_no_pelicula, GETDATE(), @p_alquiler_diario, @p_fecha_devolucion, 'RENTADO'); 
+
+    -- Actualizar el estado de la copia
+    UPDATE COPIA_PELICULA 
+    SET ESTADO = 'Alquilada' 
+    WHERE ID_PELICULA = @p_no_pelicula; 
+END;
+GO
+
+
+
+
+CREATE PROCEDURE GenerarCopiasStock 
+    @p_id_catalogo SMALLINT, 
+    @p_stock_total SMALLINT, 
+    @p_id_sucursal SMALLINT 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @v_contador SMALLINT = 1;
+
+    WHILE @v_contador <= @p_stock_total 
+    BEGIN 
+        INSERT INTO COPIA_PELICULA (ID_PELICULA, ID_SUCURSAL, ESTADO) 
+        VALUES (@p_id_catalogo, @p_id_sucursal, 'Disponible'); 
+        
+        SET @v_contador = @v_contador + 1; 
+    END; 
+END;
+GO
+
+
