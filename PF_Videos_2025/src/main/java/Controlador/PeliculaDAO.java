@@ -11,8 +11,7 @@ import javax.swing.table.DefaultTableModel;
 public class PeliculaDAO {
     // --- C: CREATE (INSERCIÓN) ---
   public boolean insertarPelicula(Pelicula pelicula, int stockInicial, int idSucursal) {
-    String sql = "INSERT INTO DIANA931.PELICULA (TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total, ID_SUCURSAL) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    int nuevoIdPelicula = -1;
+   String sql = "INSERT INTO PELICULA (TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total, ID_SUCURSAL) VALUES (?, ?, ?, ?, ?, ?, ?)"; int nuevoIdPelicula = -1;
     
     Connection con = null; // ⬅️ Declaración
     
@@ -200,7 +199,7 @@ public boolean modificarPelicula(Pelicula pelicula) {
     }
 }
  public int contarCopiasDisponibles(int idPelicula) {
-    String sql = "SELECT DIANA931.CONTARCOPIASDISPONIBLES(?) FROM SYSIBM.SYSDUMMY1";
+   String sql = "SELECT dbo.ContarCopiasDisponibles(?)";
     int copiasDisponibles = -1;
     
     Connection con = null; // ⬅️ Declaración
@@ -226,7 +225,7 @@ public boolean modificarPelicula(Pelicula pelicula) {
     return copiasDisponibles;
 } 
  public boolean generarStock(int idCatalogo, int stockTotal, int idSucursal) {
-    String call = "{CALL DIANA931.GenerarCopiasStock(?, ?, ?)}";
+  String call = "{call GenerarCopiasStock(?, ?, ?)}";
     
     Connection con = null; // ⬅️ Declaración
 
@@ -252,55 +251,50 @@ public boolean modificarPelicula(Pelicula pelicula) {
     }
 }
  public DefaultTableModel cargarDatosTabla(String filtroCategoria) {
+    // Definimos las columnas exactas de tu tabla en SQL Server
     String columnasSelect = "ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, ALQUILER_DIARIO, COSTE_VENTA, STOCK_TOTAL";
     String[] columnNames = {"ID_Pelicula", "Titulo", "Categoría", "Director", "Alquiler", "Coste", "Stock Disponible"};
     DefaultTableModel model = new DefaultTableModel(null, columnNames);
+    
     String sql;
-    boolean tieneFiltro = filtroCategoria != null
-                          && !filtroCategoria.isEmpty()
-                          && !filtroCategoria.equals("Todas las Categorías");
+    // Ajuste para evitar el error de <nulltype> y manejar "Todas las Categorías"
+    boolean tieneFiltro = filtroCategoria != null 
+                          && !filtroCategoria.trim().isEmpty() 
+                          && !filtroCategoria.equalsIgnoreCase("Todas las Categorías")
+                          && !filtroCategoria.equalsIgnoreCase("null");
 
     if (tieneFiltro) {
-        sql = "SELECT " + columnasSelect + " FROM DIANA931.PELICULA WHERE CATEGORIA = ?";
+        // Quitamos DIANA931.
+        sql = "SELECT " + columnasSelect + " FROM PELICULA WHERE CATEGORIA = ?";
     } else {
-        sql = "SELECT " + columnasSelect + " FROM DIANA931.PELICULA";
+        // Quitamos DIANA931.
+        sql = "SELECT " + columnasSelect + " FROM PELICULA";
     }
 
-    Connection con = null; // ⬅️ Declaración
-
-    try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
+    try (Connection con = ConexionBD.getInstance().getConnection();
+         PreparedStatement pstmt = con.prepareStatement(sql)) {
         
-        // try-with-resources solo para PreparedStatement
-        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
-            
-            if (tieneFiltro) {
-                pstmt.setString(1, filtroCategoria);
-            }
+        if (tieneFiltro) {
+            pstmt.setString(1, filtroCategoria);
+        }
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                
-                while (rs.next()) {
-                    Object[] row = new Object[7];
-                    
-                    row[0] = rs.getInt("ID_Pelicula");
-                    row[1] = rs.getString("titulo");
-                    row[2] = rs.getString("categoria");
-                    row[3] = rs.getString("director");
-                    row[4] = rs.getDouble("ALQUILER_DIARIO");
-                    row[5] = rs.getDouble("COSTE_VENTA");
-                    row[6] = rs.getInt("STOCK_TOTAL");
-                    
-                    model.addRow(row);
-                }
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Object[] row = new Object[7];
+                row[0] = rs.getInt("ID_PELICULA");
+                row[1] = rs.getString("TITULO");
+                row[2] = rs.getString("CATEGORIA");
+                row[3] = rs.getString("DIRECTOR");
+                row[4] = rs.getDouble("ALQUILER_DIARIO");
+                row[5] = rs.getDouble("COSTE_VENTA");
+                row[6] = rs.getInt("STOCK_TOTAL");
+                model.addRow(row);
             }
-            return model;
-            
-        } 
+        }
     } catch (SQLException e) {
-        System.err.println("Error SQL al cargar/filtrar datos: " + e.getMessage());
+        System.err.println("Error SQL al cargar datos en la tabla: " + e.getMessage());
         e.printStackTrace();
-        return model;
     }
+    return model;
 }
 }

@@ -12,8 +12,7 @@ private static final String ESQUEMA = "DIANA931"; // Asumiendo el mismo esquema 
 // R: READ (OBTENER POR ID)
 public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int idSucursal) {
     List<CopiaPelicula> lista = new ArrayList<>();
-    String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
-
+  String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
     Connection con = null; // ⬅️ Declaración
     
     try {
@@ -44,9 +43,8 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
 }
  public int obtenerIdCopiaDisponible(int idCatalogo, int idSucursal) {
     int idCopia = -1;
-    String sql = "SELECT ID_PELICULA FROM DIANA931.COPIA_PELICULA " +
-                  "WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ? AND ESTADO = 'Disponible' FETCH FIRST 1 ROW ONLY";
-
+   String sql = "SELECT TOP 1 ID_PELICULA FROM COPIA_PELICULA " +
+             "WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ? AND ESTADO = 'Disponible'";
     Connection con = null; 
 
     try {
@@ -72,8 +70,7 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
 }
 public CopiaPelicula obtenerCopiaPorId(int idCopia) {
     CopiaPelicula copia = null;
-    String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM " + ESQUEMA + ".COPIA_PELICULA WHERE ID_PELICULA = ?";
-
+   String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_PELICULA = ?";
     Connection con = null; // ⬅️ Declaración
 
     try {
@@ -101,7 +98,7 @@ public CopiaPelicula obtenerCopiaPorId(int idCopia) {
     return copia;
 }
 public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {   
-    String sql = "SELECT ID_CATALOGO FROM DIANA931.COPIA_PELICULA WHERE ID_PELICULA = ?";
+    String sql = "SELECT ID_CATALOGO FROM COPIA_PELICULA WHERE ID_PELICULA = ?";
     int idMaestra = -1;    
     Connection con = null;
     try {
@@ -123,7 +120,7 @@ public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {
     return idMaestra;
 }
 public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
-    String sql = "UPDATE " + ESQUEMA + ".COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
+    String sql = "UPDATE COPIA_PELICULA SET ESTADO = ? WHERE ID_PELICULA = ?";
     Connection con = null;
     try {
         con = ConexionBD.getInstance().getConnection();
@@ -142,7 +139,7 @@ public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
 
 public int contarCopiasDisponibles(int idPelicula) {
     // La consulta invoca la Función Definida por el Usuario (UDF)
-    String sql = "SELECT " + ESQUEMA + ".CONTARCOPIASDISPONIBLES(?) FROM SYSIBM.SYSDUMMY1";
+  String sql = "SELECT dbo.ContarCopiasDisponibles(?)";
     int copiasDisponibles = 0;
     
     Connection con = null;
