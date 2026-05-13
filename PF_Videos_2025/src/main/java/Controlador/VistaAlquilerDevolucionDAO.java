@@ -35,10 +35,10 @@ public List<VistaAlquilerDevolucion> obtenerAlquileresPendientes() throws SQLExc
 }
 public List<VistaAlquilerDevolucion> buscarAlquileres(String textoBusqueda) throws SQLException {
     List<VistaAlquilerDevolucion> listaAlquileres = new ArrayList<>();    
-    String sql = "SELECT * FROM V_ALQUILERES_CON_ESTADO WHERE " +
-                 // Filtra solo los que están pendientes de entrega
-                 "ESTADO_ENTREGA_UI = 'RENTADO' AND " +               
-                 "(TITULO_PELICULA LIKE ? OR NOMBRE_CLIENTE LIKE ? OR CAST(ID_ALQUILER AS VARCHAR(10)) LIKE ?)";
+   
+String sql = "SELECT * FROM V_ALQUILERES_CON_ESTADO WHERE " +
+             "ESTADO_ENTREGA_UI = 'RENTADO' AND " +               
+             "(TITULO_PELICULA LIKE ? OR NOMBRE_CLIENTE LIKE ? OR CAST(ID_ALQUILER AS VARCHAR(10)) LIKE ?)";
 
     // Prepara el texto de búsqueda para LIKE (ej: '%texto%')
     String busquedaLike = "%" + textoBusqueda.toUpperCase() + "%";

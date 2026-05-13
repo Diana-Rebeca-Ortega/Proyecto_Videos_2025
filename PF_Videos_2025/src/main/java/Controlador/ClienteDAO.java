@@ -4,22 +4,20 @@ import Modelo.Cliente;
 import java.sql.*; 
 import java.util.ArrayList;
 import java.util.List;
-import  ConneccionBD.ConexionBD;
+import ConneccionBD.ConexionBD;
 
 public class ClienteDAO {
 
-public List<Cliente> obtenerTodosLosClientes() {
-    List<Cliente> lista = new ArrayList<>();
-    String sql = "SELECT NO_CLIENTE, NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL FROM DIANA931.CLIENTES";
-    Connection con = null; 
-    try {
-        con = ConexionBD.getInstance().getConnection(); 
-        try (PreparedStatement ps = con.prepareStatement(sql);
+    public List<Cliente> obtenerTodosLosClientes() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT NO_CLIENTE, NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL FROM CLIENTE";
+        
+        try (Connection con = ConexionBD.getInstance().getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) { 
 
             while (rs.next()) {
                 Cliente cliente = new Cliente();
-                // ... (Tu lógica de mapeo de Cliente) ...
                 cliente.setNoCliente(rs.getInt("NO_CLIENTE"));
                 cliente.setNombre(rs.getString("NOMBRE"));
                 cliente.setApellido1(rs.getString("APELLIDO1"));
@@ -34,20 +32,19 @@ public List<Cliente> obtenerTodosLosClientes() {
                 cliente.setNoSucursal(rs.getShort("NO_SUCURSAL"));
                 lista.add(cliente);
             }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener clientes: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("Error al obtener clientes: " + e.getMessage());
+        return lista;
     }
-    return lista;
-}
 
-public boolean insertarCliente(Cliente cliente) {
-    String sql = "INSERT INTO DIANA931.CLIENTES (NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT DATE, ?)";    
-    Connection con = null; 
-    try {
-        con = ConexionBD.getInstance().getConnection(); 
-        try (PreparedStatement ps = con.prepareStatement(sql)) { 
+    public boolean insertarCliente(Cliente cliente) {
+        // 2. Cambiamos 'CURRENT DATE' por 'GETDATE()' que es de SQL Server
+        String sql = "INSERT INTO CLIENTE (NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)";    
+        
+        try (Connection con = ConexionBD.getInstance().getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql)) { 
             ps.setString(1, cliente.getNombre());
             ps.setString(2, cliente.getApellido1());
             ps.setString(3, cliente.getApellido2());
@@ -59,22 +56,18 @@ public boolean insertarCliente(Cliente cliente) {
             ps.setString(9, cliente.getEstado());
             ps.setShort(10, cliente.getNoSucursal());            
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al insertar cliente: " + e.getMessage());
+            return false;
         }
-    } catch (SQLException e) {
-        System.err.println("Error al insertar cliente: " + e.getMessage());
-        return false;
     }
-}
-//CAMBIOS CLIENTE 
-public boolean modificarCliente(Cliente cliente) {
-    String sql = "UPDATE DIANA931.CLIENTES SET NOMBRE=?, APELLIDO1=?, APELLIDO2=?, CALLE=?, CIUDAD=?, ESTADO=?, CP=?, NO_SUCURSAL=?, NO_EXTERIOR=?, COLONIA=? WHERE NO_CLIENTE=?";
-   
-    Connection conn = null; 
-    try {
-        conn = ConexionBD.getInstance().getConnection();
-        try (PreparedStatement ps = conn.prepareStatement(sql)) { 
+
+    public boolean modificarCliente(Cliente cliente) {
+        String sql = "UPDATE CLIENTE SET NOMBRE=?, APELLIDO1=?, APELLIDO2=?, CALLE=?, CIUDAD=?, ESTADO=?, CP=?, NO_SUCURSAL=?, NO_EXTERIOR=?, COLONIA=? WHERE NO_CLIENTE=?";
+        
+        try (Connection conn = ConexionBD.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) { 
             
-            // ... (Tu lógica de asignación de parámetros) ...
             ps.setString(1, cliente.getNombre());
             ps.setString(2, cliente.getApellido1());
             ps.setString(3, cliente.getApellido2());
@@ -83,52 +76,43 @@ public boolean modificarCliente(Cliente cliente) {
             ps.setString(6, cliente.getEstado());
             ps.setString(7, cliente.getCp());
             ps.setShort(8, cliente.getNoSucursal());
-            ps.setString(9, String.valueOf(cliente.getNo_exterior())); 
+            // 3. Corregimos: Usamos ps.setInt si la columna es numérica en SQL
+            ps.setInt(9, cliente.getNo_exterior()); 
             ps.setString(10, cliente.getColonia());
             ps.setInt(11, cliente.getNoCliente());
             
             return ps.executeUpdate() > 0;
-            
+        } catch (SQLException e) {
+            System.err.println("Error al modificar cliente: " + e.getMessage());
+            return false;
         } 
-    } catch (SQLException e) {
-        System.err.println("Error al modificar cliente: " + e.getMessage());
-        return false;
-    } 
-}
+    }
 
-// ELIMINAR CLIENTE
-public boolean eliminarCliente(int id) {
-    String sql = "DELETE FROM DIANA931.CLIENTES WHERE NO_CLIENTE = ?";
-    
-    Connection conn = null; // ⬅️ Declaramos fuera
-    
-    try {
-        conn = ConexionBD.getInstance().getConnection(); // ⬅️ Inicializamos fuera        
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {             
+    public boolean eliminarCliente(int id) {
+        String sql = "DELETE FROM CLIENTE WHERE NO_CLIENTE = ?";
+        
+        try (Connection conn = ConexionBD.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {              
             ps.setInt(1, id);            
             return ps.executeUpdate() > 0;            
-        } 
-    } catch (SQLException e) {
-        System.err.println("Error al eliminar cliente (DAO): " + e.getMessage());
-        e.printStackTrace(); 
-        return false;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar cliente (DAO): " + e.getMessage());
+            return false;
+        }
     }
-}
-public Cliente obtenerClientePorId(int idCliente) {
-    String sql = "SELECT NO_CLIENTE, NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL FROM DIANA931.CLIENTES WHERE NO_CLIENTE = ?";
-    Cliente cliente = null;    
-    Connection con = null; 
-    try {
-        con = ConexionBD.getInstance().getConnection(); 
-        // try-with-resources solo para PreparedStatement
-        try (PreparedStatement ps = con.prepareStatement(sql)) { 
+
+    public Cliente obtenerClientePorId(int idCliente) {
+        String sql = "SELECT NO_CLIENTE, NOMBRE, APELLIDO1, APELLIDO2, NO_EXTERIOR, CALLE, COLONIA, CIUDAD, CP, ESTADO, FECHA_REGISTRO, NO_SUCURSAL FROM CLIENTE WHERE NO_CLIENTE = ?";
+        Cliente cliente = null;    
+        
+        try (Connection con = ConexionBD.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) { 
 
             ps.setInt(1, idCliente);
 
-            try (ResultSet rs = ps.executeQuery()) { // ResultSet sí se cierra automáticamente
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     cliente = new Cliente();
-                    // ... (Tu lógica de mapeo de Cliente) ...
                     cliente.setNoCliente(rs.getInt("NO_CLIENTE"));
                     cliente.setNombre(rs.getString("NOMBRE"));
                     cliente.setApellido1(rs.getString("APELLIDO1"));
@@ -143,12 +127,9 @@ public Cliente obtenerClientePorId(int idCliente) {
                     cliente.setNoSucursal(rs.getShort("NO_SUCURSAL"));
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener cliente por ID (" + idCliente + "): " + e.getMessage());
         }
-
-    } catch (SQLException e) {
-        System.err.println("Error al obtener cliente por ID (" + idCliente + "): " + e.getMessage());
+        return cliente;
     }
-    return cliente;
-}
-
 }

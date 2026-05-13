@@ -66,3 +66,44 @@ BEGIN
     VALUES (@Nombre, @Telefono, @No_Exterior, @Calle, @Colonia, @Ciudad, @Estado, @CP);
 END
 GO
+
+
+VISTA ALQUILERES COMPLETO 
+CREATE VIEW V_ALQUILERES_CON_ESTADO AS
+SELECT 
+    A.ID_Alquiler AS ID_ALQUILER,
+    C.No_Cliente AS NO_CLIENTE,
+    C.Nombre AS NOMBRE_CLIENTE,
+    P.Titulo AS TITULO_PELICULA,
+    P.ID_Pelicula AS ID_PELICULA,
+    CP.Estado AS ESTADO_ACTUAL,
+    CP.ID_Copia AS ID_COPIA_PELICULA,
+    A.Fecha_Alquiler AS FECHA_ALQUILER,
+    A.Fecha_Vencimiento AS FECHA_VENCIMIENTO,
+    -- Esta es la lógica que tu Java espera para 'RENTADO'
+    CASE 
+        WHEN A.Fecha_Devolucion_Real IS NULL THEN 'RENTADO'
+        ELSE 'DEVUELTO'
+    END AS ESTADO_ENTREGA_UI
+FROM ALQUILER A
+JOIN CLIENTE C ON A.ID_Cliente = C.ID_Cliente
+JOIN COPIA_PELICULA CP ON A.ID_Copia = CP.ID_Copia
+JOIN PELICULA P ON CP.ID_Pelicula = P.ID_Pelicula;
+GO
+
+
+CREATE TABLE CLIENTE (
+    ID_Cliente INT PRIMARY KEY IDENTITY(1,1), -- ID automático de SQL Server
+    NO_CLIENTE INT NOT NULL,                  -- El número que manejas en tu lógica
+    NOMBRE VARCHAR(100) NOT NULL,
+    APELLIDO1 VARCHAR(100),
+    APELLIDO2 VARCHAR(100),
+    NO_EXTERIOR INT,
+    CALLE VARCHAR(200),
+    COLONIA VARCHAR(100),
+    CIUDAD VARCHAR(100),
+    CP VARCHAR(10),
+    ESTADO VARCHAR(50),
+    FECHA_REGISTRO DATE DEFAULT GETDATE(),    -- Fecha automática al insertar
+    NO_SUCURSAL SMALLINT
+);
