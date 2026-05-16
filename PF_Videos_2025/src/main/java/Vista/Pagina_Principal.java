@@ -1,5 +1,5 @@
 package Vista;
-
+import Modelo.Usuario;
 import Vista.Configuracion.Panel_Configuracion;
 import Vista.Reportes.Panel_Reportes;
 import Vista.Alquileres.Panel_Alquileres;
@@ -12,10 +12,30 @@ import java.awt.Color;
 public class Pagina_Principal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Pagina_Principal.class.getName());
-
-    public Pagina_Principal() {
+    private Usuario usuarioSesion;
+    
+   public Pagina_Principal(Usuario usuario) {
+        this.usuarioSesion = usuario;
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        restringirPermisosSegunRol();
+    }
+   private void restringirPermisosSegunRol() {
+        if (usuarioSesion != null) {
+            String rol = usuarioSesion.getTipoUsuario();
+            
+            // Si el rol es el de gestor de películas, ocultamos el resto del sistema
+            if ("Rol_Gestor_Peliculas".equals(rol)) {
+                btn_empleados.setVisible(false);
+                btn_clientes.setVisible(false);
+                btn_alquileres.setVisible(false);
+                btn_reportes.setVisible(false);
+                btn_sucursales.setVisible(false);
+                btn_configuracion.setVisible(false);
+                
+                btn_catalogoActionPerformed(null);
+            }
+        }
     }
    
     @SuppressWarnings("unchecked")
@@ -292,9 +312,8 @@ private final Panel_Cliente pnlClientes = new Panel_Cliente();
     }//GEN-LAST:event_btn_configuracionActionPerformed
 
    
-    public static void main(String args[]) {
-        
-        java.awt.EventQueue.invokeLater(() -> new Pagina_Principal().setVisible(true));
+   public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> new Pagina_Principal(null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -14,7 +14,7 @@ public class FormularioLogin extends javax.swing.JFrame {
     this.setLocationRelativeTo(null); 
     this.setTitle("Iniciar Sesión"); 
     usuarioDao = new Controlador.UsuarioDAO();
-    
+    txtClave.setText("");
 }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -149,8 +149,8 @@ public class FormularioLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Bienvenido, " + usuarioAutenticado.getNombreUsuario(), "Acceso Exitoso", JOptionPane.INFORMATION_MESSAGE);
             this.dispose(); 
             
-         Vista.Pagina_Principal principal = new Vista.Pagina_Principal();      
-         principal.setVisible(true);
+         Vista.Pagina_Principal principal = new Vista.Pagina_Principal(usuarioAutenticado);      
+        principal.setVisible(true);
            
         } else {
             JOptionPane.showMessageDialog(this, "Credenciales incorrectas.", "Error de Login", JOptionPane.ERROR_MESSAGE);

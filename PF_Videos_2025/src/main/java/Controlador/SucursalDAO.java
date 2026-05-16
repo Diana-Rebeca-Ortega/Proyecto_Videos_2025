@@ -130,7 +130,7 @@ public class SucursalDAO {
 }
     // --- R: READ (OBTENER POR ID) ---
  public Sucursal obtenerSucursalPorId(short idSucursal) {
-    String sql = "SELECT NO_Sucursal, nombre_sucursal, no_telefono, numeroExterior, calle, colonia, ciudad, estado, CP FROM DIANA931.Sucursal WHERE NO_Sucursal = ?";
+    String sql = "SELECT NO_Sucursal, nombre_sucursal, no_telefono, numeroExterior, calle, colonia, ciudad, estado, CP FROM Sucursal WHERE NO_Sucursal = ?";
     Sucursal sucursal = null;
     
     Connection con = null; // ⬅️ Declaración
