@@ -120,3 +120,13 @@ CREATE TABLE PELICULA (
     ID_SUCURSAL INT
 );
 GO
+
+
+-- Asegúrate de estar en la base de datos correcta primero
+CREATE TABLE COPIA_PELICULA (
+    ID_PELICULA INT,          -- Este suele ser el ID del catálogo
+    ID_SUCURSAL INT,
+    ESTADO VARCHAR(20) DEFAULT 'Disponible',
+    ID_COPIA INT PRIMARY KEY IDENTITY(1,1) -- Genera el ID automático en SQL Server
+);
+GO
