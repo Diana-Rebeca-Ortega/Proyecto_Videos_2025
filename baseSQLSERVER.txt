@@ -130,3 +130,13 @@ CREATE TABLE COPIA_PELICULA (
     ID_COPIA INT PRIMARY KEY IDENTITY(1,1) -- Genera el ID automático en SQL Server
 );
 GO
+
+
+ROL GESTOR 
+-- 1. Crear el nuevo rol
+CREATE ROLE Rol_Gestor_Peliculas;
+GO
+
+-- 2. Otorgar SOLO los permisos solicitados (Subir, Consultar, Borrar) sobre la tabla específica
+GRANT INSERT, SELECT, DELETE ON peliculas TO Rol_Gestor_Peliculas;
+GO
