@@ -11,6 +11,7 @@ import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import Vista.Filtros.BuscadorPredictivo;
 
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 AlquilerDAO alquilerDAO = new AlquilerDAO();
@@ -27,6 +28,7 @@ private boolean datosGuardados;
         btnRentar.setEnabled(false);
         this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
         dateDevolucion.setMinSelectableDate(new java.util.Date());
+        BuscadorPredictivo.registrarAutocompletado(cajaBuscadorPelicula);
     }
       
      public boolean isDatosGuardados() {
@@ -581,104 +583,78 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-        final String idTexto = cajaBuscadorPelicula.getText().trim();
+      String textoBusqueda = cajaBuscadorPelicula.getText().trim();
     
-    // 1. Validar formato (se mantiene en el EDT, es rápido)
-    if (idTexto.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Debe ingresar el ID de la copia de la película.", "Error de Búsqueda", JOptionPane.WARNING_MESSAGE);
-        limpiarDatosPelicula();
+    if (textoBusqueda.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese un ID de copia o el título de la película.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
         return;
     }
-    
-    final int idCopia;
-    try {
-        idCopia = Integer.parseInt(idTexto);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "El ID de Copia debe ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
-        limpiarDatosPelicula();
-        return;
-    }
-    
-    // Deshabilitar UI antes de iniciar la operación lenta
-    btn_buscarPelicula.setEnabled(false);
-    cajaBuscadorPelicula.setEnabled(false);
-    
-    // 🚀 INICIO DEL HILO THREAD
-    new Thread(new Runnable() {
-        Pelicula peliculaEncontrada = null;
-        CopiaPelicula copiaEncontrada = null;
-        String mensajeAdvertencia = null; // Para mensajes de copia no disponible
-        
-        @Override
-        public void run() {
-            // --- CÓDIGO DE LÓGICA DE NEGOCIO Y DB (FUERA del EDT) ---
-            try {
-                CopiaPeliculaDAO copiaDAO = new CopiaPeliculaDAO();
-                PeliculaDAO peliculaDAO = new PeliculaDAO();
+
+    // Instanciamos los DAOs necesarios
+    PeliculaDAO peliculaDao = new PeliculaDAO();
+    CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
+
+    // DETERMINAR EL TIPO DE BÚSQUEDA
+    // Si el texto es puramente numérico, asumimos que es el ID de la Copia (Escáner/Código de barras)
+    if (textoBusqueda.matches("\\d+")) { 
+        int idCopiaRentada = Integer.parseInt(textoBusqueda);
+        int idPeliculaMaestra = copiaDao.obtenerIdPeliculaMaestraPorCopia(idCopiaRentada);
+
+        if (idPeliculaMaestra != -1) {
+            // Buscamos los datos completos de la película en el catálogo
+            Pelicula pelicula = peliculaDao.obtenerPeliculaPorId(idPeliculaMaestra);
+            if (pelicula != null) {
+                // Rellenamos las etiquetas de tu interfaz
+                txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
+                txt_TituloPelicula.setText(pelicula.getTitulo());
+                txt_Categoria.setText(pelicula.getCategoria());
+                txt_Director.setText(pelicula.getDirector());
+                txt_AlquilerDiario.setText(String.valueOf(pelicula.getPrecioAlquiler()));
                 
-                // 1. Buscar Copia
-                copiaEncontrada = copiaDAO.obtenerCopiaPorId(idCopia); 
+                // Guardamos el ID de la copia encontrada en tu variable global
+                this.idCopiaSeleccionada = idCopiaRentada; 
                 
-                if (copiaEncontrada != null) {
-                    // 2. Validar Estado
-                    if ("DISPONIBLE".equals(copiaEncontrada.getEstado().toUpperCase())) {
-                        // 3. Buscar Película Maestra
-                        peliculaEncontrada = peliculaDAO.obtenerPeliculaPorId(copiaEncontrada.getIdPelicula());
-                        
-                        if (peliculaEncontrada == null) {
-                            // Error de integridad (copia existe, pero la película asociada no)
-                            throw new Exception("Error interno: Copia ID " + idCopia + " no tiene una película maestra asociada.");
-                        }
-                    } else {
-                        // Copia encontrada, pero NO disponible
-                        mensajeAdvertencia = "La copia ID " + idCopia + " no está disponible. Estado: " + copiaEncontrada.getEstado();
-                    }
-                }
-                
-            } catch (Exception e) {
-                // Manejo de errores de DB/Sistema
-                System.err.println("Error en hilo de búsqueda: " + e.getMessage());
-                mostrarError("Error al buscar en la base de datos: " + e.getMessage());
+                // Activamos el JDateChooser de devolución si el cliente también ya está listo
+                verificarEstadoBotonRentar(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "No se encontraron los detalles de la película maestra.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            // --- ACTUALIZACIÓN DE UI (DE VUELTA al EDT) ---
-            final Pelicula peliculaResultado = peliculaEncontrada;
-            final String advertencia = mensajeAdvertencia;
-            final CopiaPelicula copiaResultado = copiaEncontrada;
-
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    // Re-habilitar UI
-                    btn_buscarPelicula.setEnabled(true);
-                    cajaBuscadorPelicula.setEnabled(true);
-                    
-                    if (peliculaResultado != null) {
-                        // A. COPIA VÁLIDA: Cargar datos
-                        cargarDatosPelicula(peliculaResultado);
-                        FormularioRealizarRenta.this.idCopiaSeleccionada = idCopia;
-                        
-                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, "Copia ID " + idCopia + " cargada. Lista para rentar.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                        calcularCostoFinal(); // Muestra el costo inicial
-                    } else if (advertencia != null) {
-                        // B. COPIA NO DISPONIBLE
-                        limpiarDatosPelicula();
-                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, advertencia, "Copia No Disponible", JOptionPane.WARNING_MESSAGE);
-                        btnRentar.setEnabled(false);
-                    } else if (copiaResultado == null) {
-                        // C. COPIA NO ENCONTRADA
-                        limpiarDatosPelicula();
-                        JOptionPane.showMessageDialog(FormularioRealizarRenta.this, "No se encontró ninguna copia con el ID: " + idCopia, "Copia No Encontrada", JOptionPane.ERROR_MESSAGE);
-                        btnRentar.setEnabled(false);
-                    } else {
-                         // Error capturado por el catch, ya se mostró con mostrarError()
-                         limpiarDatosPelicula(); 
-                    }
-                    verificarEstadoBotonRentar();
-                }
-            });
+        } else {
+            JOptionPane.showMessageDialog(this, "La copia con ID " + idCopiaRentada + " no está registrada o no está disponible.", "No Encontrado", JOptionPane.INFORMATION_MESSAGE);
+            limpiarDatosPelicula();
         }
-    }).start();
+    } 
+    // Si contiene letras, el usuario escribió el TÍTULO de la película
+    else { 
+        // Usamos el método de búsqueda dinámica que añadimos a tu PeliculaDAO
+        java.util.List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(textoBusqueda, "Nombre");
+
+        if (resultados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se encontraron películas que coincidan con: " + textoBusqueda, "Sin Coincidencias", JOptionPane.INFORMATION_MESSAGE);
+            limpiarDatosPelicula();
+        } else if (resultados.size() == 1) {
+            // Si solo encontró una, la cargamos directamente
+            Pelicula pelicula = resultados.get(0);
+            
+            // ¡OJO! Como buscó por nombre, necesitamos conseguir una copia física disponible de esta película
+            // Aquí deberías llamar a un método de tu copiaDao que te dé el primer ID de copia libre.
+            // Ejemplo rápido suponiendo que tienes un método similar:
+            // int idCopiaLibre = copiaDao.obtenerCopiaDisponiblePorPelicula(pelicula.getIdPelicula());
+            
+            txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
+            txt_TituloPelicula.setText(pelicula.getTitulo());
+            txt_Categoria.setText(pelicula.getCategoria());
+            txt_Director.setText(pelicula.getDirector());
+            txt_AlquilerDiario.setText(String.valueOf(pelicula.getPrecioAlquiler()));
+            
+            JOptionPane.showMessageDialog(this, "Película encontrada por nombre. Asegúrese de asignar una copia física válida.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            verificarEstadoBotonRentar();
+        } else {
+            // Si encuentra múltiples películas (ej. buscas "Batman" y hay 3 diferentes)
+            // Lo ideal aquí es que abras un JDialog pequeño con una JTable para elegir cuál se quiere.
+            JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente ser más específico con el título.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
     }//GEN-LAST:event_btn_buscarPeliculaActionPerformed
 
     private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed

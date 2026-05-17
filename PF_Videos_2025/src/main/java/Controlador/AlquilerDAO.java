@@ -24,11 +24,10 @@ public class AlquilerDAO {
             while (rs.next()) {
                 Alquiler alquiler = new Alquiler();
                 
-                // Mapeamos usando EXACTAMENTE los nombres en MAYÚSCULAS de la vista
                 alquiler.setIdAlquiler(rs.getInt("ID_ALQUILER"));
                 alquiler.setIdCliente(rs.getInt("NO_CLIENTE"));
                 alquiler.setIdPelicula(rs.getInt("ID_PELICULA"));
-                alquiler.setIdCopia(rs.getInt("ID_COPIA_PELICULA")); // ¡Aquí ya no va a fallar!
+                alquiler.setIdCopia(rs.getInt("ID_COPIA_PELICULA")); 
                 alquiler.setFechaAlquiler(rs.getDate("FECHA_ALQUILER"));
                 alquiler.setFechaDevolucion(rs.getDate("FECHA_DEVOLUCION"));
                 alquiler.setEstado(rs.getString("ESTADO"));
