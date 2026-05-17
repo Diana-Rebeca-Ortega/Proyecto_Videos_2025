@@ -17,6 +17,7 @@ Alquiler nuevoAlquiler = new Alquiler();
 private int idCopiaSeleccionada = -1; 
 private double alquilerDiarioCargado = 0.0;
 private boolean datosGuardados;
+private int idSucursalActual = 0;
       public FormularioRealizarRenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -58,6 +59,8 @@ public Alquiler getAlquiler() {
         txt_IDpelicula = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        txt_IDCopia = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -134,6 +137,15 @@ public Alquiler getAlquiler() {
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/escaneo-de-codigo-de-barras.png"))); // NOI18N
         jButton4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jLabel2.setText("ID Copia Pelicula");
+
+        txt_IDCopia.setText("...");
+        txt_IDCopia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_IDCopiaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -144,7 +156,10 @@ public Alquiler getAlquiler() {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_Director, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txt_Director, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_IDCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txt_IDpelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -158,7 +173,9 @@ public Alquiler getAlquiler() {
                                     .addComponent(txt_TituloPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_AlquilerDiario, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -211,9 +228,13 @@ public Alquiler getAlquiler() {
                     .addComponent(txt_TituloPelicula)
                     .addComponent(txt_AlquilerDiario))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel9)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_Director)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_Director)
+                    .addComponent(txt_IDCopia, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -582,76 +603,82 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-  String textoBusqueda = cajaBuscadorPelicula.getText().trim();
+ String textoBusqueda = cajaBuscadorPelicula.getText().trim();
     
     if (textoBusqueda.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Por favor, ingrese un ID de copia o el título de la película.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    // Instanciamos los DAOs necesarios
     PeliculaDAO peliculaDao = new PeliculaDAO();
     CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
 
-    // DETERMINAR EL TIPO DE BÚSQUEDA
-    // Si el texto es puramente numérico, asumimos que es el ID de la Copia (Escáner/Código de barras)
+    // =========================================================================
+    // CASO A: El texto es numérico (Búsqueda directa por ID de Copia física)
+    // =========================================================================
     if (textoBusqueda.matches("\\d+")) { 
         int idCopiaRentada = Integer.parseInt(textoBusqueda);
         int idPeliculaMaestra = copiaDao.obtenerIdPeliculaMaestraPorCopia(idCopiaRentada);
 
         if (idPeliculaMaestra != -1) {
-            // Buscamos los datos completos de la película en el catálogo
             Pelicula pelicula = peliculaDao.obtenerPeliculaPorId(idPeliculaMaestra);
             if (pelicula != null) {
-                // Rellenamos las etiquetas de tu interfaz
                 txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
                 txt_TituloPelicula.setText(pelicula.getTitulo());
                 txt_Categoria.setText(pelicula.getCategoria());
                 txt_Director.setText(pelicula.getDirector());
                 txt_AlquilerDiario.setText(String.valueOf(pelicula.getPrecioAlquiler()));
                 
-                // Guardamos el ID de la copia encontrada en tu variable global
+                // Pintamos la copia física encontrada en el nuevo JFile
+                txt_IDCopia.setText(String.valueOf(idCopiaRentada));
                 this.idCopiaSeleccionada = idCopiaRentada; 
                 
-                // Activamos el JDateChooser de devolución si el cliente también ya está listo
                 verificarEstadoBotonRentar(); 
-            } else {
-                JOptionPane.showMessageDialog(this, "No se encontraron los detalles de la película maestra.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(this, "La copia con ID " + idCopiaRentada + " no está registrada o no está disponible.", "No Encontrado", JOptionPane.INFORMATION_MESSAGE);
             limpiarDatosPelicula();
         }
     } 
-    // Si contiene letras, el usuario escribió el TÍTULO de la película
+    // =========================================================================
+    // CASO B: Búsqueda por Título (Texto limpio como "Avatar")
+    // =========================================================================
     else { 
-        // Usamos el método de búsqueda dinámica que añadimos a tu PeliculaDAO
-        java.util.List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(textoBusqueda, "Nombre");
+        List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(textoBusqueda, "TITULO");
 
         if (resultados.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No se encontraron películas que coincidan con: " + textoBusqueda, "Sin Coincidencias", JOptionPane.INFORMATION_MESSAGE);
             limpiarDatosPelicula();
-        } else if (resultados.size() == 1) {
-            // Si solo encontró una, la cargamos directamente
+        } 
+        else if (resultados.size() == 1) {
             Pelicula pelicula = resultados.get(0);
             
-            // ¡OJO! Como buscó por nombre, necesitamos conseguir una copia física disponible de esta película
-            // Aquí deberías llamar a un método de tu copiaDao que te dé el primer ID de copia libre.
-            // Ejemplo rápido suponiendo que tienes un método similar:
-            // int idCopiaLibre = copiaDao.obtenerCopiaDisponiblePorPelicula(pelicula.getIdPelicula());
+            // Usamos la variable global idSucursalActual (que vale 0)
+            int idCopiaLibre = copiaDao.obtenerIdCopiaDisponible(pelicula.getIdPelicula(), this.idSucursalActual);
             
-            txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
-            txt_TituloPelicula.setText(pelicula.getTitulo());
-            txt_Categoria.setText(pelicula.getCategoria());
-            txt_Director.setText(pelicula.getDirector());
-            txt_AlquilerDiario.setText(String.valueOf(pelicula.getPrecioAlquiler()));
-            
-            JOptionPane.showMessageDialog(this, "Película encontrada por nombre. Asegúrese de asignar una copia física válida.", "Información", JOptionPane.INFORMATION_MESSAGE);
-            verificarEstadoBotonRentar();
-        } else {
-            // Si encuentra múltiples películas (ej. buscas "Batman" y hay 3 diferentes)
-            // Lo ideal aquí es que abras un JDialog pequeño con una JTable para elegir cuál se quiere.
-            JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente ser más específico con el título.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
+            if (idCopiaLibre != -1) {
+                txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
+                txt_TituloPelicula.setText(pelicula.getTitulo());
+                txt_Categoria.setText(pelicula.getCategoria());
+                txt_Director.setText(pelicula.getDirector());
+                txt_AlquilerDiario.setText(String.valueOf(pelicula.getPrecioAlquiler()));
+                
+                // Pintamos el ID de la copia libre encontrada en la sucursal 0
+                txt_IDCopia.setText(String.valueOf(idCopiaLibre));
+                this.idCopiaSeleccionada = idCopiaLibre;
+                
+                verificarEstadoBotonRentar();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "La película '" + pelicula.getTitulo() + "' está registrada, pero actualmente NO quedan copias disponibles en la sucursal.", 
+                    "Agotado", 
+                    JOptionPane.WARNING_MESSAGE);
+                txt_IDCopia.setText("NO DISPONIBLE");
+                limpiarDatosPelicula(); 
+            }
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente escribir un título más específico.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     }//GEN-LAST:event_btn_buscarPeliculaActionPerformed
@@ -659,6 +686,10 @@ public Alquiler getAlquiler() {
     private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cajaBuscadorPeliculaActionPerformed
+
+    private void txt_IDCopiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_IDCopiaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_IDCopiaActionPerformed
 //METODOS EXTRAS 
   private void configurarListenersExtras() {
     cajaBuscadorPelicula.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -786,6 +817,7 @@ public Alquiler getAlquiler() {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
@@ -807,6 +839,7 @@ public Alquiler getAlquiler() {
     private javax.swing.JLabel txt_Apellido2;
     private javax.swing.JLabel txt_Categoria;
     private javax.swing.JLabel txt_Director;
+    private javax.swing.JTextField txt_IDCopia;
     private javax.swing.JLabel txt_IDpelicula;
     private javax.swing.JLabel txt_NombreCliente;
     private javax.swing.JLabel txt_TituloPelicula;

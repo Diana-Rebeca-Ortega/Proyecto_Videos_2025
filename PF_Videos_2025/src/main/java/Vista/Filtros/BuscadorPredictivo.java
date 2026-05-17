@@ -104,7 +104,7 @@ public class BuscadorPredictivo {
    List<Pelicula> peliculasReales = peliculaDao.buscarPeliculasDinamico(consulta, "TITULO");
     // Convertimos los objetos Pelicula a Strings para tu lista sugerida
     for (Pelicula p : peliculasReales) {
-        filtradas.add(p.getTitulo() + " - ID: " + p.getIdPelicula());
+        filtradas.add(p.getTitulo());
     }
     
     return filtradas;

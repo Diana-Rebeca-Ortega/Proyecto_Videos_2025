@@ -114,7 +114,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel4" alignment="0" min="-2" pref="161" max="-2" attributes="0"/>
-                              <Component id="txt_Director" alignment="0" min="-2" pref="396" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txt_Director" min="-2" pref="396" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txt_IDCopia" min="-2" pref="96" max="-2" attributes="0"/>
+                              </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="txt_IDpelicula" alignment="0" min="-2" pref="396" max="-2" attributes="0"/>
@@ -132,7 +136,10 @@
                                       <Component id="jLabel9" alignment="0" min="-2" pref="185" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_AlquilerDiario" min="-2" pref="338" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="txt_AlquilerDiario" min="-2" pref="338" max="-2" attributes="0"/>
+                                      <Component id="jLabel2" min="-2" pref="105" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -204,9 +211,15 @@
                       <Component id="txt_AlquilerDiario" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_Director" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="txt_Director" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_IDCopia" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -314,6 +327,19 @@
               </Border>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="ID Copia Pelicula"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txt_IDCopia">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="..."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_IDCopiaActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
