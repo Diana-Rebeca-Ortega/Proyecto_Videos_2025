@@ -44,3 +44,33 @@ CREATE TRIGGER trg_GestionarStockPelicula AFTER UPDATE OF ESTADO ON COPIA_PELICU
 
 
 
+
+
+
+
+SQL SERVER 
+1> ALTER PROCEDURE dbo.GenerarCopiasStock
+2>     @idCatalogo INT,
+3>     @stockTotal INT,
+4>     @idSucursal INT
+5> AS
+6> BEGIN
+7>     SET NOCOUNT ON;
+8>
+9>     -- Variable contador para controlar las vueltas del ciclo
+10>     DECLARE @i INT = 1;
+11>
+12>     -- Ciclo que se repite según el stock solicitado
+13>     WHILE @i <= @stockTotal
+14>     BEGIN
+15>         -- Insertamos usando exactamente tus 3 columnas reales de la tabla
+16>         INSERT INTO COPIA_PELICULA (ID_PELICULA, ID_SUCURSAL, ESTADO)
+17>         VALUES (@idCatalogo, @idSucursal, 'Disponible');
+18>
+19>         -- Avanzamos el contador
+20>         SET @i = @i + 1;
+21>     END
+22> END;
+23> GO
+1> SELECT  * FROM COPIA_PELICULA;
+2> go

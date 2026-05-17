@@ -23,6 +23,8 @@ private boolean datosGuardados;
       public FormularioRealizarRenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        configurarListenersExtras();
+       
         dateDevolucion.setEnabled(false);
         mostrarFechaActual();
         btnRentar.setEnabled(false);
@@ -661,6 +663,14 @@ public Alquiler getAlquiler() {
         // TODO add your handling code here:
     }//GEN-LAST:event_cajaBuscadorPeliculaActionPerformed
 //METODOS EXTRAS 
+  private void configurarListenersExtras() {
+    cajaBuscadorPelicula.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            verificarEstadoBotonRentar();
+        }
+    });
+}
     private void limpiarDatosPelicula() {
     txt_TituloPelicula.setText("...");
     txt_Director.setText("...");

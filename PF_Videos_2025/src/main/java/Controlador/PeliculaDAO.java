@@ -109,7 +109,7 @@ public List<Pelicula> obtenerPeliculasPorCategoria(String categoria) {
 
     // --- R: READ (OBTENER POR ID) ---
  public Pelicula obtenerPeliculaPorId(int idPelicula) {
-    String sql = "SELECT ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total FROM DIANA931.PELICULA WHERE ID_PELICULA = ?";
+    String sql = "SELECT ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total FROM PELICULA WHERE ID_PELICULA = ?";
     Pelicula pelicula = null;
     
     Connection con = null; // ⬅️ Declaración
