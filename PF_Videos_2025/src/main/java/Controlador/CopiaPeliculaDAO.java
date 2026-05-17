@@ -12,7 +12,7 @@ private static final String ESQUEMA = "DIANA931"; // Asumiendo el mismo esquema 
 // R: READ (OBTENER POR ID)
 public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int idSucursal) {
     List<CopiaPelicula> lista = new ArrayList<>();
-  String sql = "SELECT ID_PELICULA, ID_CATALOGO, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_CATALOGO = ? AND ID_SUCURSAL = ?";
+ String sql = "SELECT ID_COPIA, ID_PELICULA, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_PELICULA = ? AND ID_SUCURSAL = ?";
     Connection con = null; // ⬅️ Declaración
     
     try {
@@ -27,8 +27,8 @@ public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idCatalogo, int
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     CopiaPelicula copia = new CopiaPelicula();
-                    copia.setIdCopiaPelicula(rs.getInt("ID_PELICULA"));
-                    copia.setIdPelicula(rs.getInt("ID_CATALOGO"));
+                    copia.setIdCopiaPelicula(rs.getInt("ID_COPIA"));
+                    copia.setIdPelicula(rs.getInt("ID_PELICULA"));
                     copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
                     copia.setEstado(rs.getString("ESTADO"));
                     lista.add(copia);
@@ -138,8 +138,8 @@ public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
 }
 
 public int contarCopiasDisponibles(int idPelicula) {
-    // La consulta invoca la Función Definida por el Usuario (UDF)
-  String sql = "SELECT dbo.ContarCopiasDisponibles(?)";
+    // fuNCION 
+String sql = "SELECT dbo.ContarCopiasDisponibles(?) AS Total";
     int copiasDisponibles = 0;
     
     Connection con = null;
@@ -151,6 +151,7 @@ public int contarCopiasDisponibles(int idPelicula) {
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             
             ps.setInt(1, idPelicula);
+           
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

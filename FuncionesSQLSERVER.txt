@@ -1,0 +1,21 @@
+-- 1. Borramos la versión anterior para evitar conflictos
+DROP FUNCTION IF EXISTS dbo.ContarCopiasDisponibles;
+GO
+
+-- 2. Creamos la función con UN SOLO parámetro
+CREATE FUNCTION dbo.ContarCopiasDisponibles (
+    @idPelicula INT
+)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @total INT;
+    
+    SELECT @total = COUNT(*) 
+    FROM COPIA_PELICULA 
+    WHERE ID_PELICULA = @idPelicula 
+      AND ESTADO = 'Disponible'; -- Cuenta todas las copias disponibles de esa película
+      
+    RETURN ISNULL(@total, 0);
+END;
+GO
