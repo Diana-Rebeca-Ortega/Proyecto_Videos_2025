@@ -140,3 +140,31 @@ GO
 -- 2. Otorgar SOLO los permisos solicitados (Subir, Consultar, Borrar) sobre la tabla específica
 GRANT INSERT, SELECT, DELETE ON peliculas TO Rol_Gestor_Peliculas;
 GO
+
+
+INSERT INTO USUARIO (NOMBRE_USUARIO, CONTRASENA_HASH, TIPO_USUARIO)
+VALUES 
+('diana', 'admin123', 'Rol_Administrador'),
+('rebeca', 'user123', 'Rol_Gestor_Peliculas');
+GO
+
+
+
+CREAR vista 
+1> CREATE VIEW V_ALQUILERES_CON_ESTADO AS
+2> SELECT
+3>     A.no_alquiler AS ID_ALQUILER,
+4>     C.NO_CLIENTE AS NO_CLIENTE,
+5>     CONCAT(C.NOMBRE, ' ', C.APELLIDO1, ' ', ISNULL(C.APELLIDO2, '')) AS NOMBRE_CLIENTE,
+6>     P.TITULO AS TITULO_PELICULA,
+7>     P.ID_PELICULA AS ID_PELICULA,
+8>     CP.ESTADO AS ESTADO_ACTUAL,
+9>     CP.ID_COPIA AS ID_COPIA_PELICULA,
+10>     A.fecha_alquiler AS FECHA_ALQUILER,
+11>     A.fecha_devolucion AS FECHA_VENCIMIENTO,
+12>     CP.ESTADO AS ESTADO_ENTREGA_UI
+13> FROM Alquiler A
+14> INNER JOIN CLIENTE C ON A.no_cliente = C.NO_CLIENTE
+15> INNER JOIN Copia_pelicula CP ON A.no_pelicula = CP.ID_COPIA
+16> INNER JOIN PELICULA P ON CP.ID_PELICULA = P.ID_PELICULA;
+17> GO

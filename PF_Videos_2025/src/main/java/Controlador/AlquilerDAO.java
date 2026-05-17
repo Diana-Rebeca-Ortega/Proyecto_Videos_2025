@@ -10,32 +10,36 @@ public class AlquilerDAO {
 //Los signos de interrogación (?)  se conocen como marcadores de posición (o placeholders).
    private static final String TABLA = "ALQUILER";
 //CONSULTAS******************************************************************************************
-   public List<Alquiler> obtenerTodosLosAlquileres() {
+  public List<Alquiler> obtenerTodosLosAlquileres() {
     List<Alquiler> lista = new ArrayList<>();
-   String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO "
-                   + "FROM " + TABLA;     
-    Connection con = null;     
+    // Modificamos el SQL para que use la vista que creamos
+    String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO FROM V_ALQUILERES_CON_ESTADO";
+    Connection con = null;
+    
     try {
-        con = ConexionBD.getInstance().getConnection();  
+        con = ConexionBD.getInstance().getConnection();
         try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {            
+             ResultSet rs = ps.executeQuery()) {
+            
             while (rs.next()) {
                 Alquiler alquiler = new Alquiler();
+                
+                // Mapeamos usando EXACTAMENTE los nombres en MAYÚSCULAS de la vista
                 alquiler.setIdAlquiler(rs.getInt("ID_ALQUILER"));
                 alquiler.setIdCliente(rs.getInt("NO_CLIENTE"));
                 alquiler.setIdPelicula(rs.getInt("ID_PELICULA"));
-                alquiler.setIdCopia(rs.getInt("ID_COPIA_PELICULA"));
+                alquiler.setIdCopia(rs.getInt("ID_COPIA_PELICULA")); // ¡Aquí ya no va a fallar!
                 alquiler.setFechaAlquiler(rs.getDate("FECHA_ALQUILER"));
                 alquiler.setFechaDevolucion(rs.getDate("FECHA_DEVOLUCION"));
                 alquiler.setEstado(rs.getString("ESTADO"));
                 alquiler.setIdSucursal(rs.getInt("ID_SUCURSAL"));
                 alquiler.setCostoDiario(rs.getDouble("ALQUILER_DIARIO"));
+                
                 lista.add(alquiler);
             }
         }
     } catch (SQLException e) {
-        System.err.println("Error al obtener alquileres: " + e.getMessage());
-        e.printStackTrace();
+        System.out.println("Error al obtener alquileres: " + e.getMessage());
     }
     return lista;
 }
@@ -63,7 +67,7 @@ public boolean insertarAlquiler(Alquiler alquiler) {
     }
 }
 
- // VISTA ALQUILER COMPLETO//////////////////////////////////////////////
+ // VISTA ALQUILER COMPLETO//////////////////////////////////////////////mapeo a sql server
  public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
     List<AlquilerCompleto> listado = new ArrayList<>();
     String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO WHERE ID_SUCURSAL = ?";
