@@ -5,14 +5,11 @@ import Controlador.CopiaPeliculaDAO;
 import Controlador.PeliculaDAO;
 import Modelo.Alquiler;
 import Modelo.Cliente;
-import Modelo.CopiaPelicula;
 import Modelo.Pelicula;
-import com.toedter.calendar.JDateChooser;
-import java.text.ParseException;
+import Vista.Filtros.BuscadorPredictivo;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import Vista.Filtros.BuscadorPredictivo;
-
 public class FormularioRealizarRenta extends javax.swing.JDialog {
 AlquilerDAO alquilerDAO = new AlquilerDAO();
 Alquiler nuevoAlquiler = new Alquiler();
@@ -24,13 +21,13 @@ private boolean datosGuardados;
         super(parent, modal);
         initComponents();
         configurarListenersExtras();
-       
+        BuscadorPredictivo.registrarAutocompletado(cajaBuscadorPelicula);
         dateDevolucion.setEnabled(false);
         mostrarFechaActual();
         btnRentar.setEnabled(false);
         this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
         dateDevolucion.setMinSelectableDate(new java.util.Date());
-        BuscadorPredictivo.registrarAutocompletado(cajaBuscadorPelicula);
+       
     }
       
      public boolean isDatosGuardados() {
@@ -476,7 +473,7 @@ public Alquiler getAlquiler() {
 
     // --- 1. OBTENER ID DE LA COPIA ---
     try {
-        // Primero obtenemos el ID de la copia del campo de texto (¡Paso clave!)
+        // Primero obtenemos el ID de la copia del campo de texto 
         idCopiaRentada = Integer.parseInt(cajaBuscadorPelicula.getText());
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Debe ingresar un ID de Copia válido.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -585,7 +582,7 @@ public Alquiler getAlquiler() {
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
     private void btn_buscarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarPeliculaActionPerformed
-      String textoBusqueda = cajaBuscadorPelicula.getText().trim();
+  String textoBusqueda = cajaBuscadorPelicula.getText().trim();
     
     if (textoBusqueda.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Por favor, ingrese un ID de copia o el título de la película.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
@@ -677,16 +674,10 @@ public Alquiler getAlquiler() {
     txt_Categoria.setText("...");
     txt_AlquilerDiario.setText("...");
     txt_IDpelicula.setText("...");   
+    this.idCopiaSeleccionada = -1;
     verificarHabilitacionFecha();
     }
-    private void cargarDatosPelicula(Pelicula p) {
-    txt_IDpelicula.setText( String.valueOf( p.getIdPelicula()));
-    txt_TituloPelicula.setText(p.getTitulo());
-    txt_Director.setText(p.getDirector());
-    txt_Categoria.setText(p.getCategoria());
-    txt_AlquilerDiario.setText(String.valueOf(p.getPrecioAlquiler())); 
-    verificarHabilitacionFecha();
-    }
+ 
     private  void limpiarDatosCliente() {
     txt_NombreCliente.setText("...");
     txt_Apellido1.setText("...");

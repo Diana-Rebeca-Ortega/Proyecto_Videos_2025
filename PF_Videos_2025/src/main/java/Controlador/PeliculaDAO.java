@@ -264,7 +264,6 @@ public boolean modificarPelicula(Pelicula pelicula) {
                           && !filtroCategoria.equalsIgnoreCase("null");
 
     if (tieneFiltro) {
-        // Quitamos DIANA931.
         sql = "SELECT " + columnasSelect + " FROM PELICULA WHERE CATEGORIA = ?";
     } else {
         // Quitamos DIANA931.
@@ -297,60 +296,33 @@ public boolean modificarPelicula(Pelicula pelicula) {
     }
     return model;
 }
- public List<Pelicula> buscarPeliculasDinamico(String textoBusqueda, String tipoFiltro) {
+public List<Pelicula> buscarPeliculasDinamico(String texto, String columna) {
     List<Pelicula> lista = new ArrayList<>();
+    // Concatenamos de forma segura la columna (TITULO) directamente en el SELECT
+    String sql = "SELECT * FROM PELICULA WHERE " + columna + " LIKE ?";
     
-    // Consulta base
-    String sqlBase = "SELECT ID_PELICULA, TITULO, CATEGORIA, DIRECTOR, alquiler_diario, coste_venta, Stock_total FROM PELICULA";
-    StringBuilder sb = new StringBuilder(sqlBase);
-    
-    boolean tieneTexto = textoBusqueda != null && !textoBusqueda.trim().isEmpty();
-    
-    // Construimos el filtro WHERE dinámicamente
-    if (tieneTexto) {
-        if ("ID".equalsIgnoreCase(tipoFiltro)) {
-            sb.append(" WHERE ID_PELICULA = ?");
-        } else if ("Nombre".equalsIgnoreCase(tipoFiltro)) {
-            sb.append(" WHERE TITULO LIKE ?");
-        }
-    }
-    
-    Connection con = null;
-    try {
-        con = ConexionBD.getInstance().getConnection();
-        try (PreparedStatement ps = con.prepareStatement(sb.toString())) {
-            
-            // Asignamos el parámetro según el tipo de filtro
-            if (tieneTexto) {
-                if ("ID".equalsIgnoreCase(tipoFiltro)) {
-                    // Convertimos la cadena a entero de forma segura
-                    ps.setInt(1, Integer.parseInt(textoBusqueda.trim()));
-                } else if ("Nombre".equalsIgnoreCase(tipoFiltro)) {
-                    // Usamos % para búsquedas parciales (ej: "mar" encuentra "Matrix" o "Iron Man")
-                    ps.setString(1, "%" + textoBusqueda.trim() + "%");
-                }
-            }
-            
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Pelicula pelicula = new Pelicula();
-                    pelicula.setIdPelicula(rs.getInt("ID_PELICULA"));
-                    pelicula.setTitulo(rs.getString("TITULO"));
-                    pelicula.setCategoria(rs.getString("CATEGORIA"));
-                    pelicula.setDirector(rs.getString("DIRECTOR"));
-                    pelicula.setPrecioAlquiler(rs.getDouble("alquiler_diario"));
-                    pelicula.setCosteAdquisicion(rs.getDouble("coste_venta"));
-                    pelicula.setStockTotal(rs.getInt("Stock_total"));
-                    
-                    lista.add(pelicula);
-                }
+    // 🌟 CORREGIDO: Usamos tu clase Singleton ConexionBD para abrir la conexión directamente
+    try (Connection con = ConexionBD.getInstance().getConnection(); 
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        // 🌟 Usamos el comodín % solo al FINAL para que busque las que "EMPIECEN" con esa letra
+        // Si pones "A", buscará "A%". Así 's', 'y', 'e' se quedan fuera.
+        ps.setString(1, texto.trim() + "%"); 
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Pelicula p = new Pelicula();
+                p.setIdPelicula(rs.getInt("ID_PELICULA"));
+                p.setTitulo(rs.getString("TITULO"));
+                p.setCategoria(rs.getString("CATEGORIA"));
+                p.setDirector(rs.getString("DIRECTOR"));
+                p.setPrecioAlquiler(rs.getDouble("ALQUILER_DIARIO"));
+                
+                lista.add(p);
             }
         }
-    } catch (NumberFormatException e) {
-        System.err.println("Error: El valor ingresado para ID no es un número válido.");
     } catch (SQLException e) {
-        System.err.println("Error al realizar búsqueda dinámica de películas: " + e.getMessage());
-        e.printStackTrace();
+        System.out.println("Error en búsqueda dinámica: " + e.getMessage());
     }
     return lista;
 }

@@ -1,5 +1,6 @@
 package Vista.Filtros;
-import ConneccionBD.ConexionBD;
+import Controlador.PeliculaDAO;
+import Modelo.Pelicula;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -8,27 +9,25 @@ import java.util.List;
 
 public class BuscadorPredictivo {
 
+    // Registra el autocompletado en tu JTextField actual
     public static void registrarAutocompletado(JTextField txtBuscador) {
         JPopupMenu popupMenu = new JPopupMenu();
         JList<String> listResultados = new JList<>();
-        JScrollPane scrollPane = new JScrollPane(listResultados);
         
+        // Colocamos la lista dentro de un panel con scroll por si hay muchas opciones
+        JScrollPane scrollPane = new JScrollPane(listResultados);
         popupMenu.add(scrollPane);
+        
+        // Evitamos que el popup le quite el foco al teclado del JTextField
         popupMenu.setFocusable(false);
-
-        final boolean[] programmaticChange = {false};
 
         txtBuscador.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if (programmaticChange[0]) {
-                    return;
-                }
-
+                // Omitir acciones si se presionan las flechas de dirección o Enter
                 if (e.getKeyCode() == KeyEvent.VK_UP || 
                     e.getKeyCode() == KeyEvent.VK_DOWN || 
-                    e.getKeyCode() == KeyEvent.VK_ENTER ||
-                    e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    e.getKeyCode() == KeyEvent.VK_ENTER) {
                     return;
                 }
 
@@ -39,120 +38,73 @@ public class BuscadorPredictivo {
                     return;
                 }
 
-                // Traer datos de la BD
+                // 1. Obtener los datos filtrados (Aquí conectas con tu base de datos o lista local)
+                // Reemplaza este método simulado por tu consulta SQL real (ej. buscando por título o ID)
                 List<String> sugerencias = obtenerSugerenciasDesdeBD(textoFiltro);
 
                 if (!sugerencias.isEmpty()) {
+                    // Actualizar el modelo de la lista con los nuevos resultados hallados
                     DefaultListModel<String> model = new DefaultListModel<>();
                     for (String sugerencia : sugerencias) {
                         model.addElement(sugerencia);
                     }
                     listResultados.setModel(model);
 
-                    // --- TRUCO DE RENDERIZADO FORZADO PARA SWING ---
-                    scrollPane.setPreferredSize(new java.awt.Dimension(txtBuscador.getWidth(), 140));
-                    popupMenu.pack(); 
-                    
-                    if (popupMenu.isShowing()) {
-                        popupMenu.setVisible(false);
-                    }
-
-                    SwingUtilities.invokeLater(() -> {
-                        if (!txtBuscador.isShowing()) return;
-                        
-                        popupMenu.show(txtBuscador, 0, txtBuscador.getHeight());
-                        txtBuscador.requestFocus();
-                    });
-                    
+                    // Ajustar tamaño del popup y mostrar justo debajo del JTextField
+                    scrollPane.setPreferredSize(new java.awt.Dimension(txtBuscador.getWidth(), 120));
+                    popupMenu.show(txtBuscador, 0, txtBuscador.getHeight());
+                    txtBuscador.requestFocus(); // Reafirmar el foco en el input
                 } else {
                     popupMenu.setVisible(false);
                 }
             }
         });
 
-        // EVENTO 1: Selección con CLIC del MOUSE
-        listResultados.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (listResultados.getSelectedValue() != null) {
-                    String seleccionCompleta = listResultados.getSelectedValue();
-                    String soloNombre = seleccionCompleta.split(" - ")[0].trim();
-
-                    programmaticChange[0] = true;
-                    txtBuscador.setText(soloNombre);
-                    popupMenu.setVisible(false);
-                    programmaticChange[0] = false;
-                    
-                    txtBuscador.requestFocus();
-                }
+        // Evento para cuando el usuario selecciona una opción con el mouse
+        listResultados.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && listResultados.getSelectedValue() != null) {
+                txtBuscador.setText(listResultados.getSelectedValue());
+                popupMenu.setVisible(false);
+                
+                // Aquí puedes disparar automáticamente tu lógica de búsqueda/llenado de labels
+                System.out.println("Opción seleccionada: " + txtBuscador.getText());
             }
         });
-
-        // EVENTO 2: Navegación por TECLADO
+        
+        // Permitir navegar por las opciones con las flechas del teclado desde el mismo textfield
         txtBuscador.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (popupMenu.isShowing()) {
                     int index = listResultados.getSelectedIndex();
-                    
                     if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                         listResultados.setSelectedIndex(index + 1);
                         listResultados.ensureIndexIsVisible(index + 1);
-                        e.consume();
                     } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                         listResultados.setSelectedIndex(index - 1);
                         listResultados.ensureIndexIsVisible(index - 1);
-                        e.consume();
                     } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         if (listResultados.getSelectedValue() != null) {
-                            String seleccionCompleta = listResultados.getSelectedValue();
-                            String soloNombre = seleccionCompleta.split(" - ")[0].trim();
-
-                            programmaticChange[0] = true;
-                            txtBuscador.setText(soloNombre);
+                            txtBuscador.setText(listResultados.getSelectedValue());
                             popupMenu.setVisible(false);
-                            programmaticChange[0] = false;
-                            
-                            e.consume();
+                            e.consume(); // Evita ruidos o submits accidentales
                         }
-                    } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                        popupMenu.setVisible(false);
-                        e.consume();
                     }
                 }
             }
         });
-    } // <-- Esta es la llave que faltaba para cerrar el método registrarAutocompletado
+    }
 
-    private static List<String> obtenerSugerenciasDesdeBD(String consulta) {
+    // Método de ejemplo para simular la procedencia de datos
+ private static List<String> obtenerSugerenciasDesdeBD(String consulta) {
     List<String> filtradas = new ArrayList<>();
     
-    // Cadena de consulta utilizando tu vista o tablas correspondientes
-    // Buscamos coincidencias tanto en el título como en el ID
-    String sql = "SELECT TOP 5 CP_ID_COPIA_PELICULA, TITULO_PELICULA " +
-                 "FROM dbo.VISTA_ALQUILERES_COMPLETO " +
-                 "WHERE TITULO_PELICULA LIKE ? OR CAST(CP_ID_COPIA_PELICULA AS VARCHAR) LIKE ?";
-    
-    try (java.sql.Connection con = ConneccionBD.ConexionBD.getInstance().getConnection();
-         java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
-        String parametroBusqueda = "%" + consulta + "%";
-        ps.setString(1, parametroBusqueda);
-        ps.setString(2, parametroBusqueda);
-        
-        try (java.sql.ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                // Extraemos los datos de la fila actual
-                String idCopia = rs.getString("CP_ID_COPIA_PELICULA");
-                String titulo = rs.getString("TITULO_PELICULA");
-                
-                // Formateamos la sugerencia de manera idéntica a tu diseño de interfaz
-                filtradas.add(titulo + " - ID: " + idCopia);
-            }
-        }
-        
-    } catch (java.sql.SQLException e) {
-        System.err.println("Error al consultar las sugerencias de películas: " + e.getMessage());
-        e.printStackTrace();
+    // Llamamos a tu DAO real usando el método corregido
+    PeliculaDAO peliculaDao = new PeliculaDAO();
+   List<Pelicula> peliculasReales = peliculaDao.buscarPeliculasDinamico(consulta, "TITULO");
+    // Convertimos los objetos Pelicula a Strings para tu lista sugerida
+    for (Pelicula p : peliculasReales) {
+        filtradas.add(p.getTitulo() + " - ID: " + p.getIdPelicula());
     }
     
     return filtradas;
