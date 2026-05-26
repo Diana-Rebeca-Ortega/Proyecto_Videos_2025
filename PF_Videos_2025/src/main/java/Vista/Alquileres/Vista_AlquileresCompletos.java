@@ -47,8 +47,8 @@ public void cargarTablaAlquileresVista() {
             ac.getFechaDevolucion(),
             ac.getEstado(),
             ac.getTarifaTotal(),            
-            ac.getIdSucursal(),            
-            ac.getIdCopiaPelicula()
+            ac.getIdCopiaPelicula(), 
+            ac.getIdSucursal()
         };
         modelo.addRow(fila);
     }
