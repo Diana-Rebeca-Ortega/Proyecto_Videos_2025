@@ -36,11 +36,6 @@ RentaValidatorContext
         this.peliculaDAO = new PeliculaDAO(); // Necesario para obtener la tarifa
     }
 
-    /**
-     * Proporciona una interfaz simple para realizar una renta completa.
-     * Oculta las validaciones, la obtención de tarifas y la transacción de DB.
-     * @return String: "Éxito" si la renta fue exitosa, o un mensaje de error.
-     */
     public String realizarNuevaRenta(int idCopia, int idCliente, Date fechaDevolucionUtil) { 
         try {
             // 1. Validar Cliente (Subsistema 1)
@@ -67,7 +62,6 @@ RentaValidatorContext
             java.sql.Date sqlFechaRenta = new java.sql.Date(new java.util.Date().getTime());
             java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());
             
-            // (Tu lógica de cálculo de tarifa total y estado va aquí)
             
             Alquiler nuevoAlquiler = new Alquiler();
             nuevoAlquiler.setIdCopia(idCopia);

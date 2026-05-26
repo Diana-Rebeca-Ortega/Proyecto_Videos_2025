@@ -121,7 +121,7 @@ public class CopiaPeliculaDAO {
 
     // 5. ACTUALIZAR EL ESTADO DE LA COPIA (Ej: Disponible ➡️ Rentada)
     public boolean actualizarEstadoCopia(int idCopia, String nuevoEstado) {
-        String sql = "UPDATE COPIA_PELICULA SET Estado = ? WHERE ID_Copia_Pelicula = ?";
+        String sql = "UPDATE COPIA_PELICULA SET Estado = ? WHERE ID_COPIA = ?";
         Connection con = null;
         try {
             con = ConexionBD.getInstance().getConnection();
