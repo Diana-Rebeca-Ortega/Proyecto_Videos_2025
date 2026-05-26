@@ -30,6 +30,7 @@ public class AlquilerDAO {
                 alquiler.setIdCopia(rs.getInt("ID_COPIA_PELICULA")); 
                 alquiler.setFechaAlquiler(rs.getDate("FECHA_ALQUILER"));
                 alquiler.setFechaDevolucion(rs.getDate("FECHA_DEVOLUCION"));
+                
                 alquiler.setEstado(rs.getString("ESTADO"));
                 alquiler.setIdSucursal(rs.getInt("ID_SUCURSAL"));
                 alquiler.setCostoDiario(rs.getDouble("ALQUILER_DIARIO"));

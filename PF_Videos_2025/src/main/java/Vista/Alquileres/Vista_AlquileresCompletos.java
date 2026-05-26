@@ -16,8 +16,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 public class Vista_AlquileresCompletos extends javax.swing.JDialog {
-    private AlquilerDAO alquilerDao = new AlquilerDAO();
+   private AlquilerDAO alquilerDao = new AlquilerDAO();
     private int idSucursalActual;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Vista_AlquileresCompletos.class.getName());
     private JPopupMenu popupMenu;
     private JMenuItem devolverMenuItem;
@@ -34,7 +35,8 @@ public void cargarTablaAlquileresVista() {
     modelo.setColumnIdentifiers(nuevasColumnas);
     modelo.setRowCount(0);
     
-    List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(1);
+    ///USAMOS LA SUCURSAL 0 para hacer pruebas 
+    List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(0);
     
     for (AlquilerCompleto ac : listado) {
         Object[] fila = new Object[] {
