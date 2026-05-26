@@ -11,9 +11,8 @@ public class CopiaPeliculaDAO {
     // 1. OBTENER TODAS LAS COPIAS DE UNA PELÍCULA EN UNA SUCURSAL
     public List<CopiaPelicula> obtenerCopiasPorPeliculaYSucursal(int idPelicula, int idSucursal) {
         List<CopiaPelicula> lista = new ArrayList<>();
-        String sql = "SELECT ID_Copia_Pelicula, ID_Pelicula, ID_Sucursal, Estado FROM COPIA_PELICULA WHERE ID_Pelicula = ? AND ID_Sucursal = ?";
-        Connection con = null; 
-        
+        String sql = "SELECT ID_COPIA, ID_PELICULA, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_PELICULA = ? AND ID_SUCURSAL = ?";
+        Connection con = null;
         try {
             con = ConexionBD.getInstance().getConnection(); 
 
@@ -24,7 +23,7 @@ public class CopiaPeliculaDAO {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         CopiaPelicula copia = new CopiaPelicula();
-                        copia.setIdCopiaPelicula(rs.getInt("ID_Copia_Pelicula"));
+                        copia.setIdCopiaPelicula(rs.getInt("ID_COPIA"));
                         copia.setIdPelicula(rs.getInt("ID_Pelicula"));
                         copia.setIdSucursal(rs.getInt("ID_Sucursal"));
                         copia.setEstado(rs.getString("Estado"));
@@ -43,9 +42,8 @@ public class CopiaPeliculaDAO {
     public int obtenerIdCopiaDisponible(int idPelicula, int idSucursal) {
         int idCopia = -1;
         
-        // CAMBIO AQUÍ: Probamos con ID_Copia en lugar de ID_Copia_Pelicula
-        String sql = "SELECT TOP 1 ID_Copia FROM COPIA_PELICULA " +
-                     "WHERE ID_Pelicula = ? AND ID_Sucursal = ? AND UPPER(Estado) = 'DISPONIBLE'";
+        String sql = "SELECT TOP 1 ID_COPIA FROM COPIA_PELICULA " +
+                     "WHERE ID_Pelicula = ? AND UPPER(Estado) = 'DISPONIBLE'";
         Connection con = null; 
 
         try {
