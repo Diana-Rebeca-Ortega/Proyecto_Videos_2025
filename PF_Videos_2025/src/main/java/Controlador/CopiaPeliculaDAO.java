@@ -43,8 +43,8 @@ public class CopiaPeliculaDAO {
         int idCopia = -1;
         
         String sql = "SELECT TOP 1 ID_COPIA FROM COPIA_PELICULA " +
-                     "WHERE ID_Pelicula = ? AND UPPER(Estado) = 'DISPONIBLE'";
-        Connection con = null; 
+                     "WHERE ID_PELICULA = ? AND ID_SUCURSAL = ? AND UPPER(ESTADO) = 'DISPONIBLE'";
+        Connection con = null;
 
         try {
             con = ConexionBD.getInstance().getConnection();
@@ -98,7 +98,7 @@ public class CopiaPeliculaDAO {
 
     // 4. OBTENER EL ID DE LA PELÍCULA MAESTRA A PARTIR DE UNA COPIA FÍSICA
     public int obtenerIdPeliculaMaestraPorCopia(int idCopia) {   
-        String sql = "SELECT ID_Pelicula FROM COPIA_PELICULA WHERE ID_Copia_Pelicula = ?";
+        String sql = "SELECT ID_PELICULA FROM COPIA_PELICULA WHERE ID_COPIA = ?";
         int idMaestra = -1;    
         Connection con = null;
         try {
@@ -113,7 +113,7 @@ public class CopiaPeliculaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener ID_Pelicula por ID_Copia_Pelicula: " + e.getMessage());
+            System.err.println("Error al obtener ID_Pelicula por ID_Copia: " + e.getMessage());
             e.printStackTrace();
         }
         return idMaestra;

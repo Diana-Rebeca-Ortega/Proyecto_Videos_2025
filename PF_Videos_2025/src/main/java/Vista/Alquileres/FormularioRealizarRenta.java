@@ -494,10 +494,11 @@ public Alquiler getAlquiler() {
 
     // --- 1. OBTENER ID DE LA COPIA ---
     try {
-        // Primero obtenemos el ID de la copia del campo de texto 
-        idCopiaRentada = Integer.parseInt(cajaBuscadorPelicula.getText());
+        String idCopiaTexto = txt_IDCopia.getText().trim();
+        
+        idCopiaRentada = Integer.parseInt(idCopiaTexto);
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Debe ingresar un ID de Copia válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Debe ingresar o buscar una película para obtener un ID de Copia numérico válido.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
     
