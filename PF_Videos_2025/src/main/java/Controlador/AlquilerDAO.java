@@ -13,7 +13,10 @@ public class AlquilerDAO {
   public List<Alquiler> obtenerTodosLosAlquileres() {
     List<Alquiler> lista = new ArrayList<>();
     // Modificamos el SQL para que use la vista que creamos
-    String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, ID_COPIA_PELICULA, FECHA_ALQUILER, FECHA_DEVOLUCION, ESTADO, ID_SUCURSAL, ALQUILER_DIARIO FROM V_ALQUILERES_CON_ESTADO";
+    String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, " +
+                 "CONVERT(DATE, FECHA_ALQUILER) AS FECHA_ALQUILER, " +
+                 "CONVERT(DATE, FECHA_DEVOLUCION) AS FECHA_DEVOLUCION, " +
+                 "ESTADO, ALQUILER_DIARIO, ID_SUCURSAL, ID_COPIA_PELICULA FROM ALQUILER";
     Connection con = null;
     
     try {
@@ -40,6 +43,8 @@ public class AlquilerDAO {
         }
     } catch (SQLException e) {
         System.out.println("Error al obtener alquileres: " + e.getMessage());
+        System.err.println("Error crítico en SQL: " + e.getMessage());
+        System.err.println("Error al convertir fechas: " + e.getMessage());
     }
     return lista;
 }
@@ -104,8 +109,11 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     PreparedStatement psAlquiler = null;
     PreparedStatement psCopia = null;
     boolean exito = false;
-        String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = GETDATE(), ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?";
-        String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'Disponible' WHERE ID_COPIA = ?";  try {
+      String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = GETDATE(), ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?"; 
+      String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'Disponible' WHERE ID_Copia_Pelicula = ?";
+       
+       try {
+       
         con = ConexionBD.getInstance().getConnection();
         con.setAutoCommit(false); // 1. INICIA la transacción
 
