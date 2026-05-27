@@ -84,36 +84,18 @@ private AuditoriaClaveDAO auditoriaClaveDAO = new AuditoriaClaveDAO();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
-   try {
-            Date fechaInicio = obtenerFechaInicio(); 
-            Date fechaFin = obtenerFechaFin();            
-            if (fechaInicio == null || fechaFin == null) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar ambas fechas.", "Error de Fecha", JOptionPane.WARNING_MESSAGE);
-                return;
-            }            
-            if (radioPopulares.isSelected()) {
-                new ReportePopulares(fechaInicio, fechaFin).setVisible(true); 
-            } else if (radioAlquileres.isSelected()) {               
-                var datos = reporteDAO.obtenerAlquileresPorPeriodo(fechaInicio, fechaFin);                
-                if (datos.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "No se encontraron alquileres en ese período.", "Sin Datos", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    String periodo = fechaInicio.toString() + " a " + fechaFin.toString();
-                    new ReporteAlquileres(datos, periodo); 
-                }
-            }
-            else if (radioAuditoriaClave.isSelected()) {
-                List<AuditoriaClave> historial = auditoriaClaveDAO.obtenerTodosLosRegistros();
-                if (historial.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No se encontraron registros de auditoría de contraseñas.", "Sin Datos", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                new ReporteAuditoriaClave(historial).setVisible(true);
-            }
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al generar el reporte: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }        
+  // 1. Declaracion de la interfaz
+    IReporteGenerador generador = null;
+    // 2. qué generador usar
+    if (radioAlquileres.isSelected()) {
+        generador = new ReporteAlquileresGenerador(obtenerFechaInicio(), obtenerFechaFin());
+    } 
+    // Si mañana se añade otro, solo se agrega un 'else if' aquí abajo
+    
+    // 3. Ejecutar
+    if (generador != null) {
+        generador.generar();
+    }
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 private java.sql.Date obtenerFechaInicio() {    
         java.util.Date utilDate = dateChooserInicio.getDate(); 

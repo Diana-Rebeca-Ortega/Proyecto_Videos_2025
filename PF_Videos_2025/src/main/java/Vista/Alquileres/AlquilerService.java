@@ -1,13 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Vista.Alquileres;
+//Logica 
 
-/**
- *
- * @author Diana
- */
+import Controlador.AlquilerDAO;
+import Controlador.CopiaPeliculaDAO;
+import Modelo.Alquiler;
+import javax.swing.JOptionPane;
+
 public class AlquilerService {
-    
+   
+    public boolean registrarNuevaRenta(Alquiler nuevoAlquiler) {
+        AlquilerDAO daoAlquiler = new AlquilerDAO();
+        CopiaPeliculaDAO daoCopia = new CopiaPeliculaDAO();
+        
+        
+        // Aquí ejecutas tus transacciones
+        if (daoAlquiler.insertarAlquiler(nuevoAlquiler)) {
+            return daoCopia.actualizarEstadoCopia(nuevoAlquiler.getIdCopia(), "RENTADO");
+        }
+        return false;
+    }
 }
+

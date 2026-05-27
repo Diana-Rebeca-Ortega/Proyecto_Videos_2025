@@ -186,25 +186,22 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDevolucionActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       FormularioRealizarRenta form = new FormularioRealizarRenta(null, true);
+    FormularioRealizarRenta form = new FormularioRealizarRenta(null, true);
     form.setVisible(true);
-    //Verificar si la renta fue exitosa y guardada
-    if (form.isDatosGuardados()) {
-        Alquiler nuevoAlquiler = form.getAlquiler(); // Contiene el ID de la copia
-        AlquilerDAO daoAlquiler = new AlquilerDAO();        
-        if (daoAlquiler.insertarAlquiler(nuevoAlquiler)) {
-            int idCopiaRentada = nuevoAlquiler.getIdCopia();             
-            CopiaPeliculaDAO daoCopia = new CopiaPeliculaDAO(); 
-            boolean estadoCambiado = daoCopia.actualizarEstadoCopia(idCopiaRentada, "RENTADO"); 
 
-            if (estadoCambiado) {
-                JOptionPane.showMessageDialog(this, "Renta registrada con éxito y copia actualizada.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                cargarAlquileresATabla();                
+    if (form.isDatosGuardados()) {
+        try {
+            AlquilerService service = new AlquilerService();
+            boolean exito = service.registrarNuevaRenta(form.getAlquiler());
+            
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Renta registrada con éxito.");
+                cargarAlquileresATabla(); // Esto se queda en la vista
             } else {
-                JOptionPane.showMessageDialog(this, "Alerta: Renta registrada, pero falló el cambio de estado de la Copia ID: " + idCopiaRentada + ". Revise logs y base de datos.", "Alerta de Consistencia", JOptionPane.WARNING_MESSAGE);
-                }
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al registrar la renta. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al actualizar estado.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error fatal: " + e.getMessage());
         }
     }
     }//GEN-LAST:event_jButton1ActionPerformed
