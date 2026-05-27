@@ -84,17 +84,24 @@ private AuditoriaClaveDAO auditoriaClaveDAO = new AuditoriaClaveDAO();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
-  // 1. Declaracion de la interfaz
-    IReporteGenerador generador = null;
-    // 2. qué generador usar
+  IReporteGenerador generador = null;
+
+    // Validación única de fechas
+    Date inicio = obtenerFechaInicio();
+    Date fin = obtenerFechaFin();
+
     if (radioAlquileres.isSelected()) {
-        generador = new ReporteAlquileresGenerador(obtenerFechaInicio(), obtenerFechaFin());
-    } 
-    // Si mañana se añade otro, solo se agrega un 'else if' aquí abajo
-    
-    // 3. Ejecutar
+        generador = new ReporteAlquileresGenerador(inicio, fin);
+    } else if (radioPopulares.isSelected()) {
+        generador = new ReportePopularesGenerador(inicio, fin);
+    } else if (radioAuditoriaClave.isSelected()) {
+        generador = new ReporteAuditoriaGenerador(); 
+    }
+
     if (generador != null) {
         generador.generar();
+    } else {
+        JOptionPane.showMessageDialog(this, "Seleccione un reporte válido.");
     }
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 private java.sql.Date obtenerFechaInicio() {    

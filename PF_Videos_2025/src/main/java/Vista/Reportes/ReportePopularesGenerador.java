@@ -1,13 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Vista.Reportes;
 
-/**
- *
- * @author Diana
- */
-public class ReportePopularesGenerador {
-    
+import Controlador.ReporteDAO;
+import java.sql.Date;
+
+public class ReportePopularesGenerador implements IReporteGenerador {
+    private Date inicio, fin;
+
+    public ReportePopularesGenerador(Date i, Date f) { 
+        this.inicio = i; 
+        this.fin = f; 
+    }
+
+    @Override
+    public void generar() {
+        // LSP: Esta clase respeta el contrato de la interfaz sin excepciones
+        new ReportePopulares(inicio, fin);
+    }
 }

@@ -12,9 +12,9 @@ public class ReporteAlquileresGenerador implements IReporteGenerador {
     }
 
     @Override
-    public void generar() {
-        var datos = new ReporteDAO().obtenerAlquileresPorPeriodo(inicio, fin);
-        // Aquí llamas a tu clase ReporteAlquileres que ya tenías
-        new ReporteAlquileres(datos, inicio.toString() + " a " + fin.toString());
-    }
+public void generar() {
+    var datos = new ReporteDAO().obtenerAlquileresPorPeriodo(inicio, fin);
+    ReporteAlquileres vista = new ReporteAlquileres(datos, inicio.toString() + " a " + fin.toString());
+    vista.setVisible(true); 
+}
 }
