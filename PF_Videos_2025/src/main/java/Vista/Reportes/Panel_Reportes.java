@@ -91,7 +91,7 @@ private AuditoriaClaveDAO auditoriaClaveDAO = new AuditoriaClaveDAO();
     Date fin = obtenerFechaFin();
 
     if (radioAlquileres.isSelected()) {
-        generador = new ReporteAlquileresGenerador(inicio, fin);
+        generador = new ReporteAlquileresGenerador(obtenerFechaInicio(), obtenerFechaFin(), this.reporteDAO);
     } else if (radioPopulares.isSelected()) {
         generador = new ReportePopularesGenerador(inicio, fin);
     } else if (radioAuditoriaClave.isSelected()) {
