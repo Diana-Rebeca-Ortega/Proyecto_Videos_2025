@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package Vista.Alquileres;
 
-/**
- *
- * @author Diana
- */
-public class PrecioPromocionalStrategy {
-    
+package Vista.Alquileres;
+//para dias festivos y descuentos 
+public class PrecioPromocionalStrategy implements ICalculoPrecioStrategy {
+    @Override
+    public double calcularCosto(int diasRentados, double tarifaBase) {
+        double costoNormal = diasRentados * tarifaBase;
+        return costoNormal * 0.85; // Aplica un 15% de descuento
+    }
 }

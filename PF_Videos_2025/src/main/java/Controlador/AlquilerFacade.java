@@ -4,10 +4,13 @@ import Modelo.Cliente;
 import Modelo.CopiaPelicula;
 import Modelo.Alquiler;
 import Modelo.Pelicula;
+import Vista.Alquileres.ICalculoPrecioStrategy;
+import Vista.Alquileres.PrecioEstandarStrategy;
 import java.util.Date;
 import java.sql.SQLException;
 
 public class AlquilerFacade {
+    private ICalculoPrecioStrategy precioStrategy;
     /*
     El Facade es responsable de instanciar todos los objetos de acceso a datos (DAOs) que necesita para completar la renta.
 
@@ -34,8 +37,11 @@ RentaValidatorContext
         this.clienteDAO = new ClienteDAO();
         this.alquilerDAO = new AlquilerDAO();
         this.peliculaDAO = new PeliculaDAO(); // Necesario para obtener la tarifa
+        this.precioStrategy = new PrecioEstandarStrategy();
     }
-
+public void setPrecioStrategy(ICalculoPrecioStrategy precioStrategy) {
+    this.precioStrategy = precioStrategy;
+}
     public String realizarNuevaRenta(int idCopia, int idCliente, Date fechaDevolucionUtil) { 
         try {
             // 1. Validar Cliente (Subsistema 1)

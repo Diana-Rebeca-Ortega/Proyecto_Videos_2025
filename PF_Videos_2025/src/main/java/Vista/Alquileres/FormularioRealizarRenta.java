@@ -483,16 +483,46 @@ private boolean datosGuardados;
     }//GEN-LAST:event_cajaBuscadorClienteActionPerformed
 
     private void btnRentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRentarActionPerformed
-   int idCopiaRentada = extraerIdCopiaValido();
-        if (idCopiaRentada == -1) return;
+   // 1. Validaciones iniciales rápidas de la UI
+    int idCopiaRentada = extraerIdCopiaValido();
+    if (idCopiaRentada == -1) return;
 
-        int idPeliculaMaestra = obtenerIdPeliculaMaestra(idCopiaRentada);
-        if (idPeliculaMaestra == -1) return;
+    String idClienteTexto = cajaBuscadorCliente.getText().trim();
+    if (idClienteTexto.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.", "Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    int idCliente = Integer.parseInt(idClienteTexto);
 
-        if (!cargarDatosTransaccion(idPeliculaMaestra, idCopiaRentada)) return;
-        if (!procesarYCalcularFechas()) return;
+    java.util.Date fechaDevolucion = dateDevolucion.getDate();
+    if (fechaDevolucion == null) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar una fecha de devolución.", "Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    // 2. Instanciar el Facade (Patrón Estructural)
+    Controlador.AlquilerFacade facade = new Controlador.AlquilerFacade();
 
-        ejecutarRegistroAlquiler();
+    // 3. Aplicar el Patrón Strategy (Patrón de Comportamiento)
+    // Decidimos la estrategia de cobro dinámicamente según una condición de la UI (ej. un CheckBox o día actual)
+    boolean esFinDeSemanaPromocional = false; // Aquí puedes poner tu lógica o dejarlo fijo temporalmente
+    
+    if (esFinDeSemanaPromocional) {
+        facade.setPrecioStrategy(new Vista.Alquileres.PrecioPromocionalStrategy());
+    } else {
+        facade.setPrecioStrategy(new Vista.Alquileres.PrecioEstandarStrategy());
+    }
+
+    // 4. Delegar TODA la operación y lógica pesada al Facade
+    String respuesta = facade.realizarNuevaRenta(idCopiaRentada, idCliente, fechaDevolucion);
+
+    // 5. Evaluar la respuesta del subsistema
+    if ("Éxito".equals(respuesta)) {
+        JOptionPane.showMessageDialog(this, "¡Renta registrada exitosamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        this.datosGuardados = true;
+        this.dispose();
+    } else {
+        JOptionPane.showMessageDialog(this, respuesta, "Error al Procesar Renta", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnRentarActionPerformed
 
     private void btn_cancelarRegistroClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarRegistroClienteActionPerformed
@@ -759,28 +789,21 @@ private boolean datosGuardados;
     }
 
     private void calcularCostoFinal() {   
-        String costoDiarioTexto = txt_AlquilerDiario.getText().trim();
-        if (costoDiarioTexto.equals("...")) {
-            jLabel30.setText("$0.00");
-            return;
-        }   
-        try {              
-            double costoDiario = Double.parseDouble(costoDiarioTexto);
-            java.util.Date fechaRenta = new java.util.Date(); 
-            java.util.Date fechaDevolucion = dateDevolucion.getDate();     
-            
-            if (fechaDevolucion == null || fechaDevolucion.before(fechaRenta)) { 
-                jLabel30.setText("$0.00");
-                return;
-            }    
-            
-            int diferenciaDias = alquilerDAO.calcularDiasRenta(fechaRenta, fechaDevolucion);
-            double costoTotal = costoDiario * (double) diferenciaDias;
-            jLabel30.setText("$" + String.format("%.2f", costoTotal));
-        } catch (NumberFormatException e) {
-            System.err.println("Error al convertir costo diario a número: " + e.getMessage());
-            jLabel30.setText("ERROR");
-        }
+       java.util.Date fechaRenta = new java.util.Date();
+    java.util.Date fechaDevolucion = dateDevolucion.getDate();
+
+    if (fechaDevolucion != null && alquilerDiarioCargado > 0) {
+        // Sacar diferencia de días
+        long diferenciaEnMilisegundos = Math.abs(fechaDevolucion.getTime() - fechaRenta.getTime());
+        long dias = java.util.concurrent.TimeUnit.DAYS.convert(diferenciaEnMilisegundos, java.util.concurrent.TimeUnit.MILLISECONDS);
+        if (dias == 0) dias = 1; // Cobrar al menos un día
+
+        // Instanciar la estrategia directamente para pintar el Label en la UI
+        ICalculoPrecioStrategy estrategia = new PrecioEstandarStrategy(); // O la promocional si aplica
+        double costoFinal = estrategia.calcularCosto((int) dias, alquilerDiarioCargado);
+
+        jLabel30.setText(String.format("$%.2f", costoFinal));
+    }
     }
 
     private void verificarEstadoBotonRentar() {

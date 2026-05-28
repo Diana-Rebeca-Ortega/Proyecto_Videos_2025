@@ -1,13 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Vista.Alquileres;
-
-/**
- *
- * @author Diana
- */
-public class PrecioEstandarStrategy {
-    
+ 
+public class PrecioEstandarStrategy implements ICalculoPrecioStrategy{
+    @Override
+    public double calcularCosto(int diasRentados, double tarifaBase) {
+        // Cálculo normal: días por el precio base de la película
+        return diasRentados * tarifaBase;
+    }
 }
