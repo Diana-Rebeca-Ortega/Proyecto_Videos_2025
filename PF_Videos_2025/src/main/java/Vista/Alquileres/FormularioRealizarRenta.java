@@ -95,7 +95,7 @@ private boolean datosGuardados;
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
-        jLabel1.setText("Escanee el Codigo de la Copia de Pelicula o Escriba su ID ");
+        jLabel1.setText("Escriba el nombre de la pelicula");
 
         cajaBuscadorPelicula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

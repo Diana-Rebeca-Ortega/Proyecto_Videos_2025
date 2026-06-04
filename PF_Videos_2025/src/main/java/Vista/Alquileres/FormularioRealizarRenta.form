@@ -228,7 +228,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Escanee el Codigo de la Copia de Pelicula o Escriba su ID "/>
+            <Property name="text" type="java.lang.String" value="Escriba el nombre de la pelicula"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="cajaBuscadorPelicula">
