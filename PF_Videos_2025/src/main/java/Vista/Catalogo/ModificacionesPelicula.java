@@ -11,14 +11,30 @@ public class ModificacionesPelicula extends javax.swing.JDialog {
     private final int idPelicula;    
     private boolean datosGuardados = false; 
   
-   public ModificacionesPelicula(java.awt.Frame parent, boolean modal, int idPelicula) {
-        super(parent, modal);
-        initComponents();
-        this.idPelicula = idPelicula;
-        cargarDatosPelicula(this.idPelicula);
-        this.setLocationRelativeTo(parent); 
-        this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));         
-    }
+  public ModificacionesPelicula(java.awt.Frame parent, boolean modal, int idPelicula) {
+    super(parent, modal);
+    initComponents();
+    this.idPelicula = idPelicula;
+    
+    // COLOR DE FONDO (Azul oscuro profesional)
+    java.awt.Color darkBackground = new java.awt.Color(55, 71, 79);
+    this.getContentPane().setBackground(darkBackground);
+    
+    // Cambiar color de etiquetas a blanco para que resalten
+    java.awt.Color whiteText = java.awt.Color.WHITE;
+    jLabel1.setForeground(whiteText);
+    jLabel2.setForeground(whiteText);
+    jLabel3.setForeground(whiteText);
+    jLabel4.setForeground(whiteText);
+    jLabel5.setForeground(whiteText);
+    jLabel6.setForeground(whiteText);
+    jLabel13.setForeground(whiteText);
+    jLabel14.setForeground(whiteText);
+    jLabel17.setForeground(whiteText);
+    
+    cargarDatosPelicula(this.idPelicula);
+    this.setLocationRelativeTo(parent);
+}
     public boolean isDatosGuardados() {
         return datosGuardados;
     }
