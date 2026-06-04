@@ -37,20 +37,21 @@ public void cargarTablaAlquileresVista() {
     ///USAMOS LA SUCURSAL 0 para hacer pruebas ///////////////////99999999999999999999999
     List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(0);
     
-    for (AlquilerCompleto ac : listado) {
-        Object[] fila = new Object[] {
-            ac.getIdAlquiler(),
-            ac.getNombreCliente(),    
-            ac.getTituloPelicula(),  
-            ac.getFechaAlquiler(),
-            ac.getFechaDevolucion(),
-            ac.getEstado(),
-            ac.getTarifaTotal(),            
-            ac.getIdCopiaPelicula(), 
-            ac.getIdSucursal()
-        };
-        modelo.addRow(fila);
-    }
+   for (AlquilerCompleto ac : listado) {
+    Object[] fila = new Object[] {
+        ac.getIdAlquiler(),
+        ac.getNombreCliente(),    
+        ac.getTituloPelicula(),  
+        ac.getFechaAlquiler(),
+        (ac.getFechaDevolucion() == null) ? "PENDIENTE" : ac.getFechaDevolucion(), // CORRECCIÓN AQUÍ
+        ac.getEstado(),
+        ac.getTarifaTotal(),           
+        
+        ac.getIdCopiaPelicula() ,
+        ac.getIdSucursal()
+    };
+    modelo.addRow(fila);
+}
     
 }
    private void inicializarMenuContextual() {
