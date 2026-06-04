@@ -1,5 +1,4 @@
 package Vista.Alquileres;
-//Logica 
 
 import Controlador.AlquilerDAO;
 import Controlador.CopiaPeliculaDAO;

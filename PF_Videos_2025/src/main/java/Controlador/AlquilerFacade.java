@@ -42,7 +42,7 @@ RentaValidatorContext
 public void setPrecioStrategy(ICalculoPrecioStrategy precioStrategy) {
     this.precioStrategy = precioStrategy;
 }
-    public String realizarNuevaRenta(int idCopia, int idCliente, Date fechaDevolucionUtil) { 
+    public String realizarNuevaRenta(int idCopia, int idCliente, Date fechaDevolucionUtil, double costoTotalCalculado) { 
         try {
             // 1. Validar Cliente (Subsistema 1)
             Cliente cliente = clienteDAO.obtenerClientePorId(idCliente);
@@ -62,20 +62,23 @@ public void setPrecioStrategy(ICalculoPrecioStrategy precioStrategy) {
             if (pelicula == null) {
                  return "Error de datos: La copia no tiene una película maestra asociada.";
             }
-            double costoDiario = pelicula.getPrecioAlquiler(); // Usamos el método de tu DAO
+            Alquiler nuevoAlquiler = new Alquiler();
+            nuevoAlquiler.setCostoFinal(costoTotalCalculado);
+            
+            double costoDiario = pelicula.getPrecioAlquiler(); 
 
             // 4. Preparar Objetos y Fechas
             java.sql.Date sqlFechaRenta = new java.sql.Date(new java.util.Date().getTime());
             java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());
             
             
-            Alquiler nuevoAlquiler = new Alquiler();
+           
             nuevoAlquiler.setIdCopia(idCopia);
             nuevoAlquiler.setIdCliente(idCliente);
             nuevoAlquiler.setIdPelicula(pelicula.getIdPelicula());
             nuevoAlquiler.setFechaAlquiler(sqlFechaRenta);
             nuevoAlquiler.setFechaDevolucion(sqlFechaDevolucion);
-            nuevoAlquiler.setCostoDiario(costoDiario); 
+            nuevoAlquiler.setCostoDiario(costoTotalCalculado); 
             nuevoAlquiler.setEstado("RENTADO"); 
 
             // 5. Ejecutar Transacción (Subsistema 4 y 2)

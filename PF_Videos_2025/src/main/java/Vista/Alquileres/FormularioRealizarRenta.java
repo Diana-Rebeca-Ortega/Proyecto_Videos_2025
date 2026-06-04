@@ -520,9 +520,10 @@ private boolean datosGuardados;
     } else {
         facade.setPrecioStrategy(new Vista.Alquileres.PrecioEstandarStrategy());
     }
-
+   String textoCosto = jLabel30.getText().replace("$", "").trim();
+double costoTotal = Double.parseDouble(textoCosto);
     // 4. Delegar TODA la operación y lógica pesada al Facade
-    String respuesta = facade.realizarNuevaRenta(idCopiaRentada, idCliente, fechaDevolucion);
+    String respuesta = facade.realizarNuevaRenta(idCopiaRentada, idCliente, fechaDevolucion,  costoTotal);
 
     // 5. Evaluar la respuesta del subsistema
     if ("Éxito".equals(respuesta)) {

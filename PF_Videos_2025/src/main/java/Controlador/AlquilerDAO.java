@@ -17,7 +17,7 @@ public class AlquilerDAO {
     String sql = "SELECT ID_ALQUILER, NO_CLIENTE, ID_PELICULA, " +
                  "CONVERT(DATE, FECHA_ALQUILER) AS FECHA_ALQUILER, " +
                  "CONVERT(DATE, FECHA_DEVOLUCION) AS FECHA_DEVOLUCION, " +
-                 "ESTADO, ALQUILER_DIARIO, ID_SUCURSAL, ID_COPIA_PELICULA FROM ALQUILER";
+                 "ESTADO, COSTO_FINAL, ID_SUCURSAL, ID_COPIA_PELICULA FROM ALQUILER";
     Connection con = null;
     
     try {
@@ -37,7 +37,7 @@ public class AlquilerDAO {
                 
                 alquiler.setEstado(rs.getString("ESTADO"));
                 alquiler.setIdSucursal(rs.getInt("ID_SUCURSAL"));
-                alquiler.setCostoDiario(rs.getDouble("ALQUILER_DIARIO"));
+                alquiler.setCostoFinal(rs.getDouble("COSTO_FINAL"));
                 
                 lista.add(alquiler);
             }
@@ -106,7 +106,6 @@ try {
     System.err.println("Error convirtiendo fecha: " + e.getMessage());
 }
 
-// Ahora creas tu objeto con estas variables ya convertidas
 AlquilerCompleto ac = new AlquilerCompleto(
     rs.getInt("ID_ALQUILER"),
     rs.getString("NOMBRE_CLIENTE"),
@@ -114,7 +113,7 @@ AlquilerCompleto ac = new AlquilerCompleto(
     fechaAlquiler,
     fechaDevolucion,
     rs.getString("ESTADO"),
-    rs.getDouble("ALQUILER_DIARIO"),
+    rs.getDouble("COSTO_FINAL"),
     rs.getInt("ID_SUCURSAL"),
     rs.getInt("ID_COPIA_PELICULA")
 );
