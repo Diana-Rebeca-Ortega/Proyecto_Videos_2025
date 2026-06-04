@@ -48,19 +48,14 @@ private void inicializarMenuContextual() {
         configurarAccionesMenu();
     }
 public void configurarTabla() {
-    // Asume que 'tablaResultados' es tu JTable y ya tiene un DefaultTableModel.
     DefaultTableModel modelo = (DefaultTableModel) tablaPELICULA.getModel();
-    
     // 1. Crear el TableRowSorter
     sorter = new TableRowSorter<>(modelo);
-    
     // 2. Asignarlo a la tabla
     tablaPELICULA.setRowSorter(sorter);
-    
     // 3. Llamar al método que enlaza el JTextField
     enlazarBuscador(); 
 }
-// Dentro de tu clase (PanelCatalogo.java)
 private void enlazarBuscador() {
     cajaBuscadorPelicula.getDocument().addDocumentListener(new DocumentListener() {
         
@@ -69,27 +64,21 @@ private void enlazarBuscador() {
         public void insertUpdate(DocumentEvent e) {
             aplicarFiltro(cajaBuscadorPelicula.getText());
         }
-
         // Se llama cuando se elimina texto
         @Override
         public void removeUpdate(DocumentEvent e) {
             aplicarFiltro(cajaBuscadorPelicula.getText());
         }
-
-        // Se llama cuando cambia el estilo del texto (menos común)
         @Override
         public void changedUpdate(DocumentEvent e) {
             aplicarFiltro(cajaBuscadorPelicula.getText());
         }
     });
 }
-// Dentro de tu clase (PanelCatalogo.java)
 private void aplicarFiltro(String texto) {
     if (sorter == null) {
-        // Asegúrate de que el sorter esté inicializado
         return; 
     }
-    
     // Si el texto está vacío, elimina el filtro y muestra todo
     if (texto.trim().length() == 0) {
         sorter.setRowFilter(null);
@@ -101,8 +90,6 @@ private void aplicarFiltro(String texto) {
             sorter.setRowFilter(rf);
             
         } catch (java.util.regex.PatternSyntaxException e) {
-            // En caso de que el usuario escriba un caracter inválido para regex
-            // Puedes ignorarlo o mostrar un mensaje
             System.err.println("Error de sintaxis de filtro: " + e.getMessage());
         }
     }
@@ -303,6 +290,12 @@ private void configurarAccionesMenu() {
 
         add(jPanel1);
         jPanel1.setBounds(0, 0, 1190, 40);
+
+        cajaBuscadorPelicula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cajaBuscadorPeliculaActionPerformed(evt);
+            }
+        });
         add(cajaBuscadorPelicula);
         cajaBuscadorPelicula.setBounds(20, 60, 590, 30);
 
@@ -340,6 +333,10 @@ private void configurarAccionesMenu() {
     }
     tablaPELICULA.setModel(nuevoModelo);
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cajaBuscadorPeliculaActionPerformed
 private void configurarRenderizadorPrecios() {
         final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "MX")); 
         DefaultTableCellRenderer precioRenderer = new DefaultTableCellRenderer() {

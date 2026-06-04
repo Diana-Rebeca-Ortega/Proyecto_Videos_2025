@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package Vista.Catalogo;
 import Modelo.Pelicula;
 import Vista.Filtros.AlfanumericoFilter;
@@ -27,6 +23,38 @@ public class FormularioAltasPelicula extends javax.swing.JDialog {
         inicializarFiltros();
         this.setLocationRelativeTo(parent); 
         this.getContentPane().setBackground(new java.awt.Color(230, 230, 250));
+        
+        
+        // --- NUEVO DISEÑO ---
+    java.awt.Color azulFondo = new java.awt.Color(44, 62, 80); // Azul Marino
+    java.awt.Color amarilloAccion = new java.awt.Color(241, 196, 15); // Amarillo vibrante
+    
+    // Fondo de la ventana
+    this.getContentPane().setBackground(azulFondo);
+    
+    // Título en blanco para contraste
+    jLabel17.setForeground(java.awt.Color.WHITE);
+    
+    // Etiquetas de sección en amarillo
+    jLabel4.setForeground(amarilloAccion);
+    jLabel5.setForeground(amarilloAccion);
+    
+    // Botones
+    btn_altasClientes.setBackground(amarilloAccion);
+    btn_altasClientes.setForeground(java.awt.Color.BLACK);
+    btn_altasClientes.setFocusPainted(false); // Quita el borde de foco feo
+    
+    btn_cancelarRegistroCliente.setBackground(new java.awt.Color(189, 195, 199));
+    btn_cancelarRegistroCliente.setForeground(java.awt.Color.BLACK);
+    
+    // Etiquetas normales en color claro
+    java.awt.Color textoClaro = new java.awt.Color(236, 240, 241);
+    jLabel1.setForeground(textoClaro);
+    jLabel2.setForeground(textoClaro);
+    jLabel3.setForeground(textoClaro);
+    jLabel6.setForeground(textoClaro);
+    jLabel13.setForeground(textoClaro);
+    jLabel14.setForeground(textoClaro);
     }
 public Pelicula getPelicula() {
         return pelicula;
