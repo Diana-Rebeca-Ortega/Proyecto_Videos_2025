@@ -190,18 +190,23 @@ public class Panel_Alquileres extends javax.swing.JPanel {
     form.setVisible(true);
 
     if (form.isDatosGuardados()) {
+        Alquiler alquiler = form.getAlquiler();
+        if (alquiler.getFechaDevolucion() == null) {
+      //  JOptionPane.showMessageDialog(this, "Error: La fecha de devolución es obligatoria.");
+        return; // Detiene la ejecución
+    }
         try {
             AlquilerService service = new AlquilerService();
-            boolean exito = service.registrarNuevaRenta(form.getAlquiler());
+            boolean exito = service.registrarNuevaRenta(alquiler);
             
             if (exito) {
-                JOptionPane.showMessageDialog(this, "Renta registrada con éxito.");
+             //   JOptionPane.showMessageDialog(this, "Renta registrada con éxito.");
                 cargarAlquileresATabla(); // Esto se queda en la vista
             } else {
-                JOptionPane.showMessageDialog(this, "Error al actualizar estado.");
+              //  JOptionPane.showMessageDialog(this, "Error al actualizar estado.");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error fatal: " + e.getMessage());
+          //  JOptionPane.showMessageDialog(this, "Error fatal: " + e.getMessage());
         }
     }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -223,7 +228,7 @@ public void cargarAlquileresATabla() {
             Object[] fila = new Object[7]; 
             fila[0] = a.getIdAlquiler();
             fila[1] = a.getIdCliente();
-            fila[2] = a.getIdPelicula();
+            fila[2] = a.getIdCopia();
             fila[3] = a.getFechaAlquiler();
             fila[4] = a.getFechaDevolucion();
             fila[5] = a.getEstado(); 

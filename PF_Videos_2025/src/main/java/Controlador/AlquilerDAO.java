@@ -50,7 +50,9 @@ public class AlquilerDAO {
 }
 //ALTAS////Usando el procedimiento almacenado//99999999999999999999999999999999999999999999999999999
 public boolean insertarAlquiler(Alquiler alquiler) {
-   String call = "{call RegistrarNuevoAlquiler(?, ?, ?, ?, ?)}";
+    // Asegúrate de que haya 6 signos de interrogación
+    System.out.println("DEBUG: Insertando alquiler con ID_COPIA = " + alquiler.getIdCopia());
+    String call = "{call RegistrarNuevoAlquiler(?, ?, ?, ?, ?, ?)}"; 
     Connection conn = null;     
     try {
         conn = ConexionBD.getInstance().getConnection(); 
@@ -59,11 +61,16 @@ public boolean insertarAlquiler(Alquiler alquiler) {
             cs.setInt(2, alquiler.getIdPelicula());
             cs.setInt(3, alquiler.getIdCopia());
             cs.setDouble(4, alquiler.getCostoDiario());
+            
+            // Convertir fecha correctamente
             java.sql.Date fechaDevolucionSQL = new java.sql.Date(alquiler.getFechaDevolucion().getTime());
-            cs.setDate(5, fechaDevolucionSQL);            
+            cs.setDate(5, fechaDevolucionSQL);
+            
+            // AGREGA ESTA LÍNEA QUE TE FALTA
+            cs.setInt(6, alquiler.getIdSucursal()); 
+            
             cs.execute();
             return true;
-            
         }
     } catch (SQLException e) {
         System.err.println("Error al llamar al PA RegistrarNuevoAlquiler: " + e.getMessage());
@@ -71,7 +78,6 @@ public boolean insertarAlquiler(Alquiler alquiler) {
         return false;
     }
 }
-
  // VISTA ALQUILER COMPLETO//////////////////////////////////////////////mapeo a sql server
  public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
     List<AlquilerCompleto> listado = new ArrayList<>();
