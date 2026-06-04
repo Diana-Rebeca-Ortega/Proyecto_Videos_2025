@@ -70,8 +70,8 @@ public class CopiaPeliculaDAO {
     // 3. OBTENER OBJETO COPIA COMPLETO POR SU ID ÚNICO
     public CopiaPelicula obtenerCopiaPorId(int idCopia) {
         CopiaPelicula copia = null;
-        String sql = "SELECT ID_Copia_Pelicula, ID_Pelicula, ID_Sucursal, Estado FROM COPIA_PELICULA WHERE ID_Copia_Pelicula = ?";
-        Connection con = null; 
+       String sql = "SELECT ID_COPIA, ID_PELICULA, ID_SUCURSAL, ESTADO FROM COPIA_PELICULA WHERE ID_COPIA = ?";
+    Connection con = null;
 
         try {
             con = ConexionBD.getInstance().getConnection(); 
@@ -82,10 +82,10 @@ public class CopiaPeliculaDAO {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         copia = new CopiaPelicula();
-                        copia.setIdCopiaPelicula(rs.getInt("ID_Copia_Pelicula"));
-                        copia.setIdPelicula(rs.getInt("ID_Pelicula"));
-                        copia.setIdSucursal(rs.getInt("ID_Sucursal"));
-                        copia.setEstado(rs.getString("Estado"));
+                        copia.setIdCopiaPelicula(rs.getInt("ID_COPIA"));
+                    copia.setIdPelicula(rs.getInt("ID_PELICULA"));
+                    copia.setIdSucursal(rs.getInt("ID_SUCURSAL"));
+                    copia.setEstado(rs.getString("ESTADO"));
                     }
                 }
             }
