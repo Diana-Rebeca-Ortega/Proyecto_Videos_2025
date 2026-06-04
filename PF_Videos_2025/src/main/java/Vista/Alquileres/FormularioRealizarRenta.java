@@ -507,6 +507,7 @@ private boolean datosGuardados;
         JOptionPane.showMessageDialog(this, "Debe seleccionar una fecha de devolución.", "Error", JOptionPane.WARNING_MESSAGE);
         return;
     }
+    
     // 2. Instanciar el Facade (Patrón Estructural)
     Controlador.AlquilerFacade facade = new Controlador.AlquilerFacade();
 
@@ -601,6 +602,7 @@ private boolean datosGuardados;
     }
 
     private boolean cargarDatosTransaccion(int idPelicula, int idCopia) {
+        System.out.println("DEBUG: Cargando transacción -> P99998elícula ID: " + idPelicula + ", Copia ID: " + idCopia);
         try {
             int idCliente = Integer.parseInt(cajaBuscadorCliente.getText().trim());
             double costoDiario = Double.parseDouble(txt_AlquilerDiario.getText().trim());
@@ -654,6 +656,7 @@ private void actualizarLabelFechaDevolucion() {
     }
 
     private void ejecutarRegistroAlquiler() {
+        System.out.println("DEBUG: Cargando transacción -> 89898elícula ID: " + this.datosGuardados);
         this.datosGuardados = true;
         this.dispose();
     }
@@ -693,7 +696,7 @@ private void actualizarLabelFechaDevolucion() {
     
     // 2. DESPUÉS usamos esa variable para asignar el precio
     this.alquilerDiarioCargado = pelicula.getPrecioAlquiler();
-    System.out.println("LOG: Precio cargado desde la base de datos: " + this.alquilerDiarioCargado);
+   // System.out.println("LOG: Precio cargado desde la base de datos: " + this.alquilerDiarioCargado);
 
     int idCopiaLibre = copiaDao.obtenerIdCopiaDisponible(pelicula.getIdPelicula(), this.idSucursalActual);
     

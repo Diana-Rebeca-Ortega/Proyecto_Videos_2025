@@ -53,6 +53,7 @@ public class AlquilerDAO {
 public boolean insertarAlquiler(Alquiler alquiler) {
     // Asegúrate de que haya 6 signos de interrogación
     System.out.println("DEBUG: Insertando alquiler con ID_COPIA = " + alquiler.getIdCopia());
+    System.out.println("DEBUG 99999DENTRO DEL DAO: IdPelicula recibido = " + alquiler.getIdPelicula());
     String call = "{call RegistrarNuevoAlquiler(?, ?, ?, ?, ?, ?)}"; 
     Connection conn = null;     
     try {
@@ -61,7 +62,7 @@ public boolean insertarAlquiler(Alquiler alquiler) {
             cs.setInt(1, alquiler.getIdCliente());
             cs.setInt(2, alquiler.getIdPelicula());
             cs.setInt(3, alquiler.getIdCopia());
-            cs.setDouble(4, alquiler.getCostoDiario());
+            cs.setDouble(4, alquiler.getCostoFinal());
             
             // Convertir fecha correctamente
             java.sql.Date fechaDevolucionSQL = new java.sql.Date(alquiler.getFechaDevolucion().getTime());
@@ -133,7 +134,7 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     PreparedStatement psCopia = null;
     boolean exito = false;
       String sqlAlquiler = "UPDATE ALQUILER SET FECHA_DEVOLUCION = GETDATE(), ESTADO = 'DEVUELTO' WHERE ID_ALQUILER = ?"; 
-      String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'Disponible' WHERE ID_Copia_Pelicula = ?";
+     String sqlCopia = "UPDATE COPIA_PELICULA SET ESTADO = 'Disponible' WHERE ID_COPIA = ?";
        
        try {
        

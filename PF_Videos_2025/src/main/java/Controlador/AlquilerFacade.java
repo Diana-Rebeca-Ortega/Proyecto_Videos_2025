@@ -72,10 +72,11 @@ public void setPrecioStrategy(ICalculoPrecioStrategy precioStrategy) {
             Alquiler nuevoAlquiler = new Alquiler();
             nuevoAlquiler.setIdCopia(idCopia);
             nuevoAlquiler.setIdCliente(idCliente);
+            nuevoAlquiler.setIdPelicula(pelicula.getIdPelicula());
             nuevoAlquiler.setFechaAlquiler(sqlFechaRenta);
             nuevoAlquiler.setFechaDevolucion(sqlFechaDevolucion);
             nuevoAlquiler.setCostoDiario(costoDiario); 
-            nuevoAlquiler.setEstado("RENTADO"); // Estado inicial
+            nuevoAlquiler.setEstado("RENTADO"); 
 
             // 5. Ejecutar Transacción (Subsistema 4 y 2)
             // Aquí se oculta la orquestación: primero registrar el alquiler, luego cambiar estado de la copia.
