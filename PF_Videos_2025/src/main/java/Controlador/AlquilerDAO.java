@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ConneccionBD.ConexionBD;
 import Modelo.AlquilerCompleto;
+import java.text.SimpleDateFormat;
 
 public class AlquilerDAO {
 //Los signos de interrogación (?)  se conocen como marcadores de posición (o placeholders).
@@ -78,10 +79,10 @@ public boolean insertarAlquiler(Alquiler alquiler) {
         return false;
     }
 }
- // VISTA ALQUILER COMPLETO//////////////////////////////////////////////mapeo a sql server
+ // VISTA ALQUILER DETALLADO //////////////////////////////////////////////mapeo a sql server
  public List<AlquilerCompleto> obtenerListadoAlquileres(int idSucursal) {
     List<AlquilerCompleto> listado = new ArrayList<>();
-    String sql = "SELECT * FROM VISTA_ALQUILERES_COMPLETO WHERE ID_SUCURSAL = ?";
+    String sql = "SELECT * FROM VISTA_ALQUILERES_DETALLADOS WHERE ID_SUCURSAL = ?";
     Connection con = null; 
     try {
         con = ConexionBD.getInstance().getConnection(); 
@@ -89,18 +90,34 @@ public boolean insertarAlquiler(Alquiler alquiler) {
             ps.setInt(1, idSucursal);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    AlquilerCompleto ac = new AlquilerCompleto(
-                        rs.getInt("ID_ALQUILER"),
-                        rs.getString("NOMBRE_CLIENTE"),
-                        rs.getString("TITULO_PELICULA"),
-                        rs.getDate("FECHA_ALQUILER"),
-                        rs.getDate("FECHA_DEVOLUCION"),
-                        rs.getString("ESTADO"),
-                        rs.getDouble("TARIFA_ALQUILER"),
-                        rs.getInt("ID_SUCURSAL"),
-                        rs.getInt("ID_COPIA_PELICULA")
-                    );
-                    listado.add(ac);
+           SimpleDateFormat formatoSQL = new SimpleDateFormat("MMM d yyyy hh:mma", java.util.Locale.ENGLISH);
+
+java.sql.Date fechaAlquiler = null;
+java.sql.Date fechaDevolucion = null;
+
+try {
+    String fA = rs.getString("FECHA_ALQUILER");
+    if (fA != null) fechaAlquiler = new java.sql.Date(formatoSQL.parse(fA).getTime());
+    
+    String fD = rs.getString("FECHA_DEVOLUCION");
+    if (fD != null) fechaDevolucion = new java.sql.Date(formatoSQL.parse(fD).getTime());
+} catch (Exception e) {
+    System.err.println("Error convirtiendo fecha: " + e.getMessage());
+}
+
+// Ahora creas tu objeto con estas variables ya convertidas
+AlquilerCompleto ac = new AlquilerCompleto(
+    rs.getInt("ID_ALQUILER"),
+    rs.getString("NOMBRE_CLIENTE"),
+    rs.getString("TITULO_PELICULA"),
+    fechaAlquiler,
+    fechaDevolucion,
+    rs.getString("ESTADO"),
+    rs.getDouble("ALQUILER_DIARIO"),
+    rs.getInt("ID_SUCURSAL"),
+    rs.getInt("ID_COPIA_PELICULA")
+);
+listado.add(ac);
                 }
             }
         }

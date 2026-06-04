@@ -1,7 +1,7 @@
 package Vista.Alquileres;
 
 import Controlador.AlquilerDAO;
-import Controlador.VistaAlquilerDevolucionDAO;
+
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import Modelo.AlquilerCompleto;
@@ -9,11 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 public class Vista_AlquileresCompletos extends javax.swing.JDialog {
    private AlquilerDAO alquilerDao = new AlquilerDAO();
@@ -35,7 +34,7 @@ public void cargarTablaAlquileresVista() {
     modelo.setColumnIdentifiers(nuevasColumnas);
     modelo.setRowCount(0);
     
-    ///USAMOS LA SUCURSAL 0 para hacer pruebas 
+    ///USAMOS LA SUCURSAL 0 para hacer pruebas ///////////////////99999999999999999999999
     List<AlquilerCompleto> listado = alquilerDao.obtenerListadoAlquileres(0);
     
     for (AlquilerCompleto ac : listado) {
@@ -130,9 +129,9 @@ private void ejecutarDevolucion() {
         getContentPane().setLayout(null);
 
         label1.setFont(new java.awt.Font("Dialog", 1, 36)); // NOI18N
-        label1.setText("VISTA_ALQUILERES_COMPLETO");
+        label1.setText("VISTA_ALQUILERES_ DETALLADOS");
         getContentPane().add(label1);
-        label1.setBounds(0, 10, 1168, 32);
+        label1.setBounds(0, 10, 1168, 50);
 
         textArea1.setText("\nLa vista realiza las siguientes UNIONES IZQUIERDAS (LEFT JOIN) para vincular los datos:\nALQUILER (A) con CLIENTES (C): Se une por A.NO_CLIENTE = C.NO_CLIENTE para obtener el nombre del cliente.\nALQUILER (A) con PELICULA (P): Se une por A.ID_PELICULA = P.ID_PELICULA para obtener el título de la película.");
         getContentPane().add(textArea1);

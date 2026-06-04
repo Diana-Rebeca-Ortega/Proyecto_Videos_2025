@@ -33,11 +33,11 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Dialog" size="36" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="VISTA_ALQUILERES_COMPLETO"/>
+        <Property name="text" type="java.lang.String" value="VISTA_ALQUILERES_ DETALLADOS"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="0" y="10" width="1168" height="32"/>
+          <AbsoluteConstraints x="0" y="10" width="1168" height="50"/>
         </Constraint>
       </Constraints>
     </Component>
