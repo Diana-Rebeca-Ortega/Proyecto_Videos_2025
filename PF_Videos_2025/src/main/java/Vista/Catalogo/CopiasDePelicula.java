@@ -1,4 +1,3 @@
-
 package Vista.Catalogo;
 
 import Controlador.CopiaPeliculaDAO;
@@ -22,36 +21,147 @@ public class CopiasDePelicula extends javax.swing.JDialog {
     CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
     public CopiasDePelicula(java.awt.Frame parent, boolean modal, int idPelicula, int idSucursalActual) {
         super(parent, modal);
-        initComponents();
+        initComponentsDos();
         this.idPelicula = idPelicula;
         this.idSucursalActual = idSucursalActual;
         this.setLocationRelativeTo(null);
         cargarDatosCopiaPelicula(this.idPelicula, this.idSucursalActual);
-        aplicarEstiloTabla();
+       
     }
- private void aplicarEstiloTabla() {
-    
-    Color COLOR_PRIMARIO_OSCURO = new Color(0, 51, 102); // Azul oscuro (como su menú lateral)
-    Color COLOR_ENCABEZADO_FONDO = new Color(240, 240, 240); // Gris muy claro para el fondo
-    Color COLOR_SELECCION_FILA = new Color(210, 230, 255); // Azul claro suave
-    Color COLOR_TEXTO_ENCABEZADO = Color.BLACK;
-    JTableHeader header = tabla_copias_peliculas.getTableHeader();
-    header.setFont(new Font("Segoe UI", Font.BOLD, 13)); // Fuente en negrita
-    header.setBackground(COLOR_ENCABEZADO_FONDO);
-    header.setForeground(COLOR_TEXTO_ENCABEZADO);
-    header.setBorder(null);
-    tabla_copias_peliculas.setBackground(Color.WHITE); 
-    tabla_copias_peliculas.setSelectionBackground(COLOR_SELECCION_FILA); 
-    tabla_copias_peliculas.setRowHeight(25); 
-    tabla_copias_peliculas.setShowGrid(false); 
-    tabla_copias_peliculas.setIntercellSpacing(new java.awt.Dimension(0, 0)); 
-    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-    centerRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
-     for (int i = 0; i < tabla_copias_peliculas.getColumnCount(); i++) {        
-        if (i != 1 && i != 2 && i != 3) { 
-             tabla_copias_peliculas.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+private void initComponentsDos() {
+    // 1. Definición de colores para el estilo oscuro
+    Color COLOR_FONDO_OSCURO = new Color(51, 62, 70);
+    Color COLOR_TEXTO_BLANCO = Color.WHITE;
+
+    jLabel17 = new javax.swing.JLabel();
+    jLabel1 = new javax.swing.JLabel();
+    jLabel2 = new javax.swing.JLabel();
+    txt_ID_Pelicula = new javax.swing.JLabel();
+    txt_titulo = new javax.swing.JLabel();
+    jLabel3 = new javax.swing.JLabel();
+    txt_director = new javax.swing.JLabel();
+    jLabel5 = new javax.swing.JLabel();
+    txt_sucursal = new javax.swing.JLabel();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    tabla_copias_peliculas = new javax.swing.JTable();
+    jLabel4 = new javax.swing.JLabel();
+    txt_copiastotales = new javax.swing.JLabel();
+
+    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    // Aplicar fondo oscuro a toda la ventana
+    getContentPane().setBackground(COLOR_FONDO_OSCURO);
+
+    jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 24)); 
+    jLabel17.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel17.setText("COPIAS DE LA PELICULA");
+
+    jLabel1.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel1.setText("ID Pelicula:");
+
+    jLabel2.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel2.setText("Titulo:");
+
+    txt_ID_Pelicula.setForeground(COLOR_TEXTO_BLANCO);
+    txt_ID_Pelicula.setText("...");
+
+    txt_titulo.setForeground(COLOR_TEXTO_BLANCO);
+    txt_titulo.setText("...");
+
+    jLabel3.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel3.setText("Director:");
+
+    txt_director.setForeground(COLOR_TEXTO_BLANCO);
+    txt_director.setText("...");
+
+    jLabel5.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel5.setText("ID_Sucursal");
+
+    txt_sucursal.setForeground(COLOR_TEXTO_BLANCO);
+    txt_sucursal.setText("...");
+
+    tabla_copias_peliculas.setModel(new javax.swing.table.DefaultTableModel(
+        new Object [][] {
+            {null, null, null, null},
+            {null, null, null, null},
+            {null, null, null, null},
+            {null, null, null, null}
+        },
+        new String [] {
+            "ID_Copia_Pelicula", "ID_Pelicula", "ID_Sucursal", "Estado"
         }
-    }
+    ));
+    jScrollPane1.setViewportView(tabla_copias_peliculas);
+
+    jLabel4.setForeground(COLOR_TEXTO_BLANCO);
+    jLabel4.setText("COPIAS TOTALES DISPONIBLES:");
+
+    txt_copiastotales.setForeground(COLOR_TEXTO_BLANCO);
+    txt_copiastotales.setText("...");
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(33, 33, 33)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(47, 47, 47)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_ID_Pelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(117, 117, 117)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(txt_copiastotales, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_director, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_sucursal, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 676, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addContainerGap(48, Short.MAX_VALUE))
+    );
+    layout.setVerticalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel1)
+                .addComponent(txt_ID_Pelicula)
+                .addComponent(jLabel4)
+                .addComponent(txt_copiastotales))
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel2)
+                .addComponent(txt_titulo))
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel3)
+                .addComponent(txt_director))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel5)
+                .addComponent(txt_sucursal))
+            .addGap(33, 33, 33)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(55, 55, 55))
+    );
+
+    pack();
 }
         
     public final void cargarDatosCopiaPelicula(int idPelicula, int idSucursalActual) {
