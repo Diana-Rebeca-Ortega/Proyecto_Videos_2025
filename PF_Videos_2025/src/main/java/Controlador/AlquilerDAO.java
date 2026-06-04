@@ -148,29 +148,28 @@ public boolean registrarDevolucion(int idAlquiler, int idCopiaPelicula) throws S
     return exito;
 }
 //LLAMANDO A LA FUNCION 
+// Variante sugerida si tu ConexionBD permite try-with-resources
 public int calcularDiasRenta(java.util.Date fechaRentaUtil, java.util.Date fechaDevolucionUtil) {
     String sql = "SELECT dbo.CALCULARDIASRENTA_FECHAS(?, ?)";
-    int dias = 0;
     java.sql.Date sqlFechaRenta = new java.sql.Date(fechaRentaUtil.getTime());
     java.sql.Date sqlFechaDevolucion = new java.sql.Date(fechaDevolucionUtil.getTime());    
-    Connection con = null;
-    try {
-        con = ConexionBD.getInstance().getConnection();         
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setDate(1, sqlFechaRenta);
-            ps.setDate(2, sqlFechaDevolucion);            
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    dias = rs.getInt(1);
-                }
+    
+    try (Connection con = ConexionBD.getInstance().getConnection(); // Cerrado automático
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setDate(1, sqlFechaRenta);
+        ps.setDate(2, sqlFechaDevolucion);            
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return Math.max(1, rs.getInt(1));
             }
         }
     } catch (SQLException e) {
-        System.err.println("Error al ejecutar la función CALCULARDIASRENTA_FECHAS: " + e.getMessage());
-        e.printStackTrace();
-        return 1;
+        System.err.println("Error en función de días: " + e.getMessage());
+        return 1; // Fallback seguro
     }
-    return Math.max(1, dias);
+    return 1;
 }
 
 }

@@ -572,9 +572,7 @@ private boolean datosGuardados;
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_IDCopiaActionPerformed
 
-    // MÉTODOS DE LOGICA EXTRACTADA (CLEAN CODE)
-  
-
+    // MÉTODOS DE LOGICA EXTRACTADA (CLEAN CODE)////////////
     private int extraerIdCopiaValido() {
         try {
             return Integer.parseInt(txt_IDCopia.getText().trim());
@@ -657,32 +655,41 @@ private boolean datosGuardados;
     }
 
     private void procesarBusquedaPorTitulo(String titulo) {
-        PeliculaDAO peliculaDao = new PeliculaDAO();
-        CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
-        List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(titulo, "TITULO");
+    PeliculaDAO peliculaDao = new PeliculaDAO();
+    CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
+    List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(titulo, "TITULO");
 
-        if (resultados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se encontraron películas que coincidan con: " + titulo, "Sin Coincidencias", JOptionPane.INFORMATION_MESSAGE);
-            limpiarDatosPelicula();
-            return;
-        } 
-        
-        if (resultados.size() > 1) {
-            JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente escribir un título más específico.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        Pelicula pelicula = resultados.get(0);
-        int idCopiaLibre = copiaDao.obtenerIdCopiaDisponible(pelicula.getIdPelicula(), this.idSucursalActual);
-        
-        if (idCopiaLibre != -1) {
-            desplegarDatosPeliculaEnUI(pelicula, idCopiaLibre);
-        } else {
-            JOptionPane.showMessageDialog(this, "La película '" + pelicula.getTitulo() + "' no tiene copias disponibles en esta sucursal.", "Agotado", JOptionPane.WARNING_MESSAGE);
-            txt_IDCopia.setText("NO DISPONIBLE");
-            limpiarDatosPelicula();
-        }
+    if (resultados.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "No se encontraron películas que coincidan con: " + titulo, "Sin Coincidencias", JOptionPane.INFORMATION_MESSAGE);
+        limpiarDatosPelicula();
+        return;
+    } 
+    
+    if (resultados.size() > 1) {
+        JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente escribir un título más específico.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
+        return;
     }
+
+    // 1. PRIMERO creamos la variable
+    Pelicula pelicula = resultados.get(0);
+    
+    // 2. DESPUÉS usamos esa variable para asignar el precio
+    this.alquilerDiarioCargado = pelicula.getPrecioAlquiler();
+    System.out.println("LOG: Precio cargado desde la base de datos: " + this.alquilerDiarioCargado);
+
+    int idCopiaLibre = copiaDao.obtenerIdCopiaDisponible(pelicula.getIdPelicula(), this.idSucursalActual);
+    
+    if (idCopiaLibre != -1) {
+        desplegarDatosPeliculaEnUI(pelicula, idCopiaLibre);
+        
+        // 3. Opcional: calcular costo inmediatamente al encontrar la película
+        calcularCostoFinal(); 
+    } else {
+        JOptionPane.showMessageDialog(this, "La película '" + pelicula.getTitulo() + "' no tiene copias disponibles en esta sucursal.", "Agotado", JOptionPane.WARNING_MESSAGE);
+        txt_IDCopia.setText("NO DISPONIBLE");
+        limpiarDatosPelicula();
+    }
+}
 
     private void desplegarDatosPeliculaEnUI(Pelicula pelicula, int idCopia) {
         txt_IDpelicula.setText(String.valueOf(pelicula.getIdPelicula()));
@@ -788,24 +795,39 @@ private boolean datosGuardados;
         });
     }
 
-    private void calcularCostoFinal() {   
-       java.util.Date fechaRenta = new java.util.Date();
-    java.util.Date fechaDevolucion = dateDevolucion.getDate();
+   private void calcularCostoFinal() {
+    System.out.println("--- LOG: Iniciando cálculo ---");
+    
+    // 1. Obtener datos
+    java.util.Date fechaHoy = new java.util.Date();
+    java.util.Date fechaDev = dateDevolucion.getDate();
+    
+    // Log de diagnóstico
+    System.out.println("LOG: Fecha Renta = " + fechaHoy);
+    System.out.println("LOG: Fecha Dev = " + fechaDev);
+    System.out.println("LOG: Alquiler Diario cargado = " + alquilerDiarioCargado);
 
-    if (fechaDevolucion != null && alquilerDiarioCargado > 0) {
-        // Sacar diferencia de días
-        long diferenciaEnMilisegundos = Math.abs(fechaDevolucion.getTime() - fechaRenta.getTime());
-        long dias = java.util.concurrent.TimeUnit.DAYS.convert(diferenciaEnMilisegundos, java.util.concurrent.TimeUnit.MILLISECONDS);
-        if (dias == 0) dias = 1; // Cobrar al menos un día
+    if (fechaDev != null && alquilerDiarioCargado > 0) {
+        
+        // 2. Llamar a tu DAO (aquí usamos tu función SQL profesional)
+        // Necesitas tener una instancia de tu clase AlquilerDAO
+        AlquilerDAO dao = new AlquilerDAO(); 
+        int dias = dao.calcularDiasRenta(fechaHoy, fechaDev);
+        
+        System.out.println("LOG: Días calculados por SQL = " + dias);
 
-        // Instanciar la estrategia directamente para pintar el Label en la UI
-        ICalculoPrecioStrategy estrategia = new PrecioEstandarStrategy(); // O la promocional si aplica
-        double costoFinal = estrategia.calcularCosto((int) dias, alquilerDiarioCargado);
+        // 3. Calcular costo
+        ICalculoPrecioStrategy estrategia = new PrecioEstandarStrategy();
+        double costoFinal = estrategia.calcularCosto(dias, alquilerDiarioCargado);
+        
+        System.out.println("LOG: Costo final calculado = " + costoFinal);
 
+        // 4. Actualizar UI
         jLabel30.setText(String.format("$%.2f", costoFinal));
+    } else {
+        System.out.println("LOG: No se puede calcular. Falta fecha o precio diario.");
     }
-    }
-
+}
     private void verificarEstadoBotonRentar() {
         boolean copiaOK = (this.idCopiaSeleccionada != -1); 
         boolean clienteOK = !cajaBuscadorCliente.getText().trim().isEmpty(); 
