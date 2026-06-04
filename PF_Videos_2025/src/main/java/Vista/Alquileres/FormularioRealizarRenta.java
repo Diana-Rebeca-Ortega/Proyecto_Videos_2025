@@ -84,6 +84,7 @@ private boolean datosGuardados;
         jLabel26 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         dateDevolucion = new com.toedter.calendar.JDateChooser();
+        fechaDevolucion = new javax.swing.JLabel();
         btnRentar = new javax.swing.JButton();
         btn_cancelarRegistroCliente = new javax.swing.JButton();
 
@@ -358,6 +359,8 @@ private boolean datosGuardados;
             }
         });
 
+        fechaDevolucion.setText("...");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -376,30 +379,35 @@ private boolean datosGuardados;
                 .addGap(28, 28, 28)
                 .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(112, 112, 112)
-                .addComponent(jLabel28)
-                .addGap(18, 18, 18)
-                .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fechaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel28)
+                        .addGap(18, 18, 18)
+                        .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(70, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel24)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel26))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel24)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel26)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel28)
-                                .addGap(16, 16, 16)))
-                        .addComponent(txt_fechaRenta))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel28))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(dateDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(fechaDevolucion)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_fechaRenta)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(jLabel29)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -546,6 +554,7 @@ private boolean datosGuardados;
        if ("date".equals(evt.getPropertyName())) {
             verificarEstadoBotonRentar();
             calcularCostoFinal();
+            actualizarLabelFechaDevolucion();
         }
     }//GEN-LAST:event_dateDevolucionPropertyChange
 
@@ -606,11 +615,23 @@ private boolean datosGuardados;
             return false;
         }
     }
-
+private void actualizarLabelFechaDevolucion() {
+    java.util.Date fechaSeleccionada = dateDevolucion.getDate();
+    if (fechaSeleccionada != null) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        fechaDevolucion.setText(sdf.format(fechaSeleccionada)); 
+    } else {
+        fechaDevolucion.setText("...");
+    }
+}
     private boolean procesarYCalcularFechas() {
         java.util.Date fechaDevolucionUtil = dateDevolucion.getDate();
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
         
+  if (fechaDevolucionUtil == null) {
+        return false;
+    }
+  fechaDevolucion.setText(dateFormat.format(fechaDevolucionUtil));
         try {
             java.util.Date fechaRentaUtil = dateFormat.parse(txt_fechaRenta.getText());
             java.sql.Date fechaRentaSQL = new java.sql.Date(fechaRentaUtil.getTime());
@@ -658,18 +679,15 @@ private boolean datosGuardados;
     PeliculaDAO peliculaDao = new PeliculaDAO();
     CopiaPeliculaDAO copiaDao = new CopiaPeliculaDAO();
     List<Pelicula> resultados = peliculaDao.buscarPeliculasDinamico(titulo, "TITULO");
-
     if (resultados.isEmpty()) {
         JOptionPane.showMessageDialog(this, "No se encontraron películas que coincidan con: " + titulo, "Sin Coincidencias", JOptionPane.INFORMATION_MESSAGE);
         limpiarDatosPelicula();
         return;
     } 
-    
     if (resultados.size() > 1) {
         JOptionPane.showMessageDialog(this, "Se encontraron múltiples coincidencias (" + resultados.size() + "). Intente escribir un título más específico.", "Múltiples Coincidencias", JOptionPane.INFORMATION_MESSAGE);
         return;
     }
-
     // 1. PRIMERO creamos la variable
     Pelicula pelicula = resultados.get(0);
     
@@ -797,18 +815,14 @@ private boolean datosGuardados;
 
    private void calcularCostoFinal() {
     System.out.println("--- LOG: Iniciando cálculo ---");
-    
     // 1. Obtener datos
     java.util.Date fechaHoy = new java.util.Date();
     java.util.Date fechaDev = dateDevolucion.getDate();
-    
     // Log de diagnóstico
     System.out.println("LOG: Fecha Renta = " + fechaHoy);
     System.out.println("LOG: Fecha Dev = " + fechaDev);
     System.out.println("LOG: Alquiler Diario cargado = " + alquilerDiarioCargado);
-
     if (fechaDev != null && alquilerDiarioCargado > 0) {
-        
         // 2. Llamar a tu DAO (aquí usamos tu función SQL profesional)
         // Necesitas tener una instancia de tu clase AlquilerDAO
         AlquilerDAO dao = new AlquilerDAO(); 
@@ -842,6 +856,7 @@ private boolean datosGuardados;
     private javax.swing.JTextField cajaBuscadorCliente;
     private javax.swing.JTextField cajaBuscadorPelicula;
     private com.toedter.calendar.JDateChooser dateDevolucion;
+    private javax.swing.JLabel fechaDevolucion;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
