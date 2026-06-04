@@ -168,15 +168,18 @@ private void configurarAccionesMenu() {
                 JOptionPane.YES_NO_OPTION, 
                 JOptionPane.WARNING_MESSAGE);
 
-        if (respuesta == JOptionPane.YES_OPTION) {
-            PeliculaDAO dao = new PeliculaDAO();            
-            if (dao.eliminarPelicula(idPelicula)) { 
-                JOptionPane.showMessageDialog(this, "Película eliminada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                cargarPeliculasATabla();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al eliminar la película. Revise logs.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+     if (respuesta == JOptionPane.YES_OPTION) {
+    PeliculaDAO dao = new PeliculaDAO();            
+    if (dao.eliminarPelicula(idPelicula)) { 
+        JOptionPane.showMessageDialog(this, "Película eliminada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                SwingUtilities.invokeLater(() -> {
+            cargarPeliculasATabla();
+        });
+        
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al eliminar la película.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
     }
     private void ejecutarVerCopiaPelicula() {
         int filaSeleccionada = tablaPELICULA.getSelectedRow();
@@ -201,36 +204,31 @@ private void configurarAccionesMenu() {
             e.printStackTrace();
         }
     }    
-    public void cargarPeliculasATabla() {
-    tablaPELICULA.getTableHeader().setBackground(new Color(235, 235, 235)); 
-    tablaPELICULA.getTableHeader().setForeground(new Color(47, 79, 79)); 
-    tablaPELICULA.getTableHeader().setFont(new java.awt.Font("Microsoft YaHei Light", java.awt.Font.BOLD, 12));
-    tablaPELICULA.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-           if (row % 2 == 0) {
-             c.setBackground(new Color(255, 255, 255));
-        } else {  
-            c.setBackground(new Color(245, 245, 245)); 
-        }
-        if (isSelected) {           
-            c.setBackground(new Color(251, 190, 79)); 
-        }
-        return c;
+  public void cargarPeliculasATabla() {
+    if (tablaPELICULA.getTableHeader().getBackground() == null) {
+        tablaPELICULA.getTableHeader().setBackground(new Color(235, 235, 235)); 
+        tablaPELICULA.getTableHeader().setForeground(new Color(47, 79, 79)); 
+        tablaPELICULA.getTableHeader().setFont(new java.awt.Font("Microsoft YaHei Light", java.awt.Font.BOLD, 12));
     }
-});
-        PeliculaDAO dao = new PeliculaDAO();
-        DefaultTableModel modeloCompleto = dao.cargarDatosTabla(null);
-        tablaPELICULA.setModel(modeloCompleto);
-    }    
+
+    DefaultTableModel modelo = (DefaultTableModel) tablaPELICULA.getModel();
+    modelo.setRowCount(0); 
+    PeliculaDAO dao = new PeliculaDAO();
+    DefaultTableModel modeloNuevo = dao.cargarDatosTabla(null);
+    for (int i = 0; i < modeloNuevo.getRowCount(); i++) {
+        Object[] fila = new Object[modeloNuevo.getColumnCount()];
+        for (int j = 0; j < modeloNuevo.getColumnCount(); j++) {
+            fila[j] = modeloNuevo.getValueAt(i, j);
+        }
+        modelo.addRow(fila);
+    }
+}  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaPELICULA = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
@@ -257,17 +255,6 @@ private void configurarAccionesMenu() {
 
         add(jScrollPane1);
         jScrollPane1.setBounds(0, 100, 1100, 310);
-
-        jComboBox1.setBackground(new java.awt.Color(251, 190, 79));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Buscar Por Categoria ", "Acción", "Aventura", "Ciencia Ficción", "Comedia", "Drama", "Fantasía", "Terror", "Musical", "Documental", "Otro" }));
-        jComboBox1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-        add(jComboBox1);
-        jComboBox1.setBounds(930, 60, 170, 30);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new java.awt.GridLayout(1, 0));
@@ -320,19 +307,6 @@ private void configurarAccionesMenu() {
                JOptionPane.showMessageDialog(this, "Error al insertar la película o generar stock. Revisa logs.", "Error", JOptionPane.ERROR_MESSAGE);    }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-    PeliculaDAO dao = new PeliculaDAO(); 
-    configurarRenderizadorPrecios();
-    DefaultTableModel nuevoModelo;
-    String categoriaSeleccionada = (String) jComboBox1.getSelectedItem();
-    if (categoriaSeleccionada.equals("Todas las Categorías")) {      
-        nuevoModelo = dao.cargarDatosTabla(null); 
-    } else {
-        nuevoModelo = dao.cargarDatosTabla(categoriaSeleccionada);
-    }
-    tablaPELICULA.setModel(nuevoModelo);
-    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void cajaBuscadorPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cajaBuscadorPeliculaActionPerformed
         // TODO add your handling code here:
@@ -393,7 +367,6 @@ private void configurarRenderizadorPrecios() {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cajaBuscadorPelicula;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

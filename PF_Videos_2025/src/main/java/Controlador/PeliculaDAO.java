@@ -70,15 +70,10 @@ public List<Pelicula> obtenerPeliculasPorCategoria(String categoria) {
         sb.append(" WHERE CATEGORIA = ?");
     }
     
-    Connection con = null; // ⬅️ Declaración
-
+    Connection con = null; 
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement y ResultSet
+        con = ConexionBD.getInstance().getConnection();
         try (PreparedStatement ps = con.prepareStatement(sb.toString())) {
-            
-            // ... (Lógica de filtro y mapeo) ...
             int index = 1;
             if (filtrar) {
                 ps.setString(index, categoria);
@@ -144,7 +139,7 @@ public List<Pelicula> obtenerPeliculasPorCategoria(String categoria) {
 
     // --- U: UPDATE (MODIFICAR) ---
 public boolean modificarPelicula(Pelicula pelicula) {
-    String sql = "UPDATE DIANA931.PELICULA SET TITULO=?, CATEGORIA=?, DIRECTOR=?, alquiler_diario=?, coste_venta=?, Stock_total=? WHERE ID_PELICULA=?";
+    String sql = "UPDATE PELICULA SET TITULO=?, CATEGORIA=?, DIRECTOR=?, alquiler_diario=?, coste_venta=?, Stock_total=? WHERE ID_PELICULA=?";
     
     Connection conn = null; // ⬅️ Declaración
 
@@ -176,25 +171,16 @@ public boolean modificarPelicula(Pelicula pelicula) {
 }
 
     // --- D: DELETE (ELIMINAR) ---
- public boolean eliminarPelicula(int id) {
-    String sql = "DELETE FROM DIANA931.PELICULA WHERE ID_PELICULA = ?";
-    
-    Connection conn = null; // ⬅️ Declaración
-
-    try {
-        conn = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, id);
-            
-            return ps.executeUpdate() > 0;
-            
-        }
+ // --- D: DELETE (ELIMINAR) ---
+public boolean eliminarPelicula(int id) {
+    // Usamos 'dbo.PELICULA' para evitar el error de esquema
+    String sql = "DELETE FROM dbo.PELICULA WHERE ID_PELICULA = ?";
+    try (Connection conn = ConexionBD.getInstance().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {        
+        ps.setInt(1, id);
+        return ps.executeUpdate() > 0;        
     } catch (SQLException e) {
         System.err.println("Error al eliminar película (DAO): " + e.getMessage());
-        e.printStackTrace();
         return false;
     }
 }
@@ -202,16 +188,11 @@ public boolean modificarPelicula(Pelicula pelicula) {
    String sql = "SELECT dbo.ContarCopiasDisponibles(?)";
     int copiasDisponibles = -1;
     
-    Connection con = null; // ⬅️ Declaración
-
+    Connection con = null;
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para PreparedStatement
+        con = ConexionBD.getInstance().getConnection(); 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, idPelicula);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     copiasDisponibles = rs.getInt(1);
@@ -227,12 +208,9 @@ public boolean modificarPelicula(Pelicula pelicula) {
  public boolean generarStock(int idCatalogo, int stockTotal, int idSucursal) {
   String call = "{call GenerarCopiasStock(?, ?, ?)}";
     
-    Connection con = null; // ⬅️ Declaración
-
+    Connection con = null; 
     try {
-        con = ConexionBD.getInstance().getConnection(); // ⬅️ Obtención fuera del try-with-resources
-        
-        // try-with-resources solo para CallableStatement
+        con = ConexionBD.getInstance().getConnection();
         try (CallableStatement cs = con.prepareCall(call)) {
             
             cs.setInt(1, idCatalogo);
@@ -266,7 +244,6 @@ public boolean modificarPelicula(Pelicula pelicula) {
     if (tieneFiltro) {
         sql = "SELECT " + columnasSelect + " FROM PELICULA WHERE CATEGORIA = ?";
     } else {
-        // Quitamos DIANA931.
         sql = "SELECT " + columnasSelect + " FROM PELICULA";
     }
 
